@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>김현정 수학학원 · 박경찬</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<style>
+/* ============================================================================
+   김현정 수학학원 · 박경찬 — refactored <style> inner content
+   PURE refactor of _merged.html. Pixel-identical to baseline (L1).
+   Layers: 0 global · 1 shared components (deduped) · 2 section-specific scoped ·
+           3 semantic classes for extracted inline · 4 ONE mobile @media layer
+           (with L2 orbit svh fix) · 5 reduced-motion (consolidated).
+   Color facts: 수업축 green #5C940D · 관리축 purple #7048E8 · progress amber #E6B53D.
+   ============================================================================ */
+
+/* ===== LAYER 0 — TRUE GLOBAL (was head L9-18, verbatim) ===================== */
+*{box-sizing:border-box} html,body{margin:0}
+/* overflow-x safety net: clip (NOT hidden) so it never creates a scroll container
+   that would break the position:fixed mobile orbit pin. Stops fixed-px content
+   blocks from widening the layout viewport on narrow screens ("right space"). */
+html{overflow-x:clip}
+body{font-family:'Pretendard Variable',Pretendard,-apple-system,system-ui,sans-serif;background:#F4F3F0;color:#0B0B0B;-webkit-font-smoothing:antialiased;word-break:keep-all}
+.sec{position:relative}
+.sec+.sec{margin-top:24vh !important}
+#gbar{position:fixed;top:0;left:0;right:0;height:4px;z-index:90;background:rgba(11,11,11,.08)}
+#gbar>i{display:block;height:100%;background:#E6B53D;transform-origin:0 50%;transform:scaleX(0)}
+#sec5 #msg{display:none !important}
+/* desktop: widen KG graph box horizontally */
+@media (min-width:641px){ #sec5 .wrap{max-width:96vw !important} }
+
+/* Per-section boilerplate. The original `#secN{margin:0}` and
+   `#secN{font-family...background...}` copies are redundant vs body/html rules
+   (sec1-6 background #F4F3F0 == body). word-break + text-wrap + pre-line are kept
+   as the 6 EXPLICIT per-section rules (sec1,2,3,4,6,7) the original used —
+   sec5 was DELIBERATELY EXCLUDED (no such rules on sec5), so do NOT globalize
+   them (C1: globalizing changes sec5 text wrapping = L1/L3 violation). sec7
+   background is dark — handled in the sec7 scoped block below. */
+#sec1 h1,#sec1 h2,#sec1 h3,#sec1 p{word-break:keep-all;text-wrap:pretty}
+#sec1 h1,#sec1 h2,#sec1 h3,#sec1 h4,#sec1 p,#sec1 span,#sec1 a,#sec1 article,#sec1 div[data-reveal]{white-space:pre-line}
+#sec2 h1,#sec2 h2,#sec2 h3,#sec2 p{word-break:keep-all;text-wrap:pretty}
+#sec2 h1,#sec2 h2,#sec2 h3,#sec2 h4,#sec2 p,#sec2 span,#sec2 a,#sec2 article,#sec2 div[data-reveal]{white-space:pre-line}
+#sec3 h1,#sec3 h2,#sec3 h3,#sec3 p{word-break:keep-all;text-wrap:pretty}
+#sec3 h1,#sec3 h2,#sec3 h3,#sec3 h4,#sec3 p,#sec3 span,#sec3 a,#sec3 article,#sec3 div[data-reveal]{white-space:pre-line}
+#sec4 h1,#sec4 h2,#sec4 h3,#sec4 p{word-break:keep-all;text-wrap:pretty}
+#sec4 h1,#sec4 h2,#sec4 h3,#sec4 h4,#sec4 p,#sec4 span,#sec4 a,#sec4 article,#sec4 div[data-reveal]{white-space:pre-line}
+#sec6 h1,#sec6 h2,#sec6 h3,#sec6 p{word-break:keep-all;text-wrap:pretty}
+#sec6 h1,#sec6 h2,#sec6 h3,#sec6 h4,#sec6 p,#sec6 span,#sec6 a,#sec6 article,#sec6 div[data-reveal]{white-space:pre-line}
+#sec7 h1,#sec7 h2,#sec7 h3,#sec7 p{word-break:keep-all;text-wrap:pretty}
+#sec7 h1,#sec7 h2,#sec7 h3,#sec7 h4,#sec7 p,#sec7 span,#sec7 a,#sec7 article,#sec7 div[data-reveal]{white-space:pre-line}
+
+/* ===== LAYER 1 — SHARED COMPONENT CLASSES (deduped 4-6x -> 1) =============== */
+/* Were bare-global via comment-prefix artifact (sec1==sec3==sec4==sec6 identical
+   bodies). Un-prefixed here reproduces the same cascade (last-wins, all equal). */
+
+/* reveals (shared) — translateY(42px)/.85s variant (sec1,3,4,6,7) */
+[data-reveal]{opacity:0;transform:translateY(42px);transition:opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1)}
+[data-reveal][data-in]{opacity:1;transform:none}
+/* sec2 keeps its own 38px/.8s variant — see LAYER 2 sec2 (scoped, higher spec). */
+
+/* sticky stage dots + labels (S2) — shared sec1/3/4/6 */
+.dot{position:absolute;width:18px;height:18px;border-radius:50%;background:#D9D7D0;transition:transform .5s cubic-bezier(.16,1,.3,1), background .5s, box-shadow .5s}
+.dot-cap{position:absolute;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.06em;color:#9a978d;transition:color .5s}
+[data-stagelabel]{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:translateY(8px);transition:opacity .5s, transform .5s}
+[data-active="1"] [data-stagelabel="1"], [data-active="2"] [data-stagelabel="2"], [data-active="3"] [data-stagelabel="3"], [data-active="4"] [data-stagelabel="4"]{opacity:1;transform:none}
+
+/* pulse keyframes — collapsed name-mangled copies to one each */
+@keyframes pulseA{0%{box-shadow:0 0 0 0 rgba(112,72,232,.5)}70%{box-shadow:0 0 0 20px rgba(112,72,232,0)}100%{box-shadow:0 0 0 0 rgba(112,72,232,0)}}
+@keyframes pulseS{0%{box-shadow:0 0 0 0 rgba(92,148,13,.5)}70%{box-shadow:0 0 0 20px rgba(92,148,13,0)}100%{box-shadow:0 0 0 0 rgba(92,148,13,0)}}
+
+/* AXIS A nested-square (funnel) shared shell — sec1/3/4/6 .nest identical */
+.nest{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:2px solid #E6E5E0;border-radius:22px;transition:border-color .5s, background-color .5s, box-shadow .5s}
+/* [data-stagelabelA] container positioning DIFFERS per section -> LAYER 2. */
+
+/* scene phrases (S4 + mid scrollytelling) — shared sec1/3/4/6 .phrase + .phrase2 */
+.phrase, .phrase2{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 8vw;opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);pointer-events:none}
+.phrase[data-on], .phrase2[data-on]{opacity:1;transform:none}
+
+/* #bgfx — element exists ONLY in sec6 scene; winning rule is sec6's absolute/z0.
+   Dead fixed variants (sec1/3/4) dropped. Scoped to sec6 to be safe + intentional. */
+#sec6 #bgfx{position:absolute;inset:0;z-index:0;background:#F4F3F0;transition:background-color .12s linear}
+
+/* NOTE: #badge CSS DROPPED — no #badge element anywhere, JS branch guarded null.
+   Zero pixel impact (nothing rendered). Dead-weight removal (scout 06 §F). */
+
+/* ===== LAYER 3 — SEMANTIC CLASSES (extracted inline styles) ================= */
+
+/* -- eyebrow (mono 13px/700) + color/spacing modifiers ---------------------- */
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+.eyebrow--purple{color:#7048E8;letter-spacing:.14em}      /* 관리축 intro eyebrows */
+.eyebrow--purple10{color:#7048E8;letter-spacing:.1em}     /* 관리축 step eyebrows (sec4 step1/2) */
+.eyebrow--green-wide{color:#5C940D;letter-spacing:.14em}
+.eyebrow--green{color:#5C940D;letter-spacing:.1em}        /* 수업축 step tags */
+
+/* -- scroll hint ------------------------------------------------------------ */
+.scroll-hint{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;color:#9a978d}
+.scroll-hint--abs{position:absolute;bottom:34px;left:50%;transform:translateX(-50%)}  /* S1 */
+.scroll-hint--mt48{margin-top:48px}   /* S3, S4 */
+.scroll-hint--mt44{margin-top:44px}   /* S6 */
+.scroll-hint--dark{margin-top:44px;color:rgba(244,243,240,.5)}  /* S7 on dark card */
+
+/* -- SEC1 hero -------------------------------------------------------------- */
+.s1-hero{position:relative;min-height:114vh;display:flex;flex-direction:column;justify-content:center;padding:96px 7vw;overflow:hidden}
+.s1-hero-ghost{position:absolute;top:50%;left:82%;z-index:0;font-size:48vw;font-weight:800;line-height:.8;color:#D0BFFF;opacity:.5;transform:translate(-50%,-50%) translateY(calc(var(--hp,0) * 150px)) scale(1.04)}
+.s1-hero-copy{position:relative;z-index:2;max-width:22ch;transform:translateY(calc(var(--hp,0) * -72px));opacity:calc(1 - var(--hp,0) * .7)}
+.s1-title{font-size:clamp(2.4rem,6.5vw,5rem);font-weight:800;line-height:1.04;letter-spacing:-.02em;margin:18px 0 20px;text-wrap:balance;width:min(100%,350px)}
+.s1-lead{font-size:clamp(1.05rem,1.6vw,1.3rem);color:#46464B;line-height:1.75;margin:0;max-width:42ch}
+.s1-content{position:relative;z-index:3;background:#fff;border-top:1px solid #E6E5E0;padding:14vh 7vw}
+.s1-content-box{max-width:60ch;width:min(100%,400px)}
+.s1-h2{font-size:clamp(1.8rem,4vw,3rem);font-weight:800;letter-spacing:-.01em;margin:.4em 0 .5em;text-wrap:balance;width:min(100%,400px)}
+.s1-body{font-size:clamp(1.05rem,1.5vw,1.2rem);color:#46464B;line-height:1.8;margin:0;min-height:200px;width:min(100%,400px)}
+
+/* -- SEC2 video ------------------------------------------------------------- */
+.s2-section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8vh 4vw}
+.s2-frame{max-width:1180px;width:100%;margin:0 auto}
+.lyt__meta{position:absolute;right:22px;bottom:18px;z-index:3;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.02em;color:rgba(244,243,240,.82);text-shadow:0 1px 8px rgba(0,0,0,.5)}
+/* L5-CRITICAL S2-D: scoped #sec2 .lyt__inner (1,1,0) sets justify-content:
+   space-between; the inline set center/center and WON. A plain class would lose.
+   Resolution: scope the override at EQUAL+ specificity to the base rule. */
+#sec2 .lyt__inner.lyt__inner--center{justify-content:center;align-items:center}
+
+/* -- SEC3 intro / orbit ----------------------------------------------------- */
+.s3-intro{min-height:92vh;display:flex;flex-direction:column;justify-content:center;padding:96px 7vw}
+.maxw-640{max-width:640px}
+.s3-h2{font-size:64px;font-weight:800;line-height:1.08;letter-spacing:-.02em;margin:18px 0 18px}
+.body-lead{font-size:clamp(1.05rem,1.5vw,1.25rem);color:#46464B;line-height:1.75;margin:0;max-width:40ch}  /* S3-E */
+.steps-col{display:flex;flex-direction:column}
+/* pin layout — base props moved here from inline; mobile !important overrides win */
+.pin-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:5vw;padding:0 7vw}
+.pin-stage{position:sticky;top:0;align-self:start;height:100vh;display:flex;align-items:center;justify-content:center}
+.orbit-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+/* stageA (sec3, ID kept high-spec; #stageA mobile override matches by ID) */
+#stageA{position:relative;width:min(32vw,400px);height:min(32vw,400px);border-radius:50%;border:1px solid #E6E5E0;background:#fff;box-shadow:0 30px 80px -44px rgba(11,11,11,.3)}
+/* stagelabel inner type (shared by sec3 + sec4 center labels) */
+.stagelabel-eyebrow{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.1em;color:#5C940D}
+.stagelabel-strong{font-size:clamp(1.2rem,2.2vw,1.7rem);font-weight:800;margin-top:6px}      /* sec3 */
+.stagelabel-strong--lg{font-size:clamp(1.3rem,2.4vw,1.9rem);font-weight:800;margin-top:6px}  /* sec4 */
+/* orbit step articles (sec3) — 90vh desktop; mobile 72vh+svh in LAYER 4 */
+.stepA{min-height:90vh;display:flex;flex-direction:column;justify-content:center}
+.stepA-h3{font-size:clamp(1.7rem,3vw,2.6rem);font-weight:800;letter-spacing:-.01em;margin:.35em 0 .45em}
+.stepA-body{font-size:1.1rem;color:#46464B;line-height:1.8;max-width:40ch;margin:0}
+
+/* -- SEC4 funnel (stage uses #stage circle) --------------------------------- */
+.sec-intro{min-height:92vh;display:flex;flex-direction:column;justify-content:center;padding:96px 7vw}  /* sec4 + sec6 intro */
+.intro-copy{max-width:24ch}
+.intro-h1{font-size:clamp(2.2rem,5.5vw,4.4rem);font-weight:800;line-height:1.08;letter-spacing:-.02em;margin:18px 0 18px}
+.intro-lede{font-size:clamp(1.05rem,1.5vw,1.25rem);color:#46464B;line-height:1.75;margin:0;max-width:40ch}
+.intro-lede--tone{transition:color .3s}  /* sec6 data-tone */
+.pin-section{position:relative}
+#stage{position:relative;width:min(32vw,400px);aspect-ratio:1;border-radius:50%;border:1px solid #E6E5E0;background:#fff;box-shadow:0 30px 80px -44px rgba(11,11,11,.3)}
+.step{min-height:90vh;display:flex;flex-direction:column;justify-content:center}  /* sec4 funnel steps */
+.step-title{font-size:clamp(1.7rem,3vw,2.6rem);font-weight:800;letter-spacing:-.01em;margin:.35em 0 .45em}
+.step-body{font-size:1.1rem;color:#46464B;line-height:1.8;max-width:40ch;margin:0}
+
+/* -- SEC5 KG intro + scene2 ------------------------------------------------- */
+.sec-intro--80{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:96px 7vw}
+.intro-copy--wide{max-width:48ch}
+.kg-h2{font-size:clamp(2rem,4.6vw,3.5rem);font-weight:800;line-height:1.12;letter-spacing:-.02em;margin:16px 0 16px;max-width:24ch;word-break:keep-all}
+.kg-lede{font-size:clamp(1.02rem,1.4vw,1.2rem);color:#46464B;line-height:1.7;margin:0;max-width:48ch;word-break:keep-all}
+/* scene scroll track + sticky box (shared sec5 dark / sec6 light) */
+.scene-track{position:relative;height:300vh}
+.scene-track--dark{background:#0B0B0B;color:#F4F3F0}  /* sec5 scene2 */
+.scene-sticky{position:sticky;top:0;height:100vh;overflow:hidden}
+/* phrase inner <p> typography — per-phrase size variants */
+.scene-phrase{font-weight:800;letter-spacing:-.02em;margin:0;text-align:center}
+.scene-phrase--a{font-size:clamp(1.7rem,4.2vw,3.3rem);line-height:1.34;max-width:24ch;word-break:keep-all}  /* s5 p0,p2 */
+.scene-phrase--b{font-size:clamp(1.6rem,4vw,3.1rem);line-height:1.36;max-width:26ch;word-break:keep-all}    /* s5 p1 */
+.scene-phrase--c{font-size:clamp(1.9rem,4.6vw,3.6rem);line-height:1.32;max-width:20ch}                      /* s6 ph0 */
+.scene-phrase--d{font-size:clamp(1.7rem,4vw,3.1rem);line-height:1.34;max-width:24ch}                        /* s6 ph1 */
+.scene-phrase--e{font-size:clamp(1.8rem,4.4vw,3.4rem);line-height:1.32;max-width:24ch}                      /* s6 ph2 */
+.hl-green{color:#C0EBA6}   /* s5 inline span */
+.hl-purple{color:#D0BFFF}  /* s6 inline span */
+/* scene index dots */
+.scene-dots{position:absolute;bottom:7vh;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.scene-dot{width:8px;height:8px;border-radius:50%;transition:background-color .4s, transform .4s}
+.scene-dot--light{background:rgba(244,243,240,.32)}  /* sec5 .sd2 on dark */
+.scene-dot--grey{background:rgba(140,140,140,.4)}    /* sec6 .sd */
+
+/* -- SEC6 outro ------------------------------------------------------------- */
+.scene-outro{position:relative;z-index:2;background:#F4F3F0;min-height:86vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:14vh 7vw}
+.outro-copy{max-width:600px}
+.outro-h{font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:800;letter-spacing:-.01em;margin:16px auto 0;max-width:30ch;width:min(100%,600px)}
+
+/* per-instance intro h1 widths (sec4=400, sec6=240) */
+.w400{width:min(100%,400px)}
+.w240{width:min(100%,240px)}
+
+/* ===== LAYER 2 — GENUINELY SECTION-SCOPED RULES ============================ */
+
+/* --- sec2 (#sec2) — reveal variant + video card component ------------------ */
+#sec2 [data-reveal]{opacity:0;transform:translateY(38px);transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1)}
+#sec2 [data-reveal][data-in]{opacity:1;transform:none}
+#sec2 .lyt{position:relative;display:block;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;cursor:pointer;text-decoration:none;background:#0B0B0B;box-shadow:0 30px 80px -44px rgba(11,11,11,.5)}
+#sec2 .lyt__bg{position:absolute;inset:0;background:radial-gradient(130% 130% at 22% 14%, #2A1E54 0%, #14102C 46%, #090814 100%)}
+#sec2 .lyt__motif{position:absolute;inset:0;pointer-events:none;opacity:.9}
+#sec2 .lyt__motif line{stroke-linecap:round}
+#sec2 .lyt__grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:46px 46px;mask-image:linear-gradient(to top,transparent,#000 60%)}
+#sec2 .lyt__inner{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:28px 30px}
+#sec2 .lyt__eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.14em;color:#C9B8FF}
+#sec2 .lyt__title{font-size:clamp(1.5rem,3.4vw,2.4rem);font-weight:800;line-height:1.18;letter-spacing:-.02em;color:#F4F3F0;max-width:18ch}
+#sec2 .lyt__row{display:flex;align-items:center;gap:14px}
+#sec2 .lyt__play{width:64px;height:64px;flex:none;border-radius:50%;background:#7048E8;display:flex;align-items:center;justify-content:center;border:1.5px solid rgba(255,255,255,.5);transition:transform .3s, background-color .3s}
+#sec2 .lyt:hover .lyt__play{transform:scale(1.08);background:#5B3FB0}
+#sec2 .lyt__play svg{width:24px;height:24px;margin-left:3px;fill:#fff}
+#sec2 .lyt__cta{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.04em;color:#F4F3F0}
+#sec2 .lyt__cta small{display:block;color:rgba(244,243,240,.55);font-weight:500;letter-spacing:.02em;margin-top:3px}
+
+/* --- sec1/3/4/6 dot+cap color maps (state) -------------------------------- */
+/* sec1/3/6 purple->green split (identical) */
+#sec1 [data-active="1"] [data-dot="1"], #sec1 [data-active="2"] [data-dot="2"], #sec3 [data-active="1"] [data-dot="1"], #sec3 [data-active="2"] [data-dot="2"], #sec6 [data-active="1"] [data-dot="1"], #sec6 [data-active="2"] [data-dot="2"]{background:#7048E8;transform:scale(1.9);animation:pulseA 1.8s ease-out infinite}
+#sec1 [data-active="3"] [data-dot="3"], #sec1 [data-active="4"] [data-dot="4"], #sec3 [data-active="3"] [data-dot="3"], #sec3 [data-active="4"] [data-dot="4"], #sec6 [data-active="3"] [data-dot="3"], #sec6 [data-active="4"] [data-dot="4"]{background:#5C940D;transform:scale(1.9);animation:pulseS 1.8s ease-out infinite}
+#sec1 [data-active="1"] [data-cap="1"], #sec1 [data-active="2"] [data-cap="2"], #sec3 [data-active="1"] [data-cap="1"], #sec3 [data-active="2"] [data-cap="2"], #sec6 [data-active="1"] [data-cap="1"], #sec6 [data-active="2"] [data-cap="2"]{color:#7048E8}
+#sec1 [data-active="3"] [data-cap="3"], #sec1 [data-active="4"] [data-cap="4"], #sec3 [data-active="3"] [data-cap="3"], #sec3 [data-active="4"] [data-cap="4"], #sec6 [data-active="3"] [data-cap="3"], #sec6 [data-active="4"] [data-cap="4"]{color:#5C940D}
+/* sec4 (관리축) ALL GREEN — differs */
+#sec4 [data-active="1"] [data-dot="1"], #sec4 [data-active="2"] [data-dot="2"], #sec4 [data-active="3"] [data-dot="3"], #sec4 [data-active="4"] [data-dot="4"]{background:#5C940D;transform:scale(1.9);animation:pulseS 1.8s ease-out infinite}
+#sec4 [data-active="1"] [data-cap="1"], #sec4 [data-active="2"] [data-cap="2"], #sec4 [data-active="3"] [data-cap="3"], #sec4 [data-active="4"] [data-cap="4"]{color:#5C940D}
+#sec4 .oflow{fill:#7FB23F}
+
+/* --- nest active border + stagelabelA container positioning --------------- */
+/* nest active (sec1/3/4/6 identical) */
+#sec1 [data-activeA="1"] [data-nest="1"], #sec1 [data-activeA="2"] [data-nest="2"], #sec1 [data-activeA="3"] [data-nest="3"], #sec1 [data-activeA="4"] [data-nest="4"], #sec3 [data-activeA="1"] [data-nest="1"], #sec3 [data-activeA="2"] [data-nest="2"], #sec3 [data-activeA="3"] [data-nest="3"], #sec3 [data-activeA="4"] [data-nest="4"], #sec4 [data-activeA="1"] [data-nest="1"], #sec4 [data-activeA="2"] [data-nest="2"], #sec4 [data-activeA="3"] [data-nest="3"], #sec4 [data-activeA="4"] [data-nest="4"], #sec6 [data-activeA="1"] [data-nest="1"], #sec6 [data-activeA="2"] [data-nest="2"], #sec6 [data-activeA="3"] [data-nest="3"], #sec6 [data-activeA="4"] [data-nest="4"]{border-color:#7048E8;background:rgba(112,72,232,.07);box-shadow:0 0 0 5px rgba(112,72,232,.12)}
+/* stagelabelA container — sec1/4/6 centered overlay (inset:0) */
+#sec1 [data-stagelabelA], #sec4 [data-stagelabelA], #sec6 [data-stagelabelA]{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;transform:translateY(8px);transition:opacity .5s, transform .5s;pointer-events:none}
+/* sec3 base: below-stage layout (overridden by the global !important rule below;
+   keep both so cascade order == baseline) */
+#sec3 [data-stagelabelA]{position:absolute;left:0;right:0;top:calc(100% + 26px);display:flex;flex-direction:column;align-items:center;text-align:center;opacity:0;transform:translateY(8px);transition:opacity .5s, transform .5s;pointer-events:none}
+/* L5-CRITICAL: global override (was head L15) — !important wins over the base
+   above, snapping sec3 labels back to centered overlay. Declared AFTER. */
+#sec3 [data-stagelabelA]{inset:0 !important;top:0 !important;justify-content:center !important;text-align:center}
+/* stagelabelA / stagelabel reveal state (shared sec1/3/4/6) */
+#sec1 [data-activeA="1"] [data-stagelabelA="1"], #sec1 [data-activeA="2"] [data-stagelabelA="2"], #sec1 [data-activeA="3"] [data-stagelabelA="3"], #sec1 [data-activeA="4"] [data-stagelabelA="4"], #sec3 [data-activeA="1"] [data-stagelabelA="1"], #sec3 [data-activeA="2"] [data-stagelabelA="2"], #sec3 [data-activeA="3"] [data-stagelabelA="3"], #sec3 [data-activeA="4"] [data-stagelabelA="4"], #sec4 [data-activeA="1"] [data-stagelabelA="1"], #sec4 [data-activeA="2"] [data-stagelabelA="2"], #sec4 [data-activeA="3"] [data-stagelabelA="3"], #sec4 [data-activeA="4"] [data-stagelabelA="4"], #sec6 [data-activeA="1"] [data-stagelabelA="1"], #sec6 [data-activeA="2"] [data-stagelabelA="2"], #sec6 [data-activeA="3"] [data-stagelabelA="3"], #sec6 [data-activeA="4"] [data-stagelabelA="4"]{opacity:1;transform:none}
+
+/* --- sec3-specific orbit machinery (dotA/capA/spiral/spt/nlbl) ------------- */
+#sec3 .dotA{position:absolute;width:18px;height:18px;border-radius:50%;background:#D9D7D0;transition:transform .5s cubic-bezier(.16,1,.3,1), background .5s, box-shadow .5s}
+#sec3 .capA{position:absolute;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.06em;color:#9a978d;transition:color .5s}
+@keyframes pulseA2_sec3{0%{box-shadow:0 0 0 0 rgba(112,72,232,.5)}70%{box-shadow:0 0 0 18px rgba(112,72,232,0)}100%{box-shadow:0 0 0 0 rgba(112,72,232,0)}}
+#sec3 [data-activeA="1"] .dotA[data-dotA="1"], #sec3 [data-activeA="2"] .dotA[data-dotA="2"], #sec3 [data-activeA="3"] .dotA[data-dotA="3"], #sec3 [data-activeA="4"] .dotA[data-dotA="4"]{background:#7048E8;transform:scale(1.9);animation:pulseA2_sec3 1.8s ease-out infinite}
+#sec3 [data-activeA="1"] .capA[data-capA="1"], #sec3 [data-activeA="2"] .capA[data-capA="2"], #sec3 [data-activeA="3"] .capA[data-capA="3"], #sec3 [data-activeA="4"] .capA[data-capA="4"]{color:#7048E8}
+#sec3 .oflowA{fill:#9A7BE8}
+#sec3 .nlbl{position:absolute;left:50%;transform:translate(-50%,-50%);background:#F4F3F0;padding:1px 8px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.04em;color:#C9C6BE;white-space:nowrap;transition:color .5s, background-color .5s}
+#sec3 [data-activeA="1"] .nlbl[data-nl="1"], #sec3 [data-activeA="2"] .nlbl[data-nl="2"], #sec3 [data-activeA="3"] .nlbl[data-nl="3"], #sec3 [data-activeA="4"] .nlbl[data-nl="4"]{color:#7048E8}
+#sec3 .spiral{fill:none;stroke:#E0DDD6;stroke-width:1.4;stroke-linecap:round;vector-effect:non-scaling-stroke}
+#sec3 .flowdot{fill:#9A7BE8}
+#sec3 .dot-travel{fill:#7048E8;transform-box:fill-box;transform-origin:center;animation:spPulse_sec3 1.6s ease-in-out infinite}
+#sec3 .return-arc{fill:none;stroke:#7048E8;stroke-width:1.4;stroke-dasharray:3 4;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:0;transition:opacity .6s}
+#sec3 [data-activeA="4"] .return-arc{opacity:.6}
+#sec3 [data-activeA="4"] .spt[data-sp="1"]{fill:#7048E8}
+#sec3 [data-activeA="4"] .spt-lbl[data-sp="1"]{fill:#7048E8}
+#sec3 .spt{fill:#C9C6BE;transition:fill .4s}
+#sec3 .spt-lbl{fill:#C9C6BE;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.04em;transition:fill .4s}
+@keyframes spPulse_sec3{0%,100%{transform:scale(1)}50%{transform:scale(1.6)}}
+#sec3 [data-activeA="1"] .spt[data-sp="1"], #sec3 [data-activeA="2"] .spt[data-sp="2"], #sec3 [data-activeA="3"] .spt[data-sp="3"], #sec3 [data-activeA="4"] .spt[data-sp="4"]{fill:#7048E8}
+#sec3 [data-activeA="1"] .spt-lbl[data-sp="1"], #sec3 [data-activeA="2"] .spt-lbl[data-sp="2"], #sec3 [data-activeA="3"] .spt-lbl[data-sp="3"], #sec3 [data-activeA="4"] .spt-lbl[data-sp="4"]{fill:#7048E8}
+
+/* --- sec5 KG component (fully scoped, unchanged) --------------------------- */
+#sec5 .wrap{max-width:1180px;margin:0 auto;padding:5vh 5vw}
+#sec5 .field{position:relative;width:100%;aspect-ratio:16/9;border-radius:20px;overflow:hidden;background:#FCFCFA;border:1px solid #E6E5E0;box-shadow:0 24px 60px -46px rgba(11,11,11,.4)}
+#sec5 .field svg{position:absolute;inset:0;width:100%;height:100%}
+#sec5 .kg-guide{position:absolute;left:18px;top:16px;z-index:4;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.02em;color:#46464B;background:rgba(255,255,255,.78);backdrop-filter:blur(6px);border:1px solid #E6E5E0;border-radius:999px;padding:8px 14px}
+#sec5 .edge{stroke:#D7D3CB;stroke-width:1.3;vector-effect:non-scaling-stroke;fill:none}
+#sec5 .ek-has-prerequisite{stroke:#6F8FB5;stroke-width:1.9}
+#sec5 .ek-topic-includes{stroke:#9A8FB0;stroke-width:1.4}
+#sec5 .ek-representation-of{stroke:#9A8FB0;stroke-dasharray:2 4;stroke-width:1.4}
+#sec5 .ek-parameter-affects{stroke:#9A8FB0;stroke-dasharray:5 4;stroke-width:1.5}
+#sec5 .ek-supports-action, #sec5 .ek-consumes-data, #sec5 .ek-solves, #sec5 .ek-requires-substitution-trace{stroke:#7FA890;stroke-width:1.4}
+#sec5 .ek-solves{stroke-dasharray:5 4}
+#sec5 .ek-topic-bridge{stroke:#C79A3A;stroke-width:2.8}
+#sec5 .node circle{stroke-width:2}
+#sec5 .nl-DATA{fill:#7048E8}
+#sec5 .nl-LOGIC{fill:#2A6FDB}
+#sec5 .nl-ACTION{fill:#1F8A5B}
+#sec5 .nl-PROBLEM{fill:#D9911F}
+#sec5 .nt-function{stroke:#fff}
+#sec5 .nt-equation{stroke:#0B0B0B}
+@keyframes pulseCur_sec5{0%{r:var(--r);opacity:1}70%{r:calc(var(--r) + 16px);opacity:0}100%{opacity:0}}
+@keyframes pulseWeak_sec5{0%{r:var(--r);opacity:.8}70%{r:calc(var(--r) + 12px);opacity:0}100%{opacity:0}}
+#sec5 .pulse{fill:none;stroke-width:2.5}
+#sec5 .pc-current{stroke:#13B5A6;animation:pulseCur_sec5 1.8s ease-out infinite}
+#sec5 .pc-weak{stroke:#E0443E;animation:pulseWeak_sec5 2.1s ease-out infinite}
+#sec5 .st-mastered circle{fill:#1F8A5B}
+#sec5 .st-learning circle{fill:#E0A50E}
+#sec5 .st-weak circle{fill:#E0443E}
+#sec5 .st-current circle{fill:#13B5A6}
+#sec5 .st-todo circle{fill:#C7C4BC}
+#sec5 .summary{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin:0 0 14px;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#46464B}
+#sec5 .summary .wk{color:#0B0B0B;background:#EAFBF8;border:1px solid #BFEEE8;padding:5px 11px;border-radius:999px}
+#sec5 .summary b{font-size:1.05rem}
+#sec5 .summary .sm{color:#1F8A5B}
+#sec5 .summary .lr{color:#C98A00}
+#sec5 .summary .wk2{color:#E0443E}
+#sec5 .summary .cu{color:#0E9C90}
+#sec5 .field.has-hover .edge{opacity:.12}
+#sec5 .field.has-hover .node{opacity:.18}
+#sec5 .field.has-hover .node.hl{opacity:1}
+#sec5 .field.has-hover .edge.hl{opacity:1}
+#sec5 .node{cursor:pointer;transition:opacity .18s}
+#sec5 .edge{transition:opacity .18s}
+#sec5 .node circle{transition:transform .18s}
+#sec5 .node.hl circle{transform:scale(1.35)}
+#sec5 .hoverlbl{position:absolute;transform:translate(-50%,-140%);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#0B0B0B;background:#fff;border:1px solid #E6E5E0;padding:4px 9px;border-radius:7px;box-shadow:0 8px 20px -10px rgba(11,11,11,.5);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:6}
+#sec5 .hoverlbl[data-on]{opacity:1}
+#sec5 .apanel{position:absolute;top:0;right:0;height:100%;width:340px;max-width:80%;background:#fff;border-left:1px solid #E6E5E0;box-shadow:-20px 0 50px -40px rgba(11,11,11,.5);transform:translateX(100%);transition:transform .35s cubic-bezier(.16,1,.3,1);overflow-y:auto;padding:22px 22px 30px;z-index:8}
+#sec5 .apanel[data-open]{transform:none}
+#sec5 .apanel h3{font-size:1.3rem;font-weight:800;letter-spacing:-.01em;margin:18px 0 4px}
+#sec5 .apanel .meta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.06em;color:#9a978d}
+#sec5 .apanel .close{position:absolute;top:14px;right:16px;border:0;background:#F4F3F0;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;color:#46464B}
+#sec5 .apanel ul{list-style:none;padding:0;margin:14px 0 0}
+#sec5 .apanel li{font-size:.92rem;line-height:1.5;color:#0B0B0B;padding:9px 0 9px 18px;border-top:1px solid #F0EEE8;position:relative}
+#sec5 .apanel li::before{content:"";position:absolute;left:2px;top:15px;width:7px;height:7px;border-radius:50%;background:var(--acc,#7048E8)}
+#sec5 .apanel .empty{font-size:.9rem;color:#9a978d;margin-top:14px;line-height:1.6}
+#sec5 #msg{font-family:'JetBrains Mono',monospace;font-size:12px;color:#9a978d;margin:12px 2px 0}
+#sec5 .legend{display:flex;flex-wrap:wrap;gap:16px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#46464B;margin:0 0 16px}
+#sec5 .legend span{display:inline-flex;align-items:center;gap:7px}
+#sec5 .legend i{width:13px;height:13px;border-radius:50%;display:inline-block}
+
+/* --- sec7 stacked cards + contact (scoped, unchanged) --------------------- */
+/* C2: keep the scoped dark wrapper background (original #sec7{background:#0B0B0B}) */
+#sec7{background:#0B0B0B}
+#sec7 .stack{position:sticky;top:0;min-height:100vh}
+#sec7 .stack-inner{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:12vh 7vw;border-radius:36px 36px 0 0;box-shadow:0 -40px 90px -50px rgba(0,0,0,.55);transform-origin:50% 0;transform:scale(var(--cardScale,1));overflow:hidden}
+#sec7 .stack:first-of-type .stack-inner{border-radius:0}
+#sec7 .stack-shade{position:absolute;inset:0;background:#0B0B0B;opacity:var(--cardShade,0);pointer-events:none}
+#sec7 .eyb{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:.14em}
+#sec7 .ttl{font-size:clamp(2rem,5vw,4rem);font-weight:800;line-height:1.08;letter-spacing:-.02em;margin:16px 0 20px;max-width:20ch}
+#sec7 .bdy{font-size:clamp(1.05rem,1.5vw,1.25rem);line-height:1.8;margin:0;max-width:42ch}
+#sec7 .channels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%;max-width:520px;margin:6px 0 30px}
+#sec7 .ch{display:flex;align-items:center;gap:14px;text-decoration:none;background:#fff;border:1px solid #E6E5E0;border-radius:14px;padding:16px 18px;transition:transform .18s, box-shadow .18s, border-color .18s}
+#sec7 .ch:hover{transform:translateY(-2px);box-shadow:0 16px 36px -24px rgba(11,11,11,.5);border-color:#D0BFFF}
+#sec7 .ch .ic{flex:none;width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center}
+#sec7 .ch .lab{display:flex;flex-direction:column;min-width:0;text-align:left}
+#sec7 .ch .lab b{font-size:1rem;font-weight:800;color:#0B0B0B;letter-spacing:-.01em}
+#sec7 .ch .lab small{font-size:.8rem;color:#7b7b82;font-family:'JetBrains Mono',monospace}
+/* sec7 card type extracted from inline */
+.card-h1{font-size:clamp(2.2rem,5.6vw,4.4rem);font-weight:800;line-height:1.12;letter-spacing:-.02em;margin:18px 0 22px;max-width:22ch}
+.contact-h2{font-size:clamp(2rem,5vw,3.4rem);font-weight:800;line-height:1.12;letter-spacing:-.02em;margin:16px 0 26px;max-width:20ch}
+.tel-link{font-size:clamp(2rem,5.5vw,3rem);font-weight:800;letter-spacing:-.01em;color:#0B0B0B;text-decoration:none;border-bottom:3px solid #E6B53D;padding-bottom:5px}
+
+/* ===== LAYER 4 — ONE COHERENT MOBILE LAYER ================================= */
+/* C3: @media emitted in ORIGINAL SOURCE ORDER -> 640 (mobile base, was head)
+   FIRST, THEN 820 (pin/sticky, was per-section), THEN 560 (channels). Equal-
+   specificity !important rules resolve by source order; baseline is 640-before-
+   820, so on mobile the 820 caps/labels (10px / .95rem) win over the 640 ones
+   (9px / .8rem). Wrong order shrinks them = L1 violation. */
+
+/* --- @640px — MOBILE BASE (was head L20-58, verbatim incl. .dbr) ---------- */
+@media (max-width:640px){
+  /*zflip*/ #sec1 span[aria-hidden="true"]{font-size:42vw !important} .sec section{max-width:100vw}
+  /* scene sections fill full width so dark backdrop reaches both edges */
+  #sec5 #scene2,#sec6 #scene{padding-left:0 !important;padding-right:0 !important}
+  #sec6 #bgfx{left:0 !important;right:0 !important;width:100% !important}
+  /* tighten oversized desktop side-padding globally */
+  .sec section{padding-left:7vw !important;padding-right:7vw !important}
+  /* M2 hero (#sec1) */
+  #sec1 h1{font-size:clamp(2rem,9vw,2.8rem) !important}
+  #sec1 section{min-height:96vh !important}
+  /* M3 video (#sec2) */
+  #sec2 section{padding:8vh 5vw !important}
+  #sec2 .lyt{border-radius:14px !important}
+  /* M6 KG mobile: vertical box + bottom-sheet atoms panel */
+  #sec5 .field{aspect-ratio:1/1 !important;width:100% !important}
+  /* C4: hint pill is VISIBLE on mobile in baseline — carry the head block-display
+     rule (display:block + repositioned); the sec5 non-important display:none was
+     overridden by this, so it is DROPPED. */
+  #sec5 .kg-guide{display:block !important;left:12px !important;top:12px !important;right:12px !important;font-size:11px !important;padding:8px 12px !important;text-align:center}
+  #sec5 .apanel{position:fixed !important;left:0 !important;right:0 !important;bottom:0 !important;top:auto !important;width:100% !important;max-width:none !important;height:auto !important;max-height:80vh !important;height:26vh !important;transform:translateY(101%) !important;border-left:0 !important;border-top:1px solid #E6E5E0 !important;border-radius:20px 20px 0 0 !important;box-shadow:0 -18px 50px -26px rgba(11,11,11,.55) !important;padding:26px 20px 32px !important;z-index:60 !important;overflow-y:auto !important}
+  #sec5 .apanel[data-open]{transform:translateY(0) !important}
+  #sec5 .apanel::before{content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);width:42px;height:4px;border-radius:2px;background:#D8D5CE}
+  #sec5 .apanel .close{top:14px !important;right:16px !important;width:34px !important;height:34px !important}
+  #sec5 .apanel h3{font-size:1.25rem !important;margin-top:14px !important}
+  /* M7 철학(#sec6) phrases */
+  #sec6 .phrase p,#sec6 [data-scene-text]{font-size:clamp(1.5rem,6.6vw,2.1rem) !important;line-height:1.4 !important}
+  #sec6 h1,#sec6 h2{font-size:clamp(1.8rem,8vw,2.5rem) !important;line-height:1.14 !important;max-width:100% !important}
+  #sec6 section{padding:10vh 7vw !important}
+  /* M8 마무리(#sec7) */
+  #sec7 .channels{grid-template-columns:1fr !important;max-width:none !important}
+  #sec7 .ttl,#sec7 h1{font-size:clamp(1.9rem,8vw,2.6rem) !important}
+  #sec7 .bdy{font-size:clamp(1.02rem,4.6vw,1.2rem) !important}
+  /* M9: mobile label shrink */
+  #sec3 .dot-cap,#sec3 .capA,#sec4 .dot-cap,#sec4 .capA{font-size:9px !important}
+  #sec3 [data-stagelabel] strong,#sec3 [data-stagelabelA] strong,#sec4 [data-stagelabel] strong,#sec4 [data-stagelabelA] strong{font-size:.8rem !important}
+  #sec3 [data-stagelabel] span,#sec3 [data-stagelabelA] span,#sec4 [data-stagelabel] span,#sec4 [data-stagelabelA] span{font-size:10px !important}
+  /* 07 cards fill full width */
+  #sec7 .stack{padding-left:0 !important;padding-right:0 !important}
+  /* 06 dark backdrop fills full height */
+  #sec6 #scene>div{height:100vh !important}#sec6 #bgfx{top:0 !important;bottom:0 !important;height:100% !important}
+  /* L3 line-break system — keep this (visually inert) rule for computed-style parity */
+  .dbr{display:inline !important}
+}
+
+/* --- @820px — pin/orbit/funnel mobile (was sec1/3/4/6 L70/94/109/136) ----- */
+/* Emitted AFTER @640 so its equal-!important caps/labels win on mobile (C3). */
+@media (max-width:820px){
+  /* sec1 + sec6 — NON-sticky pin */
+  #sec1 .pin-grid, #sec6 .pin-grid{grid-template-columns:1fr !important}
+  #sec1 .pin-stage, #sec6 .pin-stage{position:relative !important;height:60vh !important;top:0 !important}
+  /* sec3 + sec4 — JS FIXED-PIN (was position:sticky; sticky cannot track the live
+     mobile visible viewport when the dynamic toolbar shows/hides — painted ~1
+     address-bar-height too high. Replaced with a JS-driven position:fixed pin
+     via the .pin-fixed / .pin-end state classes below + setupPin() in the JS.
+     L2: keep align-items:flex-start = stick-edge top.) */
+  #sec3 .pin-grid, #sec4 .pin-grid{display:block !important;padding:0 !important;position:relative}
+  #sec3 .pin-stage, #sec4 .pin-stage{position:relative !important;height:auto !important;display:flex !important;align-items:flex-start !important;justify-content:center !important;padding:46px 0 34px !important;background:#F4F3F0 !important;z-index:5}
+  /* JS pin states (mobile-only; added/removed by setupPin() in the JS, never on desktop) */
+  #sec3 .pin-stage.pin-fixed, #sec4 .pin-stage.pin-fixed{position:fixed !important}
+  #sec3 .pin-stage.pin-end, #sec4 .pin-stage.pin-end{position:absolute !important;top:auto !important;bottom:0 !important;left:0 !important;right:0 !important}
+  #sec3 #stageA{width:36vw !important;height:36vw !important;max-width:180px !important;max-height:180px !important;margin:0 auto !important}
+  #sec4 #stage{width:36vw !important;max-width:180px !important;margin:0 auto !important}
+  #sec3 .dot-cap,#sec3 .capA,#sec4 .dot-cap,#sec4 .capA{font-size:10px !important}
+  #sec3 [data-stagelabel] strong,#sec3 [data-stagelabelA] strong,#sec4 [data-stagelabel] strong,#sec4 [data-stagelabelA] strong{font-size:.95rem !important}
+  /* L2 ORBIT FIX: vh sticky-region step siblings -> svh with vh fallback FIRST */
+  #sec3 [data-stepA]{min-height:72vh;min-height:72svh !important;padding:5vh 1vw 0}
+  #sec4 [data-step]{min-height:72vh;min-height:72svh !important;padding:5vh 1vw 0}
+}
+
+/* --- @560px — channels single-column (was sec7 L142) ---------------------- */
+@media (max-width:560px){ #sec7 .channels{grid-template-columns:1fr} }
+
+/* ===== LAYER 5 — CONSOLIDATED prefers-reduced-motion ======================= */
+@media (prefers-reduced-motion: reduce){
+  /* shared reveal/dot/bgfx/phrase block (was sec1/3/4/6, identical) */
+  [data-reveal]{opacity:1 !important;transform:none !important;transition:none}
+  [data-dot]{animation:none !important}
+  #sec6 #bgfx{transition:none}
+  .phrase, .phrase2{transition:none}
+  /* sec3 orbit extras */
+  #sec3 .oflowA{display:none}
+  #sec3 .dotA{animation:none !important}
+  #sec3 .flowdot{display:none}
+  #sec3 .spt{animation:none !important}
+  #sec3 .dot-travel{animation:none !important}
+  /* sec4 extra */
+  #sec4 .oflow{display:none}
+  /* C5: sec5 KG pulse rings (was pristine reduced-motion #sec5 .pulse rule) */
+  #sec5 .pulse{animation:none !important;opacity:.5}
+  /* sec7 card-stack */
+  #sec7 [data-reveal]{opacity:1 !important;transform:none !important;transition:none}
+  #sec7 .stack{position:relative}
+  #sec7 .stack-inner{transform:none !important}
+  #sec7 .stack-shade{opacity:0 !important}
+}
+</style></head>
+<body>
+<div id="gbar"><i></i></div>
+<div aria-hidden="true" style="position:fixed;top:0;left:0;width:0;height:0;pointer-events:none"></div>
+<div class="sec" id="sec1">
+
+
+
+
+
+
+  <!-- ════════════════════ S1 · PARALLAX / LAYERED ════════════════════ -->
+  <!-- HERO -->
+  <section class="s1-hero">
+    <span aria-hidden="true" class="s1-hero-ghost">왜</span>
+    <div class="s1-hero-copy">
+      <span class="eyebrow eyebrow--purple">김현정 수학학원 · 박경찬</span>
+      <h1 class="s1-title">왜 부터
+이해시키는
+수학 수업</h1>
+      <p class="s1-lead">한 명 한 명이 지금 어디에 있는지 정확히 파악하고 끝까지 따라붙습니다.</p>
+    </div>
+    <div aria-hidden="true" class="scroll-hint scroll-hint--abs">SCROLL ↓</div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="s1-content">
+    <div data-reveal class="s1-content-box">
+      <span class="eyebrow eyebrow--green">APPROACH</span>
+      <h2 class="s1-h2">수업과 관리
+두 개의 축 모두
+놓치지 않습니다</h2>
+      <p class="s1-body">학원의 체계적인 시스템과 함께
+강사로서 직접 맡은 학생들에게
+좋은 수업과 한 명 한 명을 끝까지 따라가는 관리.
+이 두 축을 같은 깊이로, 같은 끈기로 끌고 갑니다.</p>
+    </div>
+  </section>
+
+
+
+</div>
+<div class="sec" id="sec2">
+
+
+  
+
+  
+
+  <section class="s2-section">
+    <div data-reveal class="s2-frame">
+      <a class="lyt" href="https://www.youtube.com/watch?v=09vzwq8nCQA" target="_blank" rel="noopener" aria-label="수업 미리보기 영상을 유튜브에서 재생">
+        <span class="lyt__bg"></span>
+        <span class="lyt__grid" aria-hidden="true"></span>
+        <span class="lyt__meta">공통수학1 · 이차함수와 이차방정식의 관계 (맛보기)</span>
+        <span class="lyt__inner lyt__inner--center">
+          <span class="lyt__row">
+            <span class="lyt__play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg></span>
+          </span>
+        </span>
+      </a>
+    </div>
+  </section>
+
+
+
+</div>
+<div class="sec" id="sec3">
+
+
+  
+
+  
+
+  <!-- ════════════════════ AXIS A · 수업 (teaching funnel) ════════════════════ -->
+  <!-- INTRO -->
+  <section class="s3-intro">
+    <div data-reveal class="maxw-640">
+      <span class="eyebrow eyebrow--green-wide">AXIS A · 수업</span>
+      <h2 class="s3-h2">큰 그림부터<br>한 문제까지</h2>
+      <p class="body-lead">한 학기의 큰 그림에서 시작해,
+한 주 · 한 차시 · 한 문제로
+점점 좁혀 들어갑니다.</p>
+    </div>
+    <div aria-hidden="true" class="scroll-hint scroll-hint--mt48">SCROLL ↓</div>
+  </section>
+
+  <!-- PINNED FUNNEL -->
+  <section style="position:relative">
+    <div class="pin-grid">
+
+      <!-- pinned stage: nested squares narrowing 학기 → 문제 -->
+      <div class="pin-stage">
+        <div id="stageA" data-activeA="1">
+          <svg viewBox="0 0 100 100" aria-hidden="true" class="orbit-svg">
+            <path id="orbitPathA" fill="none" d="M 50 0 A 50 50 0 1 1 49.99 0 Z"></path>
+            <circle class="oflowA" r="2.6"><animateMotion dur="17s" repeatCount="indefinite" begin="0s"><mpath href="#orbitPathA"></mpath></animateMotion></circle>
+            <circle class="oflowA" r="2.6"><animateMotion dur="17s" repeatCount="indefinite" begin="-4.25s"><mpath href="#orbitPathA"></mpath></animateMotion></circle>
+            <circle class="oflowA" r="2.6"><animateMotion dur="17s" repeatCount="indefinite" begin="-8.5s"><mpath href="#orbitPathA"></mpath></animateMotion></circle>
+            <circle class="oflowA" r="2.6"><animateMotion dur="17s" repeatCount="indefinite" begin="-12.75s"><mpath href="#orbitPathA"></mpath></animateMotion></circle>
+          </svg>
+          <span class="dotA" data-dotA="1" style="top:-9px;left:calc(50% - 9px)"></span>
+          <span class="capA" data-capA="1" style="top:-32px;left:50%;transform:translateX(-50%)">학기</span>
+          <span class="dotA" data-dotA="2" style="top:calc(50% - 9px);right:-9px"></span>
+          <span class="capA" data-capA="2" style="top:50%;right:-44px;transform:translateY(-50%)">주</span>
+          <span class="dotA" data-dotA="3" style="bottom:-9px;left:calc(50% - 9px)"></span>
+          <span class="capA" data-capA="3" style="bottom:-32px;left:50%;transform:translateX(-50%)">차시</span>
+          <span class="dotA" data-dotA="4" style="top:calc(50% - 9px);left:-9px"></span>
+          <span class="capA" data-capA="4" style="top:50%;left:-44px;transform:translateY(-50%)">문제</span>
+          <div data-stagelabelA="1"><span class="stagelabel-eyebrow">STEP 01</span><strong class="stagelabel-strong">한 학기</strong></div>
+          <div data-stagelabelA="2"><span class="stagelabel-eyebrow">STEP 02</span><strong class="stagelabel-strong">한 주</strong></div>
+          <div data-stagelabelA="3"><span class="stagelabel-eyebrow">STEP 03</span><strong class="stagelabel-strong">한 차시</strong></div>
+          <div data-stagelabelA="4"><span class="stagelabel-eyebrow">STEP 04</span><strong class="stagelabel-strong">한 문제</strong></div>
+        </div>
+      </div>
+
+      <!-- scrolling steps -->
+      <div class="steps-col">
+        <article data-stepA="1" data-reveal class="stepA">
+          <span class="eyebrow eyebrow--green">STEP 01 · 전체</span>
+          <h3 class="stepA-h3">어떤 수업인가?   
+큰 그림부터</h3>
+          <p class="stepA-body">한 학기 동안 ‘왜’를 이해시키고   
+올바른 공부 습관을 잡는 것.    
+그 한 가지 원칙으로 모든 단원을 끌고 갑니다.</p>
+        </article>
+        <article data-stepA="2" data-reveal class="stepA">
+          <span class="eyebrow eyebrow--green">STEP 02 · 한 주</span>
+          <h3 class="stepA-h3">한 주는<br>이렇게 채웁니다.</h3>
+          <p class="stepA-body">개념 강의 · 실전 연습 · 점검을 특정 비율로 매주 반복합니다. 배운 내용을 그 주 안에 직접 풀어 보고  
+약한 곳을 바로 확인하는 리듬을 만듭니다.</p>
+        </article>
+        <article data-stepA="3" data-reveal class="stepA">
+          <span class="eyebrow eyebrow--green">STEP 03 · 한 차시</span>
+          <h3 class="stepA-h3">한 차시는<br>이렇게 흐릅니다.</h3>
+          <p class="stepA-body">지난 시간 복습으로 시작해  
+ 개념 강의 → 대표 예제 → 개별 연습 → 정리로 마칩니다. 막히는 지점은 다시 '개념'으로 연결합니다.</p>
+        </article>
+        <article data-stepA="4" data-reveal class="stepA">
+          <span class="eyebrow eyebrow--green">STEP 04 · 한 문제</span>
+          <h3 class="stepA-h3">한 문제를<br>이렇게 다룹니다.</h3>
+          <p class="stepA-body">문제 읽기 → 전략 세우기 → 풀이 전개 → 되돌아보기.   
+가장 작은 단위에서 실력이 갈립니다.   
+한 문제를 맞혔다고 끝이 아니라,    
+그 이해가 큰 그림에 닿았는지까지 살핍니다.</p>
+        </article>
+      </div>
+
+    </div>
+  </section>
+
+
+
+</div>
+<div class="sec" id="sec4">
+
+
+  
+
+  
+
+  <!-- ════════════════════ S2 · STICKY PIN / SCROLLYTELLING ════════════════════ -->
+  <!-- INTRO -->
+  <section class="sec-intro">
+    <div data-reveal class="intro-copy">
+      <span class="eyebrow eyebrow--purple">AXIS B · 학생관리</span>
+      <h1 class="intro-h1 w400">한 명 한 명을
+어떻게
+따라가는가</h1>
+      <p class="intro-lede">강사가 학생 한 명을 
+어떻게 더 깊이 파악하고
+이해를 도울 수 있을까요?</p>
+    </div>
+    <div aria-hidden="true" class="scroll-hint scroll-hint--mt48">SCROLL ↓</div>
+  </section>
+
+  <!-- PINNED SCROLLYTELLING -->
+  <section class="pin-section">
+    <div class="pin-grid">
+
+      <!-- pinned stage -->
+      <div class="pin-stage">
+        <div id="stage" data-active="1">
+          <!-- dots around circle: 1 top, 2 right, 3 bottom, 4 left (clockwise loop) -->
+          <svg viewBox="0 0 100 100" aria-hidden="true" class="orbit-svg">
+            <path id="orbitPath" fill="none" d="M 50 0 A 50 50 0 1 1 49.99 0 Z"></path>
+            <circle class="oflow" r="2.6"><animateMotion dur="17s" repeatCount="indefinite" begin="0s"><mpath href="#orbitPath"></mpath></animateMotion></circle>
+            <circle class="oflow" r="2.6"><animateMotion dur="17s" repeatCount="indefinite" begin="-4.25s"><mpath href="#orbitPath"></mpath></animateMotion></circle>
+            <circle class="oflow" r="2.6"><animateMotion dur="17s" repeatCount="indefinite" begin="-8.5s"><mpath href="#orbitPath"></mpath></animateMotion></circle>
+            <circle class="oflow" r="2.6"><animateMotion dur="17s" repeatCount="indefinite" begin="-12.75s"><mpath href="#orbitPath"></mpath></animateMotion></circle>
+          </svg>
+          <span class="dot" data-dot="1" style="top:-9px;left:calc(50% - 9px)"></span>
+          <span class="dot-cap" data-cap="1" style="top:-34px;left:50%;transform:translateX(-50%)">관찰</span>
+          <span class="dot" data-dot="2" style="top:calc(50% - 9px);right:-9px"></span>
+          <span class="dot-cap" data-cap="2" style="top:50%;right:-58px;transform:translateY(-50%)">기록</span>
+          <span class="dot" data-dot="3" style="bottom:-9px;left:calc(50% - 9px)"></span>
+          <span class="dot-cap" data-cap="3" style="bottom:-34px;left:50%;transform:translateX(-50%)">개입</span>
+          <span class="dot" data-dot="4" style="top:calc(50% - 9px);left:-9px"></span>
+          <span class="dot-cap" data-cap="4" style="top:50%;left:-58px;transform:translateY(-50%)">재확인</span>
+          <!-- center labels -->
+          <div data-stagelabel="1"><span class="stagelabel-eyebrow">STEP 01</span><strong class="stagelabel-strong--lg">어디서 막히는가</strong></div>
+          <div data-stagelabel="2"><span class="stagelabel-eyebrow">STEP 02</span><strong class="stagelabel-strong--lg">개념 단위로</strong></div>
+          <div data-stagelabel="3"><span class="stagelabel-eyebrow">STEP 03</span><strong class="stagelabel-strong--lg">그 학생만의 보강</strong></div>
+          <div data-stagelabel="4"><span class="stagelabel-eyebrow">STEP 04</span><strong class="stagelabel-strong--lg">다음 점검에서</strong></div>
+        </div>
+      </div>
+
+      <!-- scrolling steps -->
+      <div class="steps-col">
+        <article data-step="1" data-reveal class="step">
+          <span class="eyebrow eyebrow--purple10">STEP 01 · 관찰</span>
+          <h3 class="step-title">어디서<br class="dbr">막히는가</h3>
+          <p class="step-body">수업을 비롯한 학원 전체 시스템의 부분마다 
+제가 맡은 학생을 살핍니다.
+</p>
+        </article>
+        <article data-step="2" data-reveal class="step">
+          <span class="eyebrow eyebrow--purple10">STEP 02 · 기록</span>
+          <h3 class="step-title">개념 단위로</h3>
+          <p class="step-body">막힌 지점을 그 학생만의 지도에 적습니다.
+리포트를 위한 리포트는 만들지 않습니다.
+실제로 관찰한 것만 남깁니다.</p>
+        </article>
+        <article data-step="3" data-reveal class="step">
+          <span class="eyebrow eyebrow--green">STEP 03 · 개입</span>
+          <h3 class="step-title">그 학생만의 보강</h3>
+          <p class="step-body">약한 단원이 보이면 그 학생만 따로 다시 잡습니다.
+틀린 문제들에 대해, 
+근본적으로 어디서 막혔는지가 더 중요합니다.</p>
+        </article>
+        <article data-step="4" data-reveal class="step">
+          <span class="eyebrow eyebrow--green">STEP 04 · 재확인</span>
+          <h3 class="step-title">다음 점검에서</h3>
+          <p class="step-body">그 개념을 지속적으로 추적하며
+정말 이 부분을 이해했는지 확인합니다.
+이 관찰이 쌓여가며
+학생 한 명을 위한 한 장의 지도가 만들어집니다.</p>
+        </article>
+      </div>
+
+    </div>
+  </section>
+
+
+
+</div>
+<div class="sec" id="sec5">
+
+  
+  
+
+  <section class="sec-intro--80">
+    <div class="intro-copy--wide">
+      <span class="eyebrow eyebrow--purple">KNOWLEDGE GRAPH</span>
+      <h2 class="kg-h2">한 개념이<br>다음 개념으로<br>이어집니다.</h2>
+      <p class="kg-lede">일차함수와 일차방정식 — 한 학생의 지식 그래프입니다. </p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="field" id="field"><svg id="svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-label="개념 연결 그래프"></svg><div class="hoverlbl" id="hoverlbl"></div><div class="kg-guide" aria-hidden="true">점을 누르거나 길게 눌러 살펴보세요</div><aside class="apanel" id="apanel"><button class="close" id="aclose" aria-label="닫기">×</button><div class="meta" id="ameta"></div><h3 id="atitle"></h3><div id="abody"></div></aside></div>
+    <p id="msg">loading…</p>
+  </div>
+
+  <!-- MID · 추적 scrollytelling (KG 바로 다음) -->
+  <section id="scene2" class="scene-track scene-track--dark">
+    <div class="scene-sticky">
+      <div class="phrase2" data-p2="0"><p class="scene-phrase scene-phrase--a">개별 학생 한 명에 대해<br class="dbr">주기적이지만 정적인 파악만으로<br class="dbr">끝나지 않습니다.</p></div>
+      <div class="phrase2" data-p2="1"><p class="scene-phrase scene-phrase--b">학습 상태가 바뀔 때마다<br class="dbr">연결된 개념들까지<br class="dbr">정말 이해하고 있는지를 확인합니다.</p></div>
+      <div class="phrase2" data-p2="2"><p class="scene-phrase scene-phrase--a">이를 위해 항상<br class="dbr">수학 학습에서의<br class="dbr"><span class="hl-green">근본적인 문제점들을</span><br class="dbr">찾습니다.</p></div>
+      <div class="scene-dots">
+        <span class="sd2 scene-dot scene-dot--light"></span>
+        <span class="sd2 scene-dot scene-dot--light"></span>
+        <span class="sd2 scene-dot scene-dot--light"></span>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+</div>
+<div class="sec" id="sec6">
+
+
+  
+
+  
+
+  <!-- ════════════════════ S4 · SCENE / COLOR TRANSITION ════════════════════ -->
+  <!-- INTRO (light) -->
+  <section class="sec-intro">
+    <div data-reveal class="intro-copy">
+      <span class="eyebrow eyebrow--green-wide">PHILOSOPHY · 교육 철학</span>
+      <h1 class="intro-h1 w240">수학에는<br class="dbr">지름길이<br class="dbr">없습니다</h1>
+      <p data-tone class="intro-lede intro-lede--tone">스스로의 문제점을 찾고
+본인이 투자한 시간만큼 
+이를 극복해 나가는 방법은
+기본에서 나옵니다.</p>
+    </div>
+    <div aria-hidden="true" class="scroll-hint scroll-hint--mt44">SCROLL ↓</div>
+  </section>
+
+  <!-- SCENE STAGE: tall, pinned center; bg lerps light->dark, phrases crossfade -->
+  <section id="scene" class="scene-track">
+    <div class="scene-sticky">
+      <div id="bgfx"></div>
+      <div class="phrase" data-phrase="0">
+        <p data-scene-text class="scene-phrase scene-phrase--c">기본이 무너지면<br class="dbr">아무리 빨라 보이는 길도<br class="dbr">결국 돌아오게 됩니다.</p>
+      </div>
+      <div class="phrase" data-phrase="1">
+        <p data-scene-text class="scene-phrase scene-phrase--d">그래서 우리는<br class="dbr">시험장에서의 빠르고 정확한 풀이까지 적어낼 수 있도록<br class="dbr">변하지 않는 기반을 먼저 세웁니다.</p>
+      </div>
+      <div class="phrase" data-phrase="2">
+        <p data-scene-text class="scene-phrase scene-phrase--e">수학에 투자한 모든 시간이<br class="dbr">유의미하도록 만드는 것,<br class="dbr"><span class="hl-purple">그것 하나는 약속드립니다.</span></p>
+      </div>
+      <!-- scene index dots -->
+      <div class="scene-dots">
+        <span class="sd scene-dot scene-dot--grey" data-dot="0"></span>
+        <span class="sd scene-dot scene-dot--grey" data-dot="1"></span>
+        <span class="sd scene-dot scene-dot--grey" data-dot="2"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTRO (own light bg so it slides up over the dark backdrop) -->
+  <section class="scene-outro">
+    <div data-reveal class="outro-copy">
+      <span class="eyebrow eyebrow--green-wide">김현정 수학학원</span>
+      <p class="outro-h">수학이 어려워 포기하거나<br class="dbr">스케줄에 끌려다니기만 하는 학생이<br class="dbr">없도록 합니다.</p>
+    </div>
+  </section>
+
+<!-- ════ unified driver: three self-contained IIFEs (S1 parallax · S2 stage · S4 scene). Each guards its own elements; --sp/reveals are written idempotently. ════ -->
+
+
+
+</div>
+<div class="sec" id="sec7">
+
+
+  
+
+  
+
+  <!-- C1 INTRO (purple) -->
+  <section class="stack" data-card><div class="stack-inner card--c1" style="background:linear-gradient(160deg,#6A45D9,#6356B5);color:#F4F3F0;align-items:flex-start">
+    <span data-reveal class="eyb" style="color:#DBCBFF">김현정 수학학원 · 박경찬</span>
+    <h1 data-reveal class="card-h1">학생 한 명을 정확히 파악하고,
+학생 한 명을 원하는 목표까지 책임집니다</h1>
+    <p data-reveal class="bdy" style="color:rgba(244,243,240,.82);max-width:44ch">왜부터 이해시키는 수업, 한 명도 놓치지 않는 관리,
+데이터로 그리는 지식 그래프까지 —
+지금까지의 이야기를 한 번의 흐름으로 정리합니다.</p>
+    <div data-reveal aria-hidden="true" class="scroll-hint scroll-hint--dark">SCROLL ↓</div>
+  <div class="stack-shade"></div></div></section>
+
+  <!-- C2 수업 (purple -> green) -->
+  <section class="stack" data-card><div class="stack-inner card--c2" style="background:linear-gradient(160deg,#6356B5,#5C940D);color:#F4F3F0;align-items:flex-start">
+    <span data-reveal class="eyb" style="color:#E3DBC9">AXIS A · 수업</span>
+    <h2 data-reveal class="ttl">왜부터
+이해시킵니다.</h2>
+    <p data-reveal class="bdy" style="color:rgba(244,243,240,.86)">공식을 외우게 하지 않습니다.
+원리를 먼저 이해하면
+처음 보는 문제 앞에서도
+스스로 길을 찾습니다.</p>
+  <div class="stack-shade"></div></div></section>
+
+  <!-- C3 학생관리 (green) -->
+  <section class="stack" data-card><div class="stack-inner card--c3" style="background:linear-gradient(160deg,#5C940D,#6F9E16);color:#F4F3F0;align-items:flex-start">
+    <span data-reveal class="eyb" style="color:#DDEFC4">AXIS B · 학생관리</span>
+    <h2 data-reveal class="ttl">한 명도
+놓치지 않습니다.</h2>
+    <p data-reveal class="bdy" style="color:rgba(244,243,240,.86)">관찰 → 기록 → 개입 → 재확인
+한 명 한 명의 막힌 지점을 데이터로 쌓아,
+그 학생만의 지식 그래프를 그립니다.</p>
+  <div class="stack-shade"></div></div></section>
+
+  <!-- C4 지식 그래프 (green -> yellow) -->
+  <section class="stack" data-card><div class="stack-inner card--c4" style="background:linear-gradient(160deg,#6F9E16,#C9A52E);color:#F4F3F0;align-items:flex-start">
+    <span data-reveal class="eyb" style="color:#F1ECCB">DATA · 개별 학생 지식 그래프</span>
+    <h2 data-reveal class="ttl">개념으로
+잇습니다.</h2>
+    <p data-reveal class="bdy" style="color:rgba(244,243,240,.9)">한 명이 무엇을 알고
+무엇에서 막혔는지를
+연결된 지식 그래프로 봅니다.</p>
+  <div class="stack-shade"></div></div></section>
+
+  <!-- C5 철학 (yellow) -->
+  <section class="stack" data-card><div class="stack-inner card--c5" style="background:linear-gradient(160deg,#C9A52E,#E6B53D);color:#3A2A00;align-items:flex-start">
+    <span data-reveal class="eyb" style="color:#6E5200">PHILOSOPHY · 철학</span>
+    <h2 data-reveal class="ttl">끝까지
+함께합니다.</h2>
+    <p data-reveal class="bdy" style="color:rgba(58,42,0,.82)">수학에 지름길은 없습니다.
+기본에 충실하게,
+수학이 어려워 포기하거나
+스케줄에 끌려다니기만 하는 학생이 없도록 합니다.</p>
+  <div class="stack-shade"></div></div></section>
+
+  <!-- C6 CONTACT (paper, channels) -->
+  <section class="stack" data-card><div class="stack-inner card--c6" style="background:#F4F3F0;color:#0B0B0B;align-items:center;text-align:center">
+    <span data-reveal class="eyb" style="color:#7048E8">CONTACT · 상담 · 문의</span>
+    <h2 data-reveal class="contact-h2">편한 채널로
+연락하세요.</h2>
+    <div data-reveal class="channels">
+      <a class="ch" href="https://pf.kakao.com/_IMrxjj" target="_blank" rel="noopener">
+        <span class="ic" style="background:#FEE500"><svg width="22" height="22" viewBox="0 0 24 24" fill="#3A1D1D"><path d="M12 3C6.9 3 3 6.3 3 10.3c0 2.6 1.7 4.9 4.3 6.2-.2.7-.7 2.5-.8 2.9 0 .2.1.4.4.2.2-.1 2.7-1.8 3.7-2.5.5.1 1 .1 1.4.1 5.1 0 9-3.3 9-7.3S17.1 3 12 3z"/></svg></span>
+        <span class="lab"><b>카카오톡 채널</b><small>상담 톡</small></span>
+      </a>
+      <a class="ch" href="https://www.youtube.com/@suhakqueen_khj" target="_blank" rel="noopener">
+        <span class="ic" style="background:#FF0000"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M21.6 7.2s-.2-1.4-.8-2c-.8-.8-1.6-.8-2-.9C16 4 12 4 12 4s-4 0-6.8.3c-.4 0-1.2 0-2 .9-.6.6-.8 2-.8 2S2 8.8 2 10.5v1.3c0 1.7.2 3.3.2 3.3s.2 1.4.8 2c.8.8 1.8.8 2.3.9 1.7.2 6.7.3 6.7.3s4 0 6.8-.3c.4 0 1.2 0 2-.9.6-.6.8-2 .8-2s.2-1.6.2-3.3v-1.3c0-1.7-.2-3.3-.2-3.3zM10 14.5v-5l4.5 2.5L10 14.5z"/></svg></span>
+        <span class="lab"><b>원장 유튜브</b><small>@suhakqueen_khj</small></span>
+      </a>
+      <a class="ch" href="https://blog.naver.com/khjsuhak_official/" target="_blank" rel="noopener">
+        <span class="ic" style="background:#03C75A"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M4 4h6.2l3.8 5.6V4H20v16h-6.2L10 14.4V20H4V4z"/></svg></span>
+        <span class="lab"><b>학원 블로그</b><small>네이버 블로그</small></span>
+      </a>
+      <a class="ch" href="https://map.naver.com/p/entry/place/21879178?c=15.00,0,0,0,dh&placePath=/ticket?from=map&fromPanelNum=1&additionalHeight=76&timestamp=202606191020&locale=ko&svcName=map_pcv5&entry=bmp" target="_blank" rel="noopener">
+        <span class="ic" style="background:#7048E8"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 3v3M16 3v3M8.5 13.5l2.5 2.5 4.5-5"/></svg></span>
+        <span class="lab"><b>입학테스트 예약</b><small>네이버 예약</small></span>
+      </a>
+      <a class="ch" href="https://khjsuhak.co.kr/company/junior" target="_blank" rel="noopener">
+        <span class="ic" style="background:#5C940D"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M7 9.5V14c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V9.5"/></svg></span>
+        <span class="lab"><b>중등부 수업 안내</b><small>커리큘럼 보기</small></span>
+      </a>
+      <a class="ch" href="https://khjsuhak.co.kr/company/senior" target="_blank" rel="noopener">
+        <span class="ic" style="background:#6A45D9"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M7 9.5V14c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V9.5"/><path d="M21 7v5"/></svg></span>
+        <span class="lab"><b>고등부 수업 안내</b><small>커리큘럼 보기</small></span>
+      </a>
+    </div>
+    <a data-reveal href="tel:02-562-5050" class="tel-link">02-562-5050</a>
+  </div></section>
+
+
+
+</div>
+<script>
+var __KGGRAPH={"nodes":[{"id":"lfkg-data-cs-004","label":"일차함수와 그 그래프","role":"central topic frame","layer":"DATA","topic":"function"},{"id":"lfkg-data-fn-006","label":"일차함수","role":"central concept","layer":"DATA","topic":"function"},{"id":"lfkg-data-fn-007","label":"일차함수의 개념","role":"concept definition node","layer":"DATA","topic":"function"},{"id":"lfkg-data-fn-009","label":"일차함수의 그래프","role":"graph representation node","layer":"DATA","topic":"function"},{"id":"lfkg-data-gp-001","label":"일차함수의 그래프의 성질","role":"graph property frame","layer":"DATA","topic":"function"},{"id":"lfkg-data-gp-004","label":"기울기","role":"graph parameter node","layer":"DATA","topic":"function"},{"id":"lfkg-data-fn-001","label":"함수","role":"prerequisite concept","layer":"DATA","topic":"function"},{"id":"lfkg-data-fn-002","label":"함수의 개념","role":"prerequisite definition node","layer":"DATA","topic":"function"},{"id":"lfkg-data-fn-004","label":"함숫값","role":"function value node","layer":"DATA","topic":"function"},{"id":"lfkg-data-rc-001","label":"일상 언어","role":"representation surface","layer":"DATA","topic":"function"},{"id":"lfkg-data-fn-011","label":"함수의 그래프","role":"graph representation support","layer":"DATA","topic":"function"},{"id":"lfkg-data-rc-012","label":"x축","role":"axis vocabulary","layer":"DATA","topic":"function"},{"id":"lfkg-data-rc-013","label":"y축","role":"axis vocabulary","layer":"DATA","topic":"function"},{"id":"lfkg-data-rc-015","label":"제1사분면","role":"quadrant vocabulary","layer":"DATA","topic":"function"},{"id":"lfkg-data-rc-016","label":"제2사분면","role":"quadrant vocabulary","layer":"DATA","topic":"function"},{"id":"lfkg-data-rc-017","label":"제3사분면","role":"quadrant vocabulary","layer":"DATA","topic":"function"},{"id":"lfkg-data-rc-018","label":"제4사분면","role":"quadrant vocabulary","layer":"DATA","topic":"function"},{"id":"lfkg-data-cs-001","label":"변화하는 현상","role":"curriculum meaning frame","layer":"DATA","topic":"function"},{"id":"lfkg-data-cs-002","label":"두 양 사이의 대응 관계","role":"curriculum meaning frame","layer":"DATA","topic":"function"},{"id":"lfkg-data-cs-003","label":"함수와 그래프를 통한 관계의 수학적 표현","role":"curriculum meaning frame","layer":"DATA","topic":"function"},{"id":"lfkg-data-fn-003","label":"한 양의 변화에 따라 다른 양이 하나씩 정해지는 대응 관계","role":"function meaning frame","layer":"DATA","topic":"function"},{"id":"lfkg-data-pa-001","label":"문자","role":"algebra prerequisite","layer":"DATA","topic":"function"},{"id":"lfkg-data-cs-005","label":"일차함수와 일차방정식의 관계","role":"relation concept","layer":"DATA","topic":"function"},{"id":"lfkg-data-eq-007","label":"일차함수와 미지수가 2개인 일차방정식의 관계","role":"function-equation relation","layer":"DATA","topic":"function"},{"id":"lfkg-data-eq-008","label":"일차함수의 그래프와 미지수가 2개인 일차방정식의 해 사이의 관계","role":"graph-solution relation","layer":"DATA","topic":"function"},{"id":"lfkg-data-eq-009","label":"두 일차함수의 그래프","role":"two-graph relation basis","layer":"DATA","topic":"function"},{"id":"lfkg-data-eq-010","label":"두 일차함수의 그래프와 연립일차방정식의 관계","role":"graph-system relation","layer":"DATA","topic":"function"},{"id":"lfkg-data-eq-004","label":"연립방정식","role":"equation-system vocabulary","layer":"DATA","topic":"function"},{"id":"lfkg-logic-lg-rep-link","label":"표, 식, 그래프, 순서쌍, 좌표의 표현 연결","role":"","layer":"LOGIC","topic":"function"},{"id":"lfkg-logic-lg-func-to-linear","label":"함수 개념에서 일차함수 개념으로의 연결","role":"","layer":"LOGIC","topic":"function"},{"id":"lfkg-logic-lg-graph-param","label":"일차함수 그래프 성질과 기울기 및 절편의 연결","role":"","layer":"LOGIC","topic":"function"},{"id":"lfkg-logic-lg-xintercept-condition","label":"x절편 reasoning의 y=0 조건","role":"","layer":"LOGIC","topic":"function"},{"id":"lfkg-logic-lg-substitution-trace","label":"조건 대입과 값 도출 reasoning trace","role":"","layer":"LOGIC","topic":"function"},{"id":"lfkg-logic-lg-eq-graph-solution","label":"일차함수 그래프와 미지수가 2개인 일차방정식의 해 연결","role":"","layer":"LOGIC","topic":"function"},{"id":"lfkg-logic-lg-system-graph-intersection","label":"두 일차함수 그래프와 연립일차방정식의 연결","role":"","layer":"LOGIC","topic":"function"},{"id":"lfkg-logic-lg-prereq-algebra","label":"문자, 변수, 식의 값, 방정식 어휘의 선수 연결","role":"","layer":"LOGIC","topic":"function"},{"id":"lfkg-logic-lg-adjacent-ratio","label":"정비례와 반비례의 인접 관계 연결","role":"","layer":"LOGIC","topic":"function"},{"id":"lfkg-action-act-value-compute","label":"식의 값과 함숫값 구하기","role":"","layer":"ACTION","topic":"function"},{"id":"lfkg-action-act-rep-convert","label":"표, 식, 그래프 변환하기","role":"","layer":"ACTION","topic":"function"},{"id":"lfkg-action-act-graph-draw","label":"일차함수 그래프 그리기","role":"","layer":"ACTION","topic":"function"},{"id":"lfkg-action-act-graph-explain","label":"일차함수 그래프 성질 설명하기","role":"","layer":"ACTION","topic":"function"},{"id":"lfkg-action-act-problem-solve","label":"그래프 성질 활용 문제 해결하기","role":"","layer":"ACTION","topic":"function"},{"id":"lfkg-action-act-graph-interpret","label":"그래프 해석하기","role":"","layer":"ACTION","topic":"function"},{"id":"lfkg-action-act-eq-rel-explain","label":"그래프와 일차방정식 해 관계 설명하기","role":"","layer":"ACTION","topic":"function"},{"id":"lfkg-action-act-system-rel-explain","label":"두 그래프와 연립일차방정식 해 관계 설명하기","role":"","layer":"ACTION","topic":"function"},{"id":"lfkg-action-act-tool-graph","label":"공학 도구로 그래프 탐구하기","role":"","layer":"ACTION","topic":"function"},{"id":"lfkg-action-act-ratio-represent","label":"정비례와 반비례 관계 나타내기","role":"","layer":"ACTION","topic":"function"},{"id":"lfkg-data-fn-005","label":"y=ax+b","role":"equation form node","layer":"DATA","topic":"function"},{"id":"lfkg-data-fn-008","label":"변화율","role":"rate concept node","layer":"DATA","topic":"function"},{"id":"lfkg-data-fn-010","label":"함수표","role":"input-output table node","layer":"DATA","topic":"function"},{"id":"lfkg-problem-001","label":"함숫값 계산","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-002","label":"두 점으로 식 결정","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-003","label":"그래프 그리기","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-004","label":"절편 구하기","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-005","label":"직선의 계수 결정","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-006","label":"두 직선의 교점","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-007","label":"실생활 모델링","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-008","label":"그래프 위의 점","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-009","label":"기울기와 y절편 설명","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-010","label":"그래프 성질로 부호 판단","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-011","label":"일차방정식을 일차함수로","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-012","label":"그래프 특징으로 식 구하기","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-013","label":"정비례 표·그래프 표현","role":"","layer":"PROBLEM","topic":"function"},{"id":"lfkg-problem-014","label":"공학 도구로 그래프 그리기","role":"","layer":"PROBLEM","topic":"function"},{"id":"lekg-data-le-topic","label":"일차방정식","role":"central topic frame","layer":"DATA","topic":"equation"},{"id":"lekg-data-equality","label":"등식","role":"foundational concept","layer":"DATA","topic":"equation"},{"id":"lekg-data-equation","label":"방정식","role":"core concept","layer":"DATA","topic":"equation"},{"id":"lekg-data-identity","label":"항등식","role":"core concept","layer":"DATA","topic":"equation"},{"id":"lekg-data-eq-identity-distinction","label":"방정식과 항등식의 구별","role":"distinction","layer":"DATA","topic":"equation"},{"id":"lekg-data-no-div-zero","label":"0으로 나눌 수 없음","role":"constraint","layer":"DATA","topic":"equation"},{"id":"lekg-data-transpose","label":"이항","role":"procedure concept","layer":"DATA","topic":"equation"},{"id":"lekg-data-transpose-basis","label":"이항의 근거 (등식의 성질)","role":"justification","layer":"DATA","topic":"equation"},{"id":"lekg-data-standard-form","label":"일차방정식의 표준형 ax+b=0","role":"representation","layer":"DATA","topic":"equation"},{"id":"lekg-data-a-cond","label":"일차방정식의 계수 조건 (a≠0)","role":"constraint","layer":"DATA","topic":"equation"},{"id":"lekg-data-solve-procedure","label":"일차방정식의 풀이 절차","role":"procedure concept","layer":"DATA","topic":"equation"},{"id":"lekg-data-divide-by-coef","label":"양변을 계수로 나누어 해 구하기","role":"procedure concept","layer":"DATA","topic":"equation"},{"id":"lekg-data-check","label":"해의 검산","role":"procedure concept","layer":"DATA","topic":"equation"},{"id":"lekg-data-modeling","label":"일차방정식의 활용 (문장제 모델링)","role":"application concept","layer":"DATA","topic":"equation"},{"id":"lekg-data-prereq-letters","label":"문자와 식 (선수 개념)","role":"prerequisite concept","layer":"DATA","topic":"equation"},{"id":"lekg-data-prereq-linear-expr","label":"일차식의 계산 (선수 개념)","role":"prerequisite concept","layer":"DATA","topic":"equation"},{"id":"lekg-logic-lg-equality-property-apply","label":"등식의 성질 적용 추론","role":"","layer":"LOGIC","topic":"equation"},{"id":"lekg-logic-lg-transpose-trace","label":"이항 추론","role":"","layer":"LOGIC","topic":"equation"},{"id":"lekg-logic-lg-linear-tidy","label":"일차식 정리 추론","role":"","layer":"LOGIC","topic":"equation"},{"id":"lekg-logic-lg-clear-frac-dec","label":"분수·소수 계수 정리 추론","role":"","layer":"LOGIC","topic":"equation"},{"id":"lekg-logic-lg-isolate-unknown","label":"미지수 분리 추론","role":"","layer":"LOGIC","topic":"equation"},{"id":"lekg-logic-lg-check-trace","label":"해의 검산 추론","role":"","layer":"LOGIC","topic":"equation"},{"id":"lekg-logic-lg-modeling","label":"활용 모델링 추론","role":"","layer":"LOGIC","topic":"equation"},{"id":"lekg-action-act-transpose","label":"이항하기","role":"","layer":"ACTION","topic":"equation"},{"id":"lekg-action-act-clear-fractions","label":"계수 정수화하기","role":"","layer":"ACTION","topic":"equation"},{"id":"lekg-action-act-isolate-variable","label":"미지수 분리하기","role":"","layer":"ACTION","topic":"equation"},{"id":"lekg-action-act-solve-linear-eq","label":"일차방정식 풀기","role":"","layer":"ACTION","topic":"equation"},{"id":"lekg-action-act-check-solution","label":"해 검산하기","role":"","layer":"ACTION","topic":"equation"},{"id":"lekg-action-act-set-up-equation","label":"방정식 세우기","role":"","layer":"ACTION","topic":"equation"},{"id":"lekg-action-act-model-word-problem","label":"문장제 모델링하기","role":"","layer":"ACTION","topic":"equation"},{"id":"lekg-problem-001","label":"이항으로 풀기","role":"","layer":"PROBLEM","topic":"equation"},{"id":"lekg-problem-002","label":"기본형 방정식 풀기","role":"","layer":"PROBLEM","topic":"equation"},{"id":"lekg-problem-003","label":"양변에 미지수가 있는 방정식 풀기","role":"","layer":"PROBLEM","topic":"equation"},{"id":"lekg-problem-004","label":"분수 계수 방정식 풀기","role":"","layer":"PROBLEM","topic":"equation"},{"id":"lekg-problem-005","label":"소수 계수 방정식 풀기","role":"","layer":"PROBLEM","topic":"equation"},{"id":"lekg-problem-006","label":"해 검산하기","role":"","layer":"PROBLEM","topic":"equation"},{"id":"lekg-problem-007","label":"수에 대한 문장제","role":"","layer":"PROBLEM","topic":"equation"},{"id":"lekg-problem-008","label":"나이 문장제","role":"","layer":"PROBLEM","topic":"equation"},{"id":"lekg-problem-009","label":"속력 문장제","role":"","layer":"PROBLEM","topic":"equation"},{"id":"lekg-problem-010","label":"가격 문장제","role":"","layer":"PROBLEM","topic":"equation"}],"edges":[{"s":"lfkg-data-fn-009","t":"lfkg-data-fn-006","kind":"representation-of"},{"s":"lfkg-data-fn-011","t":"lfkg-data-fn-001","kind":"representation-of"},{"s":"lfkg-logic-lg-substitution-trace","t":"lfkg-action-act-value-compute","kind":"supports-action"},{"s":"lfkg-logic-lg-rep-link","t":"lfkg-action-act-rep-convert","kind":"supports-action"},{"s":"lfkg-logic-lg-graph-param","t":"lfkg-action-act-graph-draw","kind":"supports-action"},{"s":"lfkg-logic-lg-graph-param","t":"lfkg-action-act-graph-explain","kind":"supports-action"},{"s":"lfkg-logic-lg-graph-param","t":"lfkg-action-act-problem-solve","kind":"supports-action"},{"s":"lfkg-logic-lg-rep-link","t":"lfkg-action-act-graph-interpret","kind":"supports-action"},{"s":"lfkg-logic-lg-eq-graph-solution","t":"lfkg-action-act-eq-rel-explain","kind":"supports-action"},{"s":"lfkg-logic-lg-system-graph-intersection","t":"lfkg-action-act-system-rel-explain","kind":"supports-action"},{"s":"lfkg-logic-lg-rep-link","t":"lfkg-action-act-tool-graph","kind":"supports-action"},{"s":"lfkg-logic-lg-adjacent-ratio","t":"lfkg-action-act-ratio-represent","kind":"supports-action"},{"s":"lfkg-data-gp-004","t":"lfkg-data-gp-001","kind":"parameter-affects"},{"s":"lfkg-logic-lg-xintercept-condition","t":"lfkg-logic-lg-substitution-trace","kind":"requires-substitution-trace"},{"s":"lfkg-data-fn-006","t":"lfkg-data-fn-001","kind":"has-prerequisite"},{"s":"lfkg-logic-lg-rep-link","t":"lfkg-data-rc-001","kind":"consumes-data"},{"s":"lfkg-logic-lg-rep-link","t":"lfkg-data-fn-009","kind":"consumes-data"},{"s":"lfkg-logic-lg-rep-link","t":"lfkg-data-fn-011","kind":"consumes-data"},{"s":"lfkg-logic-lg-func-to-linear","t":"lfkg-data-fn-001","kind":"consumes-data"},{"s":"lfkg-logic-lg-func-to-linear","t":"lfkg-data-fn-002","kind":"consumes-data"},{"s":"lfkg-logic-lg-func-to-linear","t":"lfkg-data-fn-003","kind":"consumes-data"},{"s":"lfkg-logic-lg-func-to-linear","t":"lfkg-data-fn-006","kind":"consumes-data"},{"s":"lfkg-logic-lg-func-to-linear","t":"lfkg-data-fn-007","kind":"consumes-data"},{"s":"lfkg-logic-lg-func-to-linear","t":"lfkg-data-cs-001","kind":"consumes-data"},{"s":"lfkg-logic-lg-func-to-linear","t":"lfkg-data-cs-002","kind":"consumes-data"},{"s":"lfkg-logic-lg-graph-param","t":"lfkg-data-fn-009","kind":"consumes-data"},{"s":"lfkg-logic-lg-graph-param","t":"lfkg-data-gp-001","kind":"consumes-data"},{"s":"lfkg-logic-lg-graph-param","t":"lfkg-data-gp-004","kind":"consumes-data"},{"s":"lfkg-logic-lg-xintercept-condition","t":"lfkg-data-fn-009","kind":"consumes-data"},{"s":"lfkg-logic-lg-eq-graph-solution","t":"lfkg-data-eq-007","kind":"consumes-data"},{"s":"lfkg-logic-lg-eq-graph-solution","t":"lfkg-data-eq-008","kind":"consumes-data"},{"s":"lfkg-logic-lg-eq-graph-solution","t":"lfkg-data-fn-009","kind":"consumes-data"},{"s":"lfkg-logic-lg-system-graph-intersection","t":"lfkg-data-eq-004","kind":"consumes-data"},{"s":"lfkg-logic-lg-system-graph-intersection","t":"lfkg-data-eq-009","kind":"consumes-data"},{"s":"lfkg-logic-lg-system-graph-intersection","t":"lfkg-data-eq-010","kind":"consumes-data"},{"s":"lfkg-logic-lg-prereq-algebra","t":"lfkg-data-pa-001","kind":"consumes-data"},{"s":"lfkg-logic-lg-prereq-algebra","t":"lfkg-data-fn-006","kind":"consumes-data"},{"s":"lfkg-logic-lg-adjacent-ratio","t":"lfkg-data-fn-006","kind":"consumes-data"},{"s":"lfkg-problem-001","t":"lfkg-action-act-value-compute","kind":"solves"},{"s":"lfkg-problem-002","t":"lfkg-action-act-rep-convert","kind":"solves"},{"s":"lfkg-problem-003","t":"lfkg-action-act-graph-draw","kind":"solves"},{"s":"lfkg-problem-004","t":"lfkg-action-act-value-compute","kind":"solves"},{"s":"lfkg-problem-005","t":"lfkg-action-act-rep-convert","kind":"solves"},{"s":"lfkg-problem-006","t":"lfkg-action-act-system-rel-explain","kind":"solves"},{"s":"lfkg-problem-007","t":"lfkg-action-act-rep-convert","kind":"solves"},{"s":"lfkg-problem-008","t":"lfkg-action-act-value-compute","kind":"solves"},{"s":"lfkg-problem-009","t":"lfkg-action-act-graph-explain","kind":"solves"},{"s":"lfkg-problem-010","t":"lfkg-action-act-problem-solve","kind":"solves"},{"s":"lfkg-problem-011","t":"lfkg-action-act-eq-rel-explain","kind":"solves"},{"s":"lfkg-problem-012","t":"lfkg-action-act-graph-interpret","kind":"solves"},{"s":"lfkg-problem-013","t":"lfkg-action-act-ratio-represent","kind":"solves"},{"s":"lfkg-problem-014","t":"lfkg-action-act-tool-graph","kind":"solves"},{"s":"lfkg-data-cs-004","t":"lfkg-data-fn-006","kind":"topic-includes"},{"s":"lfkg-data-cs-004","t":"lfkg-data-fn-009","kind":"topic-includes"},{"s":"lfkg-data-cs-004","t":"lfkg-data-gp-004","kind":"topic-includes"},{"s":"lfkg-data-fn-010","t":"lfkg-data-fn-006","kind":"representation-of"},{"s":"lfkg-logic-lg-substitution-trace","t":"lfkg-data-fn-004","kind":"consumes-data"},{"s":"lfkg-logic-lg-eq-graph-solution","t":"lfkg-data-cs-005","kind":"consumes-data"},{"s":"lekg-data-le-topic","t":"lekg-data-equality","kind":"topic-includes"},{"s":"lekg-data-le-topic","t":"lekg-data-equation","kind":"topic-includes"},{"s":"lekg-data-le-topic","t":"lekg-data-identity","kind":"topic-includes"},{"s":"lekg-data-le-topic","t":"lekg-data-transpose","kind":"topic-includes"},{"s":"lekg-data-le-topic","t":"lekg-data-solve-procedure","kind":"topic-includes"},{"s":"lekg-data-le-topic","t":"lekg-data-check","kind":"topic-includes"},{"s":"lekg-data-le-topic","t":"lekg-data-modeling","kind":"topic-includes"},{"s":"lekg-data-divide-by-coef","t":"lekg-data-solve-procedure","kind":"representation-of"},{"s":"lekg-data-eq-identity-distinction","t":"lekg-data-equation","kind":"representation-of"},{"s":"lekg-data-modeling","t":"lekg-data-solve-procedure","kind":"has-prerequisite"},{"s":"lekg-logic-lg-transpose-trace","t":"lekg-data-transpose","kind":"consumes-data"},{"s":"lekg-logic-lg-transpose-trace","t":"lekg-data-transpose-basis","kind":"consumes-data"},{"s":"lekg-logic-lg-linear-tidy","t":"lekg-data-standard-form","kind":"consumes-data"},{"s":"lekg-logic-lg-linear-tidy","t":"lekg-data-solve-procedure","kind":"consumes-data"},{"s":"lekg-logic-lg-isolate-unknown","t":"lekg-data-divide-by-coef","kind":"consumes-data"},{"s":"lekg-logic-lg-isolate-unknown","t":"lekg-data-a-cond","kind":"consumes-data"},{"s":"lekg-logic-lg-check-trace","t":"lekg-data-check","kind":"consumes-data"},{"s":"lekg-logic-lg-modeling","t":"lekg-data-modeling","kind":"consumes-data"},{"s":"lekg-logic-lg-transpose-trace","t":"lekg-action-act-transpose","kind":"supports-action"},{"s":"lekg-logic-lg-clear-frac-dec","t":"lekg-action-act-clear-fractions","kind":"supports-action"},{"s":"lekg-logic-lg-isolate-unknown","t":"lekg-action-act-isolate-variable","kind":"supports-action"},{"s":"lekg-logic-lg-linear-tidy","t":"lekg-action-act-solve-linear-eq","kind":"supports-action"},{"s":"lekg-logic-lg-isolate-unknown","t":"lekg-action-act-solve-linear-eq","kind":"supports-action"},{"s":"lekg-logic-lg-check-trace","t":"lekg-action-act-check-solution","kind":"supports-action"},{"s":"lekg-logic-lg-modeling","t":"lekg-action-act-set-up-equation","kind":"supports-action"},{"s":"lekg-logic-lg-modeling","t":"lekg-action-act-model-word-problem","kind":"supports-action"},{"s":"lekg-problem-001","t":"lekg-action-act-transpose","kind":"solves"},{"s":"lekg-problem-002","t":"lekg-action-act-solve-linear-eq","kind":"solves"},{"s":"lekg-problem-003","t":"lekg-action-act-solve-linear-eq","kind":"solves"},{"s":"lekg-problem-004","t":"lekg-action-act-clear-fractions","kind":"solves"},{"s":"lekg-problem-005","t":"lekg-action-act-clear-fractions","kind":"solves"},{"s":"lekg-problem-006","t":"lekg-action-act-check-solution","kind":"solves"},{"s":"lekg-problem-007","t":"lekg-action-act-model-word-problem","kind":"solves"},{"s":"lekg-problem-008","t":"lekg-action-act-model-word-problem","kind":"solves"},{"s":"lekg-problem-009","t":"lekg-action-act-model-word-problem","kind":"solves"},{"s":"lekg-problem-010","t":"lekg-action-act-model-word-problem","kind":"solves"},{"s":"lfkg-data-cs-005","t":"lekg-data-le-topic","kind":"topic-bridge"}],"atoms":{"lfkg-data-cs-004":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의","미지수 두 개 일차방정식 그래프는 직선","일차방정식과 일차함수의 그래프 일치"],"lfkg-data-fn-006":["기울기와 한 점으로 일차함수 식 결정","두 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","일차함수 식의 결정에 필요한 정보량","일차함수는 증가함수이거나 감소함수","x절편이 존재하지 않는 일차함수는 없음(a≠0)","이차 변화(둘째 차분)가 0이 아니면 일차함수 아님","일차함수의 합·차도 일차함수 또는 상수함수"],"lfkg-data-fn-007":["일차함수의 합·차도 일차함수 또는 상수함수","정의역·치역이 구간으로 제한된 일차함수의 최댓값·최솟값","일차방정식과 일차함수의 그래프 일치","절편의 포괄 개념","일차함수의 정의","일차함수의 표준형 y=ax+b","정비례 y=ax는 일차함수의 특수꼴","일차함수의 일반형 ax+by+c=0"],"lfkg-data-fn-009":["일차함수의 합·차도 일차함수 또는 상수함수","함수가 아닌 그래프의 예(원·세로직선)","정의역·치역이 구간으로 제한된 일차함수의 최댓값·최솟값","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의"],"lfkg-data-gp-001":["일차함수의 합·차도 일차함수 또는 상수함수","함수가 아닌 그래프의 예(원·세로직선)","정의역·치역이 구간으로 제한된 일차함수의 최댓값·최솟값","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","두 그래프의 상하 위치는 함숫값 대소","일차방정식과 일차함수의 그래프 일치","수직선 판정 성질"],"lfkg-data-gp-004":["기울기를 알 때 한 점으로 직선 결정(점-기울기)","기울기와 한 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","기울기 1과 −1의 의미","음수·분수 기울기의 좌표 이동 해석","기울기와 평행이동의 무관성","기울기 절댓값이 같고 부호가 반대인 두 직선의 대칭성","부등식 방향과 기울기 부호의 관계"],"lfkg-data-fn-001":["기울기와 한 점으로 일차함수 식 결정","두 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","일차함수 식의 결정에 필요한 정보량","일차함수는 증가함수이거나 감소함수","x절편이 존재하지 않는 일차함수는 없음(a≠0)","이차 변화(둘째 차분)가 0이 아니면 일차함수 아님","일차함수의 합·차도 일차함수 또는 상수함수"],"lfkg-data-fn-002":["일차함수의 합·차도 일차함수 또는 상수함수","정의역·치역이 구간으로 제한된 일차함수의 최댓값·최솟값","일차방정식과 일차함수의 그래프 일치","함수의 정의","함수의 조건(유일대응)","함수의 식 표현","함수의 대응 그림(화살표) 표현","상수함수의 함수성"],"lfkg-data-fn-004":["두 그래프의 상하 위치는 함숫값 대소","함숫값이 주어졌을 때 x를 거꾸로 정함(역대응 사실)","함숫값 f(x)의 정의","함숫값과 종속변수의 동일성","그래프 위 점과 함숫값의 관계","함숫값 표기 f(x)=ax+b","특정 함숫값 f(k)","y는 x의 함수 표기 —[depends-on]→ 함숫값 f(x)의 정의"],"lfkg-data-rc-001":["말(언어적) 표현","말(언어적) 표현 —[part-of]→ 함수의 4중 표현","말↔식 대응 사실 —[depends-on]→ 말(언어적) 표현","말→식 번역 —[consumes-data]→ 말(언어적) 표현","말→표 번역 —[consumes-data]→ 말(언어적) 표현","네 표현 상호 변환 가능성 —[consumes-data]→ 말(언어적) 표현","말을 식·표로 번역하기 —[acts-on-data]→ 말(언어적) 표현","네 표현 상호 변환 통합하기 —[acts-on-data]→ 말(언어적) 표현"],"lfkg-data-fn-011":["일차함수의 합·차도 일차함수 또는 상수함수","함수가 아닌 그래프의 예(원·세로직선)","정의역·치역이 구간으로 제한된 일차함수의 최댓값·최솟값","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의"],"lfkg-data-rc-012":["x축 평행이동의 의미","직선의 x축·y축 방향 평행이동 동치성","x축에 대한 대칭이동","방정식의 해↔그래프와 x축 교점","x축에 평행한 직선은 일차함수가 아님","x축","x축 위 점의 y좌표=0","기울기=직선과 x축이 이루는 각의 탄젠트"],"lfkg-data-rc-013":["직선의 x축·y축 방향 평행이동 동치성","y축에 대한 대칭이동","y축 방향 평행이동의 의미","y절편 부호와 그래프가 y축과 만나는 위치","y축","y축 위 점의 x좌표=0","y절편의 x좌표 조건 (x=0) —[depends-on]→ y축 위 점의 x좌표=0","y절편의 그래프상 의미 —[depends-on]→ y축"],"lfkg-data-rc-015":["제1사분면 부호","제1사분면 부호 —[has-property]→ 사분면","제1사분면 부호 —[depends-on]→ x좌표","제1사분면 부호 —[depends-on]→ y좌표","a>0,b>0이면 제1·2·3사분면을 지난다 —[consumes-data]→ 제1사분면 부호","a>0,b<0이면 제1·3·4사분면을 지난다 —[consumes-data]→ 제1사분면 부호","a<0,b>0이면 제1·2·4사분면을 지난다 —[consumes-data]→ 제1사분면 부호","점이 속한 사분면 판정 —[consumes-data]→ 제1사분면 부호"],"lfkg-data-rc-016":["제2사분면 부호","제2사분면 부호 —[has-property]→ 사분면","제2사분면 부호 —[depends-on]→ x좌표","제2사분면 부호 —[depends-on]→ y좌표","a>0,b>0이면 제1·2·3사분면을 지난다 —[consumes-data]→ 제2사분면 부호","a<0,b>0이면 제1·2·4사분면을 지난다 —[consumes-data]→ 제2사분면 부호","a<0,b<0이면 제2·3·4사분면을 지난다 —[consumes-data]→ 제2사분면 부호","점이 속한 사분면 판정 —[consumes-data]→ 제2사분면 부호"],"lfkg-data-rc-017":["제3사분면 부호","제3사분면 부호 —[has-property]→ 사분면","제3사분면 부호 —[depends-on]→ x좌표","제3사분면 부호 —[depends-on]→ y좌표","a>0,b>0이면 제1·2·3사분면을 지난다 —[consumes-data]→ 제3사분면 부호","a>0,b<0이면 제1·3·4사분면을 지난다 —[consumes-data]→ 제3사분면 부호","a<0,b<0이면 제2·3·4사분면을 지난다 —[consumes-data]→ 제3사분면 부호","점이 속한 사분면 판정 —[consumes-data]→ 제3사분면 부호"],"lfkg-data-rc-018":["제4사분면 부호","제4사분면 부호 —[has-property]→ 사분면","제4사분면 부호 —[depends-on]→ x좌표","제4사분면 부호 —[depends-on]→ y좌표","a>0,b<0이면 제1·3·4사분면을 지난다 —[consumes-data]→ 제4사분면 부호","a<0,b>0이면 제1·2·4사분면을 지난다 —[consumes-data]→ 제4사분면 부호","a<0,b<0이면 제2·3·4사분면을 지난다 —[consumes-data]→ 제4사분면 부호","점이 속한 사분면 판정 —[consumes-data]→ 제4사분면 부호"],"lfkg-data-cs-001":["두 양이 함께 변하는 상황 찾기","한 양이 변하면 다른 양이 따라 변하는지 확인하기"],"lfkg-data-cs-002":["x의 증가량과 y의 증가량의 부호 관계","절편이 만드는 삼각형의 넓이 관계","증가량의 비례 관계","부등식 방향과 기울기 부호의 관계","함숫값이 주어졌을 때 x를 거꾸로 정함(역대응 사실)","일차함수와 일차방정식의 관계","ax+b=0의 해와 x절편의 관계","두 직선의 위치 관계와 해의 개수"],"lfkg-data-cs-003":["일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","좌표평면의 정의역 표현(연속 대 이산)","좌표평면 위 점을 찍는 표현(좌표→점)","일차함수와 일차방정식의 관계","함수의 식 표현","함수의 대응 그림(화살표) 표현","절편은 축 위의 점이라는 표현 의미","정비례 관계는 일차 관계의 특수형"],"lfkg-data-fn-003":["x의 증가량과 y의 증가량의 부호 관계","절편이 만드는 삼각형의 넓이 관계","증가량의 비례 관계","부등식 방향과 기울기 부호의 관계","함숫값이 주어졌을 때 x를 거꾸로 정함(역대응 사실)","일차함수와 일차방정식의 관계","ax+b=0의 해와 x절편의 관계","두 직선의 위치 관계와 해의 개수"],"lfkg-data-pa-001":["변하는 양을 문자 x로 놓기","문자를 사용해 식으로 나타내기"],"lfkg-data-cs-005":["x의 증가량과 y의 증가량의 부호 관계","절편이 만드는 삼각형의 넓이 관계","증가량의 비례 관계","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","부등식 방향과 기울기 부호의 관계","미지수 두 개 일차방정식의 해 정의","미지수 두 개 일차방정식의 그래프 정의","일차함수와 일차방정식의 관계"],"lfkg-data-eq-007":["x의 증가량과 y의 증가량의 부호 관계","절편이 만드는 삼각형의 넓이 관계","증가량의 비례 관계","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","부등식 방향과 기울기 부호의 관계","미지수 두 개 일차방정식의 해 정의","미지수 두 개 일차방정식의 그래프 정의","일차함수와 일차방정식의 관계"],"lfkg-data-eq-008":["x의 증가량과 y의 증가량의 부호 관계","절편이 만드는 삼각형의 넓이 관계","일차함수의 합·차도 일차함수 또는 상수함수","증가량의 비례 관계","정의역·치역이 구간으로 제한된 일차함수의 최댓값·최솟값","부등식 방향과 기울기 부호의 관계","미지수 두 개 일차방정식의 해 정의","미지수 두 개 일차방정식의 그래프 정의"],"lfkg-data-eq-009":["일차함수의 합·차도 일차함수 또는 상수함수","함수가 아닌 그래프의 예(원·세로직선)","정의역·치역이 구간으로 제한된 일차함수의 최댓값·최솟값","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의"],"lfkg-data-eq-010":["x의 증가량과 y의 증가량의 부호 관계","절편이 만드는 삼각형의 넓이 관계","일차함수의 합·차도 일차함수 또는 상수함수","증가량의 비례 관계","정의역·치역이 구간으로 제한된 일차함수의 최댓값·최솟값","부등식 방향과 기울기 부호의 관계","일차방정식과 일차함수의 그래프 일치","일차함수와 일차방정식의 관계"],"lfkg-data-eq-004":["연립방정식의 해↔두 직선의 교점","연립방정식의 해↔두 직선의 교점 —[depends-on]→ 연립일차방정식의 해 정의","연립방정식의 해↔두 직선의 교점 —[depends-on]→ 미지수 두 개 일차방정식 그래프는 직선","연립방정식의 해↔두 직선의 교점 —[represented-as]→ 두 직선의 교점은 공통으로 지나는 점","교점의 좌표가 공통해인 이유 —[depends-on]→ 연립방정식의 해↔두 직선의 교점","한 점에서 만남⟺해 하나 —[depends-on]→ 연립방정식의 해↔두 직선의 교점","평행⟺해 없음 —[depends-on]→ 연립방정식의 해↔두 직선의 교점","일치⟺해 무수히 많음 —[depends-on]→ 연립방정식의 해↔두 직선의 교점"],"lfkg-logic-lg-rep-link":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","좌표평면의 정의역 표현(연속 대 이산)","좌표평면 위 점을 찍는 표현(좌표→점)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의"],"lfkg-logic-lg-func-to-linear":["기울기와 한 점으로 일차함수 식 결정","두 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","일차함수 식의 결정에 필요한 정보량","일차함수는 증가함수이거나 감소함수","x절편이 존재하지 않는 일차함수는 없음(a≠0)","이차 변화(둘째 차분)가 0이 아니면 일차함수 아님","일차함수의 합·차도 일차함수 또는 상수함수"],"lfkg-logic-lg-graph-param":["기울기를 알 때 한 점으로 직선 결정(점-기울기)","기울기와 한 점으로 일차함수 식 결정","두 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","일차함수 식의 결정에 필요한 정보량","기울기 1과 −1의 의미","일차함수는 증가함수이거나 감소함수","음수·분수 기울기의 좌표 이동 해석"],"lfkg-logic-lg-xintercept-condition":["x절편과 y절편이 같은 점이 될 조건(원점)","x절편이 존재하지 않는 일차함수는 없음(a≠0)","세 직선이 한 점에서 만날 조건","두 직선의 교점이 좌표축 위에 있을 조건","일차방정식 부등식 해의 경계는 x절편","ax+by+c=0의 x절편","ax+b=0의 해와 x절편의 관계","계수비로 본 한 점에서 만날 조건"],"lfkg-logic-lg-substitution-trace":["x절편과 y절편이 같은 점이 될 조건(원점)","세 직선이 한 점에서 만날 조건","두 직선의 교점이 좌표축 위에 있을 조건","계수비로 본 한 점에서 만날 조건","계수비로 본 평행 조건","계수비로 본 일치 조건","원점을 지날 조건 c=0","함수의 조건(유일대응)"],"lfkg-logic-lg-eq-graph-solution":["기울기와 한 점으로 일차함수 식 결정","두 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","일차함수 식의 결정에 필요한 정보량","일차함수는 증가함수이거나 감소함수","x절편이 존재하지 않는 일차함수는 없음(a≠0)","이차 변화(둘째 차분)가 0이 아니면 일차함수 아님","일차함수의 합·차도 일차함수 또는 상수함수"],"lfkg-logic-lg-system-graph-intersection":["기울기와 한 점으로 일차함수 식 결정","두 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","일차함수 식의 결정에 필요한 정보량","일차함수는 증가함수이거나 감소함수","x절편이 존재하지 않는 일차함수는 없음(a≠0)","이차 변화(둘째 차분)가 0이 아니면 일차함수 아님","일차함수의 합·차도 일차함수 또는 상수함수"],"lfkg-logic-lg-prereq-algebra":["일차함수 식의 결정에 필요한 정보량","일차식의 상수배도 일차식","같은 직선을 나타내는 일차방정식은 상수배만큼 많음","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차방정식 부등식 해의 경계는 x절편","독립변수·종속변수의 단위","미지수 두 개인 일차방정식 정의","미지수 두 개 일차방정식의 해 정의"],"lfkg-logic-lg-adjacent-ratio":["x의 증가량과 y의 증가량의 부호 관계","절편이 만드는 삼각형의 넓이 관계","증가량의 비례 관계","부등식 방향과 기울기 부호의 관계","일차함수와 일차방정식의 관계","ax+b=0의 해와 x절편의 관계","두 직선의 위치 관계와 해의 개수","교점의 y좌표 구하는 식 관계"],"lfkg-action-act-value-compute":["일차함수 식의 결정에 필요한 정보량","일차식의 상수배도 일차식","두 그래프의 상하 위치는 함숫값 대소","함숫값이 주어졌을 때 x를 거꾸로 정함(역대응 사실)","미지수 두 개 일차방정식의 해 정의","미지수 두 개 일차방정식의 그래프 정의","일차함수와 일차방정식의 관계","y=q·x=p는 일차방정식의 그래프(특수꼴)"],"lfkg-action-act-rep-convert":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의","미지수 두 개 일차방정식 그래프는 직선","일차방정식과 일차함수의 그래프 일치"],"lfkg-action-act-graph-draw":["기울기와 한 점으로 일차함수 식 결정","두 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","일차함수 식의 결정에 필요한 정보량","일차함수는 증가함수이거나 감소함수","x절편이 존재하지 않는 일차함수는 없음(a≠0)","이차 변화(둘째 차분)가 0이 아니면 일차함수 아님","일차함수의 합·차도 일차함수 또는 상수함수"],"lfkg-action-act-graph-explain":["기울기와 한 점으로 일차함수 식 결정","두 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","일차함수 식의 결정에 필요한 정보량","일차함수는 증가함수이거나 감소함수","x절편이 존재하지 않는 일차함수는 없음(a≠0)","이차 변화(둘째 차분)가 0이 아니면 일차함수 아님","일차함수의 합·차도 일차함수 또는 상수함수"],"lfkg-action-act-problem-solve":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의","미지수 두 개 일차방정식 그래프는 직선","일차방정식과 일차함수의 그래프 일치"],"lfkg-action-act-graph-interpret":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의","미지수 두 개 일차방정식 그래프는 직선","일차방정식과 일차함수의 그래프 일치"],"lfkg-action-act-eq-rel-explain":["x의 증가량과 y의 증가량의 부호 관계","절편이 만드는 삼각형의 넓이 관계","같은 직선을 나타내는 일차방정식은 상수배만큼 많음","증가량의 비례 관계","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차방정식 부등식 해의 경계는 x절편","부등식 방향과 기울기 부호의 관계","미지수 두 개인 일차방정식 정의"],"lfkg-action-act-system-rel-explain":["x의 증가량과 y의 증가량의 부호 관계","절편이 만드는 삼각형의 넓이 관계","증가량의 비례 관계","부등식 방향과 기울기 부호의 관계","일차함수와 일차방정식의 관계","ax+b=0의 해와 x절편의 관계","방정식의 해↔그래프와 x축 교점","연립일차방정식 정의"],"lfkg-action-act-tool-graph":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의","미지수 두 개 일차방정식 그래프는 직선","일차방정식과 일차함수의 그래프 일치"],"lfkg-action-act-ratio-represent":["x의 증가량과 y의 증가량의 부호 관계","절편이 만드는 삼각형의 넓이 관계","증가량의 비례 관계","부등식 방향과 기울기 부호의 관계","일차함수와 일차방정식의 관계","ax+b=0의 해와 x절편의 관계","두 직선의 위치 관계와 해의 개수","교점의 y좌표 구하는 식 관계"],"lfkg-data-fn-005":["y=ax+b에서 같은 x 증가에 대한 y 증가의 일정성","y=ax+b는 y=ax의 평행이동","y=ax+b에서 x절편 = -b/a","y=ax+b에서 b=y절편","y=ax+b에서 두 절편의 비","일차함수의 표준형 y=ax+b","y=ax+b에서 y절편=b","y=ax+b에서 기울기=a"],"lfkg-data-fn-008":["그래프가 직선인 이유=일정한 변화율","일차함수 변화율의 일정성","변화율로서의 기울기 해석","온도변화율로서의 기울기","물높이변화율로서의 기울기","양초길이변화율로서의 기울기","양의 변화율은 증가 모델","음의 변화율은 감소 모델"],"lfkg-data-fn-010":["x값에 따른 y값을 표로 정리하기","표에서 대응 규칙 읽어내기"],"lfkg-problem-001":["일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","함숫값이 주어졌을 때 x를 거꾸로 정함(역대응 사실)","함숫값 f(x)의 정의","함숫값과 종속변수의 동일성","그래프 위 점과 함숫값의 관계","함숫값 표기 f(x)=ax+b","특정 함숫값 f(k)"],"lfkg-problem-002":["기울기를 알 때 한 점으로 직선 결정(점-기울기)","기울기와 한 점으로 일차함수 식 결정","두 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","일차함수 식의 결정에 필요한 정보량","상수항 b가 그래프의 상하 위치를 결정","두 점으로 그리기","두 점으로부터의 변화율"],"lfkg-problem-003":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의","미지수 두 개 일차방정식 그래프는 직선","일차방정식과 일차함수의 그래프 일치"],"lfkg-problem-004":["기울기와 y절편으로 일차함수 식 결정","평행한 두 직선의 y절편은 서로 다름","x절편과 y절편이 같은 점이 될 조건(원점)","x절편이 존재하지 않는 일차함수는 없음(a≠0)","절편이 만드는 삼각형의 넓이 관계","일차방정식 부등식 해의 경계는 x절편","ax+by+c=0의 y절편","ax+by+c=0의 x절편"],"lfkg-problem-005":["기울기를 알 때 한 점으로 직선 결정(점-기울기)","기울기와 한 점으로 일차함수 식 결정","두 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","일차함수 식의 결정에 필요한 정보량","미정계수의 정의","평행한 두 직선의 y절편은 서로 다름","직선의 x축·y축 방향 평행이동 동치성"],"lfkg-problem-006":["평행한 두 직선의 y절편은 서로 다름","직선의 x축·y축 방향 평행이동 동치성","좌표평면 위 임의의 두 점을 잇는 직선의 식","두 직선의 교점이 좌표축 위에 있을 조건","기울기 절댓값이 같고 부호가 반대인 두 직선의 대칭성","방정식의 해↔그래프와 x축 교점","연립방정식의 해↔두 직선의 교점","교점의 좌표가 공통해인 이유"],"lfkg-problem-007":["실생활 일차함수 모델링","실생활 정의역 제한","실생활 그래프는 선분 또는 반직선","x절편의 실생활 의미","기울기 단위 의미(실생활 변화율)","기울기 단위 의미(실생활 변화율) —[depends-on]→ 기울기=x가 1 증가할 때 y의 증가량","실생활 일차함수 모델링 —[depends-on]→ 변화율로서의 기울기 해석","실생활 일차함수 모델링 —[depends-on]→ 두 양 사이의 일차 관계"],"lfkg-problem-008":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의","미지수 두 개 일차방정식 그래프는 직선","일차방정식과 일차함수의 그래프 일치"],"lfkg-problem-009":["기울기와 한 점으로 일차함수 식 결정","기울기와 y절편으로 일차함수 식 결정","평행한 두 직선의 y절편은 서로 다름","x절편과 y절편이 같은 점이 될 조건(원점)","기울기와 평행이동의 무관성","ax+by+c=0의 y절편","기울기와 y절편으로 그리기","y절편 부호와 그래프가 y축과 만나는 위치"],"lfkg-problem-010":["x의 증가량과 y의 증가량의 부호 관계","함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","기울기 절댓값이 같고 부호가 반대인 두 직선의 대칭성","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","부등식 방향과 기울기 부호의 관계"],"lfkg-problem-011":["일차방정식을 일차함수 꼴로 변형","일차방정식을 일차함수 꼴로 변형 —[depends-on]→ 일차함수의 일반형 ax+by+c=0","일차방정식을 일차함수 꼴로 변형 —[special-case-of]→ 일반형을 표준형으로 변환","일차방정식을 일차함수 꼴로 변형 —[represented-as]→ 일차함수의 표준형 y=ax+b","일차방정식과 일차함수의 그래프 일치 —[depends-on]→ 일차방정식을 일차함수 꼴로 변형","ax+by+c=0의 기울기 —[depends-on]→ 일차방정식을 일차함수 꼴로 변형","ax+by+c=0의 y절편 —[depends-on]→ 일차방정식을 일차함수 꼴로 변형","계수비로 본 한 점에서 만날 조건 —[depends-on]→ 일차방정식을 일차함수 꼴로 변형"],"lfkg-problem-012":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의","미지수 두 개 일차방정식 그래프는 직선","일차방정식과 일차함수의 그래프 일치"],"lfkg-problem-013":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","좌표평면의 정의역 표현(연속 대 이산)","좌표평면 위 점을 찍는 표현(좌표→점)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의"],"lfkg-problem-014":["함수가 아닌 그래프의 예(원·세로직선)","상수항 b가 그래프의 상하 위치를 결정","일차함수와 일차방정식 그래프의 차이(수직선 포함 여부)","일차함수 그래프 위 점의 y좌표 계산 사실","두 그래프의 상하 위치는 함숫값 대소","미지수 두 개 일차방정식의 그래프 정의","미지수 두 개 일차방정식 그래프는 직선","일차방정식과 일차함수의 그래프 일치"],"lekg-data-le-topic":["방정식","항등식","방정식과 항등식의 구별","이항","일차방정식의 표준형","이항할 때의 부호 변화","이항의 근거 (등식의 성질)","일차방정식의 계수 조건 (a≠0)"],"lekg-data-equality":["등식","좌변","우변","양변","등식의 성질 (양변에 같은 수 더하기)","등식의 성질 (양변에서 같은 수 빼기)","등식의 성질 (양변에 같은 수 곱하기)","등식의 성질 (양변을 0이 아닌 같은 수로 나누기)"],"lekg-data-equation":["방정식","항등식","방정식과 항등식의 구별"],"lekg-data-identity":["등식","좌변","우변","양변","등식의 성질 (양변에 같은 수 더하기)","등식의 성질 (양변에서 같은 수 빼기)","등식의 성질 (양변에 같은 수 곱하기)","등식의 성질 (양변을 0이 아닌 같은 수로 나누기)"],"lekg-data-eq-identity-distinction":["등식","방정식","항등식","방정식과 항등식의 구별","좌변","우변","양변","등식의 성질 (양변에 같은 수 더하기)"],"lekg-data-no-div-zero":["분모가 0이 되는 경우를 제외하기","나누기 전에 분모가 0인지 확인하기"],"lekg-data-transpose":["부호를 바꿔 항을 등호 반대편으로 옮기기","이항 후 동류항 정리하기"],"lekg-data-transpose-basis":["등식","좌변","우변","양변","등식의 성질 (양변에 같은 수 더하기)","등식의 성질 (양변에서 같은 수 빼기)","등식의 성질 (양변에 같은 수 곱하기)","등식의 성질 (양변을 0이 아닌 같은 수로 나누기)"],"lekg-data-standard-form":["방정식","항등식","방정식과 항등식의 구별","이항","일차방정식의 표준형","이항할 때의 부호 변화","이항의 근거 (등식의 성질)","일차방정식의 계수 조건 (a≠0)"],"lekg-data-a-cond":["방정식","항등식","방정식과 항등식의 구별","이항","일차방정식의 표준형","이항할 때의 부호 변화","이항의 근거 (등식의 성질)","일차방정식의 계수 조건 (a≠0)"],"lekg-data-solve-procedure":["방정식","항등식","방정식과 항등식의 구별","이항","일차방정식의 표준형","이항할 때의 부호 변화","이항의 근거 (등식의 성질)","일차방정식의 계수 조건 (a≠0)"],"lekg-data-divide-by-coef":["일차방정식의 풀이 절차","해의 검산","양변을 계수로 나누어 해 구하기 (등식의 성질 적용)","해의 종류 (a≠0): 유일한 해","해의 종류 (a=0, b≠0): 해 없음","해의 종류 (a=0, b=0): 해가 무수히 많음","모든 수가 해인 등식 (항등식)","해가 없는 등식 (모순)"],"lekg-data-check":["일차방정식의 풀이 절차","해의 검산","양변을 계수로 나누어 해 구하기 (등식의 성질 적용)","해의 종류 (a≠0): 유일한 해","해의 종류 (a=0, b≠0): 해 없음","해의 종류 (a=0, b=0): 해가 무수히 많음","모든 수가 해인 등식 (항등식)","해가 없는 등식 (모순)"],"lekg-data-modeling":["방정식","항등식","방정식과 항등식의 구별","이항","일차방정식의 표준형","이항할 때의 부호 변화","이항의 근거 (등식의 성질)","일차방정식의 계수 조건 (a≠0)"],"lekg-data-prereq-letters":["문자가 들어간 식 세우기","문자에 수를 대입해 식의 값 구하기"],"lekg-data-prereq-linear-expr":["동류항끼리 모으기","괄호를 풀고 식 정리하기"],"lekg-logic-lg-equality-property-apply":["등식","좌변","우변","양변","등식의 성질 (양변에 같은 수 더하기)","등식의 성질 (양변에서 같은 수 빼기)","등식의 성질 (양변에 같은 수 곱하기)","등식의 성질 (양변을 0이 아닌 같은 수로 나누기)"],"lekg-logic-lg-transpose-trace":["왜 옮길 때 부호가 바뀌는지 설명하기","등식의 성질로 이항을 정당화하기"],"lekg-logic-lg-linear-tidy":["동류항을 정리하는 순서 판단하기","정리 전후 식이 같은지 확인하기"],"lekg-logic-lg-clear-frac-dec":["양변에 무엇을 곱할지 판단하기","최소공배수·10의 거듭제곱 고르기"],"lekg-logic-lg-isolate-unknown":["미지수를 한쪽에 모으는 전략 세우기","상수를 반대편으로 옮길지 판단하기"],"lekg-logic-lg-check-trace":["일차방정식의 풀이 절차","해의 검산","양변을 계수로 나누어 해 구하기 (등식의 성질 적용)","해의 종류 (a≠0): 유일한 해","해의 종류 (a=0, b≠0): 해 없음","해의 종류 (a=0, b=0): 해가 무수히 많음","모든 수가 해인 등식 (항등식)","해가 없는 등식 (모순)"],"lekg-logic-lg-modeling":["문장을 식으로 옮기는 과정 설계하기","구한 해가 문제 상황에 맞는지 판단하기"],"lekg-action-act-transpose":["항의 부호를 바꿔 옮기기","미지수 항과 상수 항을 나누기"],"lekg-action-act-clear-fractions":["양변에 적절한 수 곱하기","분수·소수 계수를 정수로 바꾸기"],"lekg-action-act-isolate-variable":["ax = b 꼴로 만들기","양변을 a로 나눠 x 구하기"],"lekg-action-act-solve-linear-eq":["방정식","항등식","방정식과 항등식의 구별","이항","일차방정식의 표준형","이항할 때의 부호 변화","이항의 근거 (등식의 성질)","일차방정식의 계수 조건 (a≠0)"],"lekg-action-act-check-solution":["일차방정식의 풀이 절차","해의 검산","양변을 계수로 나누어 해 구하기 (등식의 성질 적용)","해의 종류 (a≠0): 유일한 해","해의 종류 (a=0, b≠0): 해 없음","해의 종류 (a=0, b=0): 해가 무수히 많음","모든 수가 해인 등식 (항등식)","해가 없는 등식 (모순)"],"lekg-action-act-set-up-equation":["방정식","항등식","방정식과 항등식의 구별"],"lekg-action-act-model-word-problem":["무엇을 미지수로 둘지 정하기","조건을 식으로 세우기","식을 풀고 답이 맞는지 확인하기"],"lekg-problem-001":["이항으로 미지수를 한쪽에 모으기","해 구하기"],"lekg-problem-002":["ax+b=c 형태로 정리하기","양변을 나눠 해 구하기"],"lekg-problem-003":["양변을 정리한 뒤 이항하기","미지수를 모아 해 구하기"],"lekg-problem-004":["분모의 최소공배수를 양변에 곱하기","정수 계수로 바꿔 풀기"],"lekg-problem-005":["10의 거듭제곱을 양변에 곱하기","정수 계수로 바꿔 풀기"],"lekg-problem-006":["구한 해를 원래 식에 대입하기","좌변과 우변이 같은지 확인하기"],"lekg-problem-007":["구하려는 수를 미지수로 놓기","조건을 식으로 세워 풀기"],"lekg-problem-008":["현재·몇 년 후 나이를 식으로 세우기","식을 풀어 나이 구하기"],"lekg-problem-009":["거리 = 속력 × 시간으로 식 세우기","식을 풀어 답 구하기"],"lekg-problem-010":["정가·할인·개수로 식 세우기","식을 풀어 금액 구하기"]}};
+var __KGSTATE={"meta":{"student":"데모 학생","week":7,"totalWeeks":16,"updated":"2026-06-19"},"state":{"lfkg-data-cs-004":"todo","lfkg-data-fn-006":"todo","lfkg-data-fn-007":"learning","lfkg-data-fn-009":"todo","lfkg-data-gp-001":"todo","lfkg-data-gp-004":"weak","lfkg-data-fn-001":"todo","lfkg-data-fn-002":"todo","lfkg-data-fn-004":"mastered","lfkg-data-rc-001":"todo","lfkg-data-fn-011":"todo","lfkg-data-rc-012":"todo","lfkg-data-rc-013":"todo","lfkg-data-rc-015":"todo","lfkg-data-rc-016":"todo","lfkg-data-rc-017":"todo","lfkg-data-rc-018":"todo","lfkg-data-cs-001":"todo","lfkg-data-cs-002":"todo","lfkg-data-cs-003":"todo","lfkg-data-fn-003":"todo","lfkg-data-pa-001":"todo","lfkg-data-cs-005":"todo","lfkg-data-eq-007":"todo","lfkg-data-eq-008":"todo","lfkg-data-eq-009":"todo","lfkg-data-eq-010":"todo","lfkg-data-eq-004":"todo","lfkg-logic-lg-rep-link":"mastered","lfkg-logic-lg-func-to-linear":"todo","lfkg-logic-lg-graph-param":"weak","lfkg-logic-lg-xintercept-condition":"weak","lfkg-logic-lg-substitution-trace":"todo","lfkg-logic-lg-eq-graph-solution":"todo","lfkg-logic-lg-system-graph-intersection":"todo","lfkg-logic-lg-prereq-algebra":"todo","lfkg-logic-lg-adjacent-ratio":"mastered","lfkg-action-act-value-compute":"mastered","lfkg-action-act-rep-convert":"todo","lfkg-action-act-graph-draw":"current","lfkg-action-act-graph-explain":"todo","lfkg-action-act-problem-solve":"weak","lfkg-action-act-graph-interpret":"todo","lfkg-action-act-eq-rel-explain":"todo","lfkg-action-act-system-rel-explain":"todo","lfkg-action-act-tool-graph":"todo","lfkg-action-act-ratio-represent":"mastered","lfkg-data-fn-005":"todo","lfkg-data-fn-008":"weak","lfkg-data-fn-010":"learning","lfkg-problem-001":"mastered","lfkg-problem-002":"current","lfkg-problem-003":"current","lfkg-problem-004":"todo","lfkg-problem-005":"todo","lfkg-problem-006":"current","lfkg-problem-007":"todo","lfkg-problem-008":"todo","lfkg-problem-009":"weak","lfkg-problem-010":"todo","lfkg-problem-011":"todo","lfkg-problem-012":"current","lfkg-problem-013":"mastered","lfkg-problem-014":"current","lekg-data-le-topic":"todo","lekg-data-equality":"mastered","lekg-data-equation":"todo","lekg-data-identity":"mastered","lekg-data-eq-identity-distinction":"mastered","lekg-data-no-div-zero":"todo","lekg-data-transpose":"learning","lekg-data-transpose-basis":"learning","lekg-data-standard-form":"todo","lekg-data-a-cond":"todo","lekg-data-solve-procedure":"todo","lekg-data-divide-by-coef":"todo","lekg-data-check":"todo","lekg-data-modeling":"weak","lekg-data-prereq-letters":"mastered","lekg-data-prereq-linear-expr":"mastered","lekg-logic-lg-equality-property-apply":"mastered","lekg-logic-lg-transpose-trace":"learning","lekg-logic-lg-linear-tidy":"todo","lekg-logic-lg-clear-frac-dec":"todo","lekg-logic-lg-isolate-unknown":"todo","lekg-logic-lg-check-trace":"todo","lekg-logic-lg-modeling":"weak","lekg-action-act-transpose":"learning","lekg-action-act-clear-fractions":"todo","lekg-action-act-isolate-variable":"todo","lekg-action-act-solve-linear-eq":"todo","lekg-action-act-check-solution":"todo","lekg-action-act-set-up-equation":"todo","lekg-action-act-model-word-problem":"weak","lekg-problem-001":"learning","lekg-problem-002":"learning","lekg-problem-003":"todo","lekg-problem-004":"todo","lekg-problem-005":"todo","lekg-problem-006":"todo","lekg-problem-007":"weak","lekg-problem-008":"weak","lekg-problem-009":"weak","lekg-problem-010":"weak"},"atomsMastered":{"lfkg-data-cs-004":0,"lfkg-data-fn-006":0,"lfkg-data-fn-007":5,"lfkg-data-fn-009":0,"lfkg-data-gp-001":0,"lfkg-data-gp-004":2,"lfkg-data-fn-001":0,"lfkg-data-fn-002":0,"lfkg-data-fn-004":8,"lfkg-data-rc-001":0,"lfkg-data-fn-011":0,"lfkg-data-rc-012":0,"lfkg-data-rc-013":0,"lfkg-data-rc-015":0,"lfkg-data-rc-016":0,"lfkg-data-rc-017":0,"lfkg-data-rc-018":0,"lfkg-data-cs-001":0,"lfkg-data-cs-002":0,"lfkg-data-cs-003":0,"lfkg-data-fn-003":0,"lfkg-data-pa-001":0,"lfkg-data-cs-005":0,"lfkg-data-eq-007":0,"lfkg-data-eq-008":0,"lfkg-data-eq-009":0,"lfkg-data-eq-010":0,"lfkg-data-eq-004":0,"lfkg-logic-lg-rep-link":8,"lfkg-logic-lg-func-to-linear":0,"lfkg-logic-lg-graph-param":2,"lfkg-logic-lg-xintercept-condition":2,"lfkg-logic-lg-substitution-trace":0,"lfkg-logic-lg-eq-graph-solution":0,"lfkg-logic-lg-system-graph-intersection":0,"lfkg-logic-lg-prereq-algebra":0,"lfkg-logic-lg-adjacent-ratio":8,"lfkg-action-act-value-compute":8,"lfkg-action-act-rep-convert":0,"lfkg-action-act-graph-draw":3,"lfkg-action-act-graph-explain":0,"lfkg-action-act-problem-solve":2,"lfkg-action-act-graph-interpret":0,"lfkg-action-act-eq-rel-explain":0,"lfkg-action-act-system-rel-explain":0,"lfkg-action-act-tool-graph":0,"lfkg-action-act-ratio-represent":8,"lfkg-data-fn-005":0,"lfkg-data-fn-008":2,"lfkg-data-fn-010":1,"lfkg-problem-001":8,"lfkg-problem-002":3,"lfkg-problem-003":3,"lfkg-problem-004":0,"lfkg-problem-005":0,"lfkg-problem-006":3,"lfkg-problem-007":0,"lfkg-problem-008":0,"lfkg-problem-009":2,"lfkg-problem-010":0,"lfkg-problem-011":0,"lfkg-problem-012":3,"lfkg-problem-013":8,"lfkg-problem-014":3,"lekg-data-le-topic":0,"lekg-data-equality":8,"lekg-data-equation":0,"lekg-data-identity":8,"lekg-data-eq-identity-distinction":8,"lekg-data-no-div-zero":0,"lekg-data-transpose":1,"lekg-data-transpose-basis":5,"lekg-data-standard-form":0,"lekg-data-a-cond":0,"lekg-data-solve-procedure":0,"lekg-data-divide-by-coef":0,"lekg-data-check":0,"lekg-data-modeling":2,"lekg-data-prereq-letters":2,"lekg-data-prereq-linear-expr":2,"lekg-logic-lg-equality-property-apply":8,"lekg-logic-lg-transpose-trace":1,"lekg-logic-lg-linear-tidy":0,"lekg-logic-lg-clear-frac-dec":0,"lekg-logic-lg-isolate-unknown":0,"lekg-logic-lg-check-trace":0,"lekg-logic-lg-modeling":1,"lekg-action-act-transpose":1,"lekg-action-act-clear-fractions":0,"lekg-action-act-isolate-variable":0,"lekg-action-act-solve-linear-eq":0,"lekg-action-act-check-solution":0,"lekg-action-act-set-up-equation":0,"lekg-action-act-model-word-problem":1,"lekg-problem-001":1,"lekg-problem-002":1,"lekg-problem-003":0,"lekg-problem-004":0,"lekg-problem-005":0,"lekg-problem-006":0,"lekg-problem-007":1,"lekg-problem-008":1,"lekg-problem-009":1,"lekg-problem-010":1}};
+/* ============================================================================
+   new-script.js — DEDUPED shared driver set for the refactored _merged.html.
+   Replaces the seven secroot_secN wrapper IIFEs (~42 inner IIFEs, ~13 no-op)
+   with ONE flat run of 9 REAL drivers + 2 verbatim global tail scripts.
+
+   BEHAVIOR IS BYTE-FOR-BYTE EQUIVALENT to the live drivers:
+   - same rAF loop shape: apply(); scroll(passive)+resize listeners; (loop(){apply();rAF;})()
+   - same reveal thresholds per section (0.82/0.12 vs 0.84/0.10) — NOT unified
+   - same reduced-motion arms (return vs continue) per section
+   - same color-lerp math, same KG force-sim constants, same band logic
+   - same active-dot colors: scene2=#C0EBA6, scene(sec6)=#D0BFFF/#7048E8
+
+   ALL secroot_secN.querySelector(x) -> document.querySelector(x): every id the
+   drivers touch (#stageA/#stage/#scene/#scene2/#svg/#field/#pbar/#gbar...) is
+   globally unique and lives in exactly one section (scout 05 ground-truth map).
+   Class queries (.phrase/.sd/.phrase2/.sd2/[data-reveal]/[data-vp]) are global-
+   safe because each class renders only in its one owning section — BUT reveal
+   thresholds differ, so the reveal driver stays SECTION-SCOPED (see RV).
+
+   DROPPED (scout 06 §F): all `if(badge){...}` branches. #badge has no markup and
+   no JS creates it; the original querySelector returns null and the branch never
+   runs. Zero pixel risk. The sec6 scene driver below omits the dead badge branch.
+
+   The two huge KG blobs var __KGGRAPH={...} / var __KGSTATE={...} stay inlined and
+   byte-untouched ABOVE this code (do NOT reformat them). This file is the driver
+   body that follows them inside the first <script>, plus the two global tails.
+   ============================================================================ */
+
+/* ============================================================================
+   CONSOLIDATED rAF — ONE requestAnimationFrame loop drives every per-frame
+   scroll-progress driver (CHANGE 3). Each driver below registers its per-frame
+   function on __FRAMES instead of starting its own loop; the single loop at the
+   BOTTOM of this script calls every __FRAMES fn in order, then schedules itself.
+   Per-driver math/behavior is unchanged — only loop OWNERSHIP is consolidated.
+   The KG builder, the two tail scripts, and the IO reveals below are NOT part of
+   the rAF loop.
+   ============================================================================ */
+var __FRAMES=[];
+
+/* ---- PIN (CHANGE 1): mobile orbit sticky -> JS-driven position:fixed pin.
+   position:sticky cannot track the live mobile visible viewport when the dynamic
+   toolbar shows/hides; position:fixed CAN. Per orbit section root id R (sec3/sec4)
+   we measure the un-pinned reserved height H and drive .pin-fixed / .pin-end via
+   grid.getBoundingClientRect(). Desktop (>820px) no-ops and clears its classes. */
+function setupPin(R){
+  var grid = document.querySelector('#'+R+' .pin-grid');
+  var stage = document.querySelector('#'+R+' .pin-stage');
+  if(!grid||!stage) return null;
+  var mq = window.matchMedia('(max-width:820px)');
+  var H = 0;
+  return function frame(){
+    if(mq.matches){
+      // measure reserved height from the relative (un-pinned) state once it's not fixed
+      if(!stage.classList.contains('pin-fixed') && !stage.classList.contains('pin-end')) H = stage.offsetHeight;
+      var r = grid.getBoundingClientRect();
+      // position:fixed is relative to the LAYOUT viewport; the VISUAL viewport is offset
+      // by visualViewport.offsetTop/offsetLeft (and may be narrower) when the dynamic
+      // toolbar shows/hides. Make engage/end thresholds offset-aware so the orbit pins
+      // exactly when its top reaches the VISUAL top (no "cut" window), and track the
+      // visual viewport for both top AND left/width while pinned (Z Flip horizontal).
+      var off = (window.visualViewport ? Math.round(window.visualViewport.offsetTop) : 0);
+      if(r.top <= off && r.bottom >= H + off){
+        if(!stage.classList.contains('pin-fixed')){ stage.classList.add('pin-fixed'); stage.classList.remove('pin-end'); grid.style.setProperty('padding-top', H + 'px', 'important'); }
+        stage.style.setProperty('top', off + 'px', 'important');
+        stage.style.setProperty('left', (window.visualViewport ? Math.round(window.visualViewport.offsetLeft) : 0) + 'px', 'important');
+        stage.style.setProperty('width', (window.visualViewport && window.visualViewport.width ? Math.round(window.visualViewport.width) : window.innerWidth) + 'px', 'important');
+        stage.style.setProperty('right', 'auto', 'important');
+      } else if(r.bottom < H + off){
+        if(!stage.classList.contains('pin-end')){ stage.classList.add('pin-end'); stage.classList.remove('pin-fixed'); grid.style.setProperty('padding-top', H + 'px', 'important'); }
+        stage.style.removeProperty('top'); stage.style.removeProperty('left'); stage.style.removeProperty('width'); stage.style.removeProperty('right');
+      } else {
+        if(stage.classList.contains('pin-fixed')||stage.classList.contains('pin-end')){ stage.classList.remove('pin-fixed','pin-end'); grid.style.removeProperty('padding-top'); }
+        stage.style.removeProperty('top'); stage.style.removeProperty('left'); stage.style.removeProperty('width'); stage.style.removeProperty('right');
+      }
+    } else {
+      if(stage.classList.contains('pin-fixed')||stage.classList.contains('pin-end')){ stage.classList.remove('pin-fixed','pin-end'); grid.style.removeProperty('padding-top'); }
+      stage.style.removeProperty('top'); stage.style.removeProperty('left'); stage.style.removeProperty('width'); stage.style.removeProperty('right');
+    }
+  };
+}
+
+/* ---- REVEALS (CHANGE 2): rAF-poll -> ONE IntersectionObserver for ALL
+   [data-reveal]. Trigger only (add data-in then unobserve, one-shot); the CSS
+   opacity/translateY transition is unchanged. rootMargin -18% bottom ~= the old
+   ~82% viewport threshold. prefers-reduced-motion: show every reveal immediately.
+   The [data-vp]/--hp/--sp PARALLAX stays per-frame in the rAF loop below (RV). */
+(function(){
+  var reveals=[].slice.call(document.querySelectorAll('[data-reveal]'));
+  if(!reveals.length) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+    reveals.forEach(function(el){ el.setAttribute('data-in',''); });
+    return;
+  }
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.setAttribute('data-in',''); io.unobserve(e.target); } });
+  }, {root:null, rootMargin:'0px 0px 0px 0px', threshold:0});
+  reveals.forEach(function(el){ io.observe(el); });
+})();
+
+/* ---- RV: PARALLAX only (--sp scroll-progress + --hp hero + --vp), ONE driver
+   per section to preserve each original section IIFE's --sp/--hp/--vp math. The
+   reveal-toggling that used to live here moved to the IntersectionObserver above.
+   sec1/3/4/6: --hp + [data-vp]; sec2: --sp only. Each config pushes its per-frame
+   fn onto __FRAMES (the single rAF loop calls them). */
+[
+  {root:'#sec1', vp:true,  sp:true},
+  {root:'#sec2', vp:false, sp:true},
+  {root:'#sec3', vp:true,  sp:true},
+  {root:'#sec4', vp:true,  sp:true},
+  {root:'#sec6', vp:true,  sp:true}
+].forEach(function(cfg){
+  var root=document.querySelector(cfg.root); if(!root) return;
+  var de=document.documentElement;
+  var vpEls=cfg.vp?[].slice.call(root.querySelectorAll('[data-vp]')):[];
+  var last=-1;
+  function apply(){
+    var vh=window.innerHeight;
+    var st=window.scrollY || de.scrollTop || 0;
+    if(st!==last){
+      last=st;
+      if(cfg.sp){ var max=(de.scrollHeight - vh)||1; de.style.setProperty('--sp',(st/max).toFixed(4)); }
+      if(cfg.vp){
+        de.style.setProperty('--hp',Math.min(1, st/vh).toFixed(4));
+        for(var i=0;i<vpEls.length;i++){
+          var host=vpEls[i].parentElement, er=host.getBoundingClientRect();
+          var prog=(vh - er.top)/(vh + er.height);
+          vpEls[i].style.setProperty('--vp',Math.max(0,Math.min(1,prog)).toFixed(4));
+        }
+      }
+    }
+  }
+  __FRAMES.push(apply);
+});
+
+/* ---- ORBIT (sec3, green 수업축): scroll-progress floor, a=min(4,floor(p*3.999)+1).
+   The 841 impl — DISTINCT from the nearest-center funnel. rAF-only (no scroll/resize). */
+(function(){
+  var stage=document.querySelector('#stageA');
+  var steps=[].slice.call(document.querySelectorAll('[data-stepA]'));
+  if(!stage||!steps.length) return;
+  var sec=stage.closest('section');
+  function frame(){
+    if(sec){
+      var vh=window.innerHeight, r=sec.getBoundingClientRect(), range=(sec.offsetHeight-vh)||1;
+      var p=Math.max(0,Math.min(1,(-r.top)/range));
+      var a=Math.min(4, Math.floor(p*3.999)+1);
+      if(stage.getAttribute('data-activeA')!==String(a)) stage.setAttribute('data-activeA',String(a));
+    }
+  }
+  __FRAMES.push(frame);
+})();
+
+/* ---- STAGE (sec4, purple 관리축): nearest-center funnel, data-step. The 1037 impl. */
+(function(){
+  var de=document.documentElement;
+  var steps=[].slice.call(document.querySelectorAll('[data-step]'));
+  var stage=document.querySelector('#stage');
+  if(!stage || !steps.length) return;
+  var last=-1;
+  function apply(){
+    var vh=window.innerHeight, st=window.scrollY || de.scrollTop || 0;
+    if(st!==last){
+      last=st; var cy=vh/2, best='1', bestD=1e9;
+      for(var k=0;k<steps.length;k++){
+        var r=steps[k].getBoundingClientRect(), d=Math.abs((r.top+r.height/2)-cy);
+        if(d<bestD){ bestD=d; best=steps[k].getAttribute('data-step'); }
+      }
+      if(stage.getAttribute('data-active')!==best){ stage.setAttribute('data-active',best); }
+    }
+  }
+  __FRAMES.push(apply);
+})();
+
+/* ---- SCENE (sec6 dark scene): color-lerp light->dark + phrase/dot bands.
+   The 1426 impl. active dot = #D0BFFF (LIVE value; the #C0EBA6 copies were no-ops).
+   Dead `if(badge)` branch DROPPED. */
+(function(){
+  var de=document.documentElement;
+  var scene=document.querySelector('#scene');
+  var bgfx=document.querySelector('#bgfx');
+  if(!scene) return;
+  var phrases=[].slice.call(document.querySelectorAll('.phrase'));
+  var dots=[].slice.call(document.querySelectorAll('.sd'));
+  var sceneTexts=[].slice.call(document.querySelectorAll('[data-scene-text]'));
+  var toneEls=[].slice.call(document.querySelectorAll('[data-tone]'));
+  var LIGHT=[244,243,240], DARK=[16,16,18];
+  var INK=[11,11,11], PAPER=[244,243,240];
+  function lerp(a,b,t){ return Math.round(a+(b-a)*t); }
+  function mix(c1,c2,t){ return 'rgb('+lerp(c1[0],c2[0],t)+','+lerp(c1[1],c2[1],t)+','+lerp(c1[2],c2[2],t)+')'; }
+  var last=-1, lastBand=-1;
+  function apply(){
+    var vh=window.innerHeight, st=window.scrollY || de.scrollTop || 0;
+    if(st!==last){
+      last=st;
+      var r=scene.getBoundingClientRect(), range=(scene.offsetHeight - vh)||1;
+      var t=Math.max(0,Math.min(1, (-r.top)/range));
+      var amt=Math.max(0,Math.min(1, t/0.25));
+      if(bgfx) bgfx.style.backgroundColor=mix(LIGHT,DARK,amt);
+      var ink=mix(INK,PAPER,amt);
+      sceneTexts.forEach(function(el){ el.style.color=ink; });
+      toneEls.forEach(function(el){ el.style.color= amt>0.4? ink : ''; });
+      var band = t>=0.66?2 : t>=0.33?1 : 0;
+      if(band!==lastBand){
+        lastBand=band;
+        for(var i=0;i<phrases.length;i++){ if(i===band) phrases[i].setAttribute('data-on',''); else phrases[i].removeAttribute('data-on'); }
+        for(var k=0;k<dots.length;k++){
+          if(k===band){ dots[k].style.background= amt>0.5?'#D0BFFF':'#7048E8'; dots[k].style.transform='scale(1.5)'; }
+          else { dots[k].style.background='rgba(140,140,140,.4)'; dots[k].style.transform='none'; }
+        }
+      }
+    }
+  }
+  __FRAMES.push(apply);
+})();
+
+/* ---- KG BUILDER (sec5): force-sim + render + hover/panel + applyState overlay.
+   Verbatim from 1152; only secroot_sec5.X -> document.X. Constants byte-stable. */
+(function(){
+  var W=1600,H=900,SVGNS='http://www.w3.org/2000/svg';
+
+  function simulate(graph){
+    var nodes=graph.nodes, edges=graph.edges;
+    var idx={}; nodes.forEach(function(n,i){ idx[n.id]=i; });
+    var seed=42; function rnd(){ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; }
+    var P=nodes.map(function(_,i){ var a=(i/nodes.length)*Math.PI*2; return {x:W/2+Math.cos(a)*300+(rnd()-0.5)*40,y:H/2+Math.sin(a)*300+(rnd()-0.5)*40,vx:0,vy:0}; });
+    var E=edges.map(function(e,ei){ return [idx[e.s],idx[e.t],ei]; }).filter(function(p){ return p[0]!=null&&p[1]!=null; });
+    var deg=nodes.map(function(){return 0;}); E.forEach(function(p){ deg[p[0]]++; deg[p[1]]++; });
+    var k_rep=52000,k_spring=0.012,L=200,k_center=0.0011,damp=0.85,ITER=900,maxDisp=0;
+    for(var it=0;it<ITER;it++){
+      var cool=Math.pow(1-(it/ITER),1.6);
+      for(var i=0;i<P.length;i++){
+        var cf=(deg[i]===0?6:(deg[i]===1?1.8:1));
+        var fx=0,fy=0;
+        for(var j=0;j<P.length;j++){ if(i===j)continue; var dx=P[i].x-P[j].x,dy=P[i].y-P[j].y,d2=dx*dx+dy*dy+0.01,d=Math.sqrt(d2),f=k_rep/d2; fx+=(dx/d)*f; fy+=(dy/d)*f; }
+        fx+=(W/2-P[i].x)*k_center*cf; fy+=(H/2-P[i].y)*k_center*cf;
+        P[i].vx=(P[i].vx+fx)*damp; P[i].vy=(P[i].vy+fy)*damp;
+      }
+      for(var e=0;e<E.length;e++){ var a=E[e][0],b=E[e][1],dx=P[b].x-P[a].x,dy=P[b].y-P[a].y,d=Math.sqrt(dx*dx+dy*dy)+0.01,f=k_spring*(d-L),ux=dx/d,uy=dy/d; P[a].vx+=ux*f; P[a].vy+=uy*f; P[b].vx-=ux*f; P[b].vy-=uy*f; }
+      maxDisp=0;
+      for(var i=0;i<P.length;i++){ var ddx=P[i].vx*cool,ddy=P[i].vy*cool; P[i].x+=ddx; P[i].y+=ddy; var disp=Math.abs(ddx)+Math.abs(ddy); if(disp>maxDisp)maxDisp=disp; }
+    }
+    var minX=1e9,minY=1e9,maxX=-1e9,maxY=-1e9;
+    P.forEach(function(p){ if(p.x<minX)minX=p.x; if(p.y<minY)minY=p.y; if(p.x>maxX)maxX=p.x; if(p.y>maxY)maxY=p.y; });
+    var m=70,s=Math.min((W-2*m)/(maxX-minX||1),(H-2*m)/(maxY-minY||1));
+    var usedW=(maxX-minX)*s, usedH=(maxY-minY)*s;
+    var offX=(W-usedW)/2, offY=(H-usedH)/2;
+    P.forEach(function(p){ p.x=offX+(p.x-minX)*s; p.y=offY+(p.y-minY)*s; });
+    return {P:P,E:E};
+  }
+
+  function render(graph,sim){
+    var svg=document.querySelector('#svg');
+    var gE=document.createElementNS(SVGNS,'g'), gN=document.createElementNS(SVGNS,'g');
+    sim.E.forEach(function(p){
+      var ln=document.createElementNS(SVGNS,'line'); ln.setAttribute('class','edge '+('ek-'+(graph.edges[p[2]]&&graph.edges[p[2]].kind||'').replace(/\s+/g,'-')));
+      ln.setAttribute('x1',sim.P[p[0]].x.toFixed(1)); ln.setAttribute('y1',sim.P[p[0]].y.toFixed(1));
+      ln.setAttribute('x2',sim.P[p[1]].x.toFixed(1)); ln.setAttribute('y2',sim.P[p[1]].y.toFixed(1));
+      gE.appendChild(ln);
+    });
+    var RSZ={DATA:11,LOGIC:8,ACTION:8,PROBLEM:7};
+    graph.nodes.forEach(function(n,i){
+      var g=document.createElementNS(SVGNS,'g'); g.setAttribute('class','node'); g.setAttribute('transform','translate('+sim.P[i].x.toFixed(1)+','+sim.P[i].y.toFixed(1)+')');
+      var c=document.createElementNS(SVGNS,'circle'); c.setAttribute('r',RSZ[n.layer]||8);
+      c.setAttribute('class','nl-'+n.layer+' nt-'+n.topic);
+      var ti=document.createElementNS(SVGNS,'title'); ti.textContent=n.label+'  ['+n.layer+' · '+(n.topic==='function'?'함수':'방정식')+']';
+      g.appendChild(c); g.appendChild(ti); gN.appendChild(g);
+    });
+    svg.appendChild(gE); svg.appendChild(gN);
+    var field=document.querySelector('#field'), hl=document.querySelector('#hoverlbl');
+    var adj={}; sim.E.forEach(function(p){ (adj[p[0]]=adj[p[0]]||[]).push(p[1]); (adj[p[1]]=adj[p[1]]||[]).push(p[0]); });
+    var nodeEls=[].slice.call(gN.children), edgeEls=[].slice.call(gE.children);
+    nodeEls.forEach(function(g,i){
+      function enter(){
+        field.classList.add('has-hover');
+        var nb={}; nb[i]=1; (adj[i]||[]).forEach(function(j){ nb[j]=1; });
+        nodeEls.forEach(function(el,k){ el.classList.toggle('hl', !!nb[k]); });
+        edgeEls.forEach(function(el,k){ var p=sim.E[k]; el.classList.toggle('hl', p[0]===i||p[1]===i); });
+        hl.textContent=graph.nodes[i].label;
+        hl.style.left=(sim.P[i].x/1600*field.clientWidth)+'px';
+        hl.style.top=(sim.P[i].y/900*field.clientHeight)+'px';
+        hl.setAttribute('data-on','');
+      }
+      function leave(){ field.classList.remove('has-hover'); hl.removeAttribute('data-on'); }
+      g.addEventListener('mouseenter',enter);
+      g.addEventListener('mouseleave',leave);
+      g.addEventListener('click',function(){ openPanel(i); });
+      var lpTimer=null, moved=false;
+      g.addEventListener('touchstart',function(){ moved=false; lpTimer=setTimeout(function(){ lpTimer=null; enter(); }, 380); },{passive:true});
+      g.addEventListener('touchmove',function(){ moved=true; if(lpTimer){ clearTimeout(lpTimer); lpTimer=null; } },{passive:true});
+      g.addEventListener('touchend',function(e){
+        if(lpTimer){ clearTimeout(lpTimer); lpTimer=null; if(!moved){ e.preventDefault(); openPanel(i); } }
+        else { setTimeout(leave, 1600); }
+      });
+    });
+    var apanel=document.querySelector('#apanel'), atitle=document.querySelector('#atitle'), ameta=document.querySelector('#ameta'), abody=document.querySelector('#abody');
+    var LAYNAME={DATA:'개념',LOGIC:'논리',ACTION:'동작',PROBLEM:'문제'};
+    function openPanel(i){
+      var n=graph.nodes[i], list=(graph.atoms&&graph.atoms[n.id])||[];
+      var STC={mastered:'#1F8A5B',learning:'#E0A50E',weak:'#E0443E',current:'#13B5A6',todo:'#C7C4BC'};
+      var st=(window.__state&&window.__state[n.id])||'todo';
+      apanel.style.setProperty('--acc', STC[st]||'#7048E8');
+      ameta.textContent=(n.topic==='function'?'일차함수':'일차방정식')+' · '+(LAYNAME[n.layer]||n.layer)+' · 세부 동작 '+list.length;
+      atitle.textContent=n.label;
+      if(list.length){ abody.innerHTML='<ul>'+list.map(function(a){var c=String(a).replace(/\s*—\[[^\]]*\]→[\s\S]*$/,'').trim()||String(a); return '<li>'+c.replace(/</g,'&lt;')+'</li>';}).join('')+'</ul>'; }
+      else { abody.innerHTML='<p class="empty">이 개념에 연결된 세부 동작은 곧 추가됩니다.</p>'; }
+      apanel.setAttribute('data-open','');
+    }
+    document.querySelector('#aclose').addEventListener('click',function(){ apanel.removeAttribute('data-open'); });
+    return {lines:gE.children.length, nodes:gN.children.length};
+  }
+
+  Promise.resolve(__KGGRAPH).then(function(graph){
+    var sim=simulate(graph);
+    var out=render(graph,sim);
+    window.__render={nodes:graph.nodes.length, edges:graph.edges.length, drawnNodes:out.nodes, drawnLines:out.lines};
+    document.querySelector('#msg').textContent='nodes '+out.nodes+' · edges '+out.lines;
+    Promise.resolve(__KGSTATE).then(function(ss){ applyState(graph,sim,ss); }).catch(function(){});
+  }).catch(function(err){ window.__render={error:String(err)}; document.querySelector('#msg').textContent='ERROR: '+err; });
+
+  function applyState(graph,sim,ss){
+    var SVGNS='http://www.w3.org/2000/svg';
+    var nodeEls=[].slice.call(document.querySelectorAll('#svg .node'));
+    var pulseG=document.createElementNS(SVGNS,'g');
+    document.querySelector('#svg').insertBefore(pulseG, document.querySelectorAll('#svg g')[1]);
+    graph.nodes.forEach(function(n,i){
+      var s=ss.state[n.id]||'todo';
+      nodeEls[i].classList.add('st-'+s);
+      if(s==='current'||s==='weak'){
+        var r=(n.layer==='DATA'?11:n.layer==='PROBLEM'?7:8);
+        var pc=document.createElementNS(SVGNS,'circle');
+        pc.setAttribute('class','pulse '+(s==='current'?'pc-current':'pc-weak'));
+        pc.setAttribute('cx',sim.P[i].x.toFixed(1)); pc.setAttribute('cy',sim.P[i].y.toFixed(1));
+        pc.setAttribute('r',r); pc.style.setProperty('--r',r+'px');
+        pulseG.appendChild(pc);
+      }
+    });
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+      var flowG=document.createElementNS(SVGNS,'g');
+      document.querySelector('#svg').appendChild(flowG);
+      sim.E.forEach(function(p){
+        var ss1=ss.state[graph.nodes[p[0]].id]||'todo', ss2=ss.state[graph.nodes[p[1]].id]||'todo';
+        var color=null;
+        if(ss2==='current') color='#13B5A6';
+        else if(ss2==='weak') color='#E0443E';
+        else if(ss1==='mastered' && (ss2==='learning')) color='#1F8A5B';
+        if(!color) return;
+        var dot=document.createElementNS(SVGNS,'circle');
+        dot.setAttribute('r','3.4'); dot.setAttribute('fill',color);
+        var am=document.createElementNS(SVGNS,'animateMotion');
+        am.setAttribute('dur',(1.5+Math.random()*0.6).toFixed(2)+'s'); am.setAttribute('repeatCount','indefinite');
+        am.setAttribute('path','M '+sim.P[p[0]].x.toFixed(1)+' '+sim.P[p[0]].y.toFixed(1)+' L '+sim.P[p[1]].x.toFixed(1)+' '+sim.P[p[1]].y.toFixed(1));
+        dot.appendChild(am); flowG.appendChild(dot);
+      });
+    }
+    var c={mastered:0,learning:0,weak:0,current:0,todo:0};
+    window.__state=ss.state;
+    Object.keys(ss.state).forEach(function(k){ c[ss.state[k]]=(c[ss.state[k]]||0)+1; });
+    var sum=document.querySelector('#summary');
+    if(sum) sum.innerHTML='<span class="wk">이번 주 · '+ss.meta.week+'/'+ss.meta.totalWeeks+'주차</span>'+
+      '<span class="cu"><b>'+c.current+'</b> 이번 주 학습</span>'+
+      '<span class="wk2"><b>'+c.weak+'</b> 보강 필요</span>'+
+      '<span class="lr"><b>'+c.learning+'</b> 학습 중</span>'+
+      '<span class="sm"><b>'+c.mastered+'</b> 숙련</span>';
+  }
+})();
+
+/* ---- PBAR + scene2 (sec5): progress bar #pbar + MID dark-scene phrase/dot bands.
+   active dot = #C0EBA6. The 1308 impl, verbatim minus secroot_sec5. -> document. */
+(function(){
+  var de=document.documentElement, pbar=document.querySelector('#pbar');
+  var scene=document.querySelector('#scene2');
+  var phrases=[].slice.call(document.querySelectorAll('.phrase2'));
+  var dots=[].slice.call(document.querySelectorAll('.sd2'));
+  var last=-1, lastBand=-1;
+  function apply(){
+    var vh=window.innerHeight, st=window.scrollY||de.scrollTop||0;
+    if(st!==last){ last=st; var max=(de.scrollHeight-vh)||1; if(pbar) pbar.style.transform='scaleX('+(st/max).toFixed(4)+')';
+      if(scene){ var r=scene.getBoundingClientRect(); var range=(scene.offsetHeight-vh)||1; var t=Math.max(0,Math.min(1,(-r.top)/range));
+        var band=t>=0.66?2:t>=0.33?1:0;
+        if(band!==lastBand){ lastBand=band;
+          for(var i=0;i<phrases.length;i++){ if(i===band) phrases[i].setAttribute('data-on',''); else phrases[i].removeAttribute('data-on'); }
+          for(var k=0;k<dots.length;k++){ if(k===band){ dots[k].style.background='#C0EBA6'; dots[k].style.transform='scale(1.5)'; } else { dots[k].style.background='rgba(244,243,240,.32)'; dots[k].style.transform='none'; } }
+        }
+      }
+    }
+  }
+  __FRAMES.push(apply);
+})();
+
+/* ---- STACK (sec7): card depth scale/shade + --sp scroll-progress. The reveal
+   toggling that used to live here (0.84/0.10, bidirectional) moved to the unified
+   IntersectionObserver above (CHANGE 2). reduced-motion: skip card stacking.
+   The 1513 impl, verbatim minus secroot_sec7. -> document.querySelector('#sec7 ...').
+   NOTE: scoped to #sec7 to mirror the original's per-section card scan. */
+(function(){
+  var sec7=document.querySelector('#sec7'); if(!sec7) return;
+  var de=document.documentElement;
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cards=[].slice.call(sec7.querySelectorAll('[data-card] .stack-inner'));
+  var last=-1;
+  function apply(){
+    var vh=window.innerHeight, st=window.scrollY || de.scrollTop || 0;
+    if(st!==last){
+      last=st; var max=(de.scrollHeight - vh)||1; de.style.setProperty('--sp',(st/max).toFixed(4));
+      if(!reduce){
+        for(var c=0;c<cards.length;c++){
+          var inner=cards[c], host=inner.parentElement, next=host.nextElementSibling, p=0;
+          if(next){ var nr=next.getBoundingClientRect(); p=1-Math.max(0,Math.min(1, nr.top/vh)); }
+          inner.style.setProperty('--cardScale',(1-0.05*p).toFixed(4));
+          inner.style.setProperty('--cardShade',(0.4*p).toFixed(4));
+        }
+      }
+    }
+  }
+  __FRAMES.push(apply);
+})();
+
+/* ---- GBAR (global): scroll progress scaleX on #gbar>i. The 1552 impl. */
+(function(){var de=document.documentElement,bar=document.querySelector('#gbar>i');function u(){var max=(de.scrollHeight-window.innerHeight)||1;bar.style.transform='scaleX('+((window.scrollY||de.scrollTop||0)/max).toFixed(4)+')';}__FRAMES.push(u);})();
+
+/* ---- PIN registration (CHANGE 1): register the two orbit-section pin drivers. */
+[setupPin('sec3'), setupPin('sec4')].forEach(function(fn){ if(fn) __FRAMES.push(fn); });
+
+/* ---- THE single rAF loop (CHANGE 3): run every registered per-frame fn in order,
+   once now + on scroll/resize for immediacy + every animation frame, then reschedule. */
+(function(){
+  function tick(){ for(var i=0;i<__FRAMES.length;i++){ __FRAMES[i](); } }
+  tick();
+  window.addEventListener('scroll',tick,{passive:true});
+  window.addEventListener('resize',tick);
+  (function loop(){ tick(); requestAnimationFrame(loop); })();
+})();
+
+</script>
+<script>
+(function(){var f=document.querySelector('#sec5 #field');var p=document.querySelector('#sec5 #apanel');if(!f)return;function clr(e){var t=e.target;if(t.closest&&t.closest('.node'))return;if(p&&p.contains(t))return;if(p)p.removeAttribute('data-open');f.classList.remove('has-hover');var hl=f.querySelector('.hoverlbl');if(hl)hl.removeAttribute('data-on');[].forEach.call(f.querySelectorAll('.hl'),function(el){el.classList.remove('hl');});}document.addEventListener('click',clr,true);document.addEventListener('touchstart',clr,true);})();
+</script>
+<script>
+/* __kgfill: on mobile, make KG graph fill its box (slice instead of letterbox) */
+(function(){function f(){var svg=document.querySelector("#sec5 #svg");if(!svg)return;svg.setAttribute("preserveAspectRatio", window.innerWidth<=640 ? "xMidYMid slice" : "xMidYMid meet");}f();window.addEventListener("resize",f);})();
+</script>
+</body></html>
