@@ -416,12 +416,13 @@ body{font-family:'Pretendard Variable',Pretendard,-apple-system,system-ui,sans-s
   #sec3 .flowdot{display:none}
   #sec3 .spt{animation:none !important}
   #sec3 .dot-travel{animation:none !important}
-  /* sec4 extra */
-  #sec4 .oflow{display:none}
-  /* C5: sec5 KG pulse rings (was pristine reduced-motion #sec5 .pulse rule) */
-  #sec5 .pulse{animation:none !important;opacity:.5}
-  /* sec7 card-stack */
-  #sec7 [data-reveal]{opacity:1 !important;transform:none !important;transition:none}
+
+/* sec6 headline: wider desktop slot for the longer 4-line copy (mobile keeps the @640 rules) */
+@media (min-width:641px){
+  #sec6 .intro-copy{max-width:680px}
+  #sec6 .intro-h1.w240{width:auto;max-width:680px;font-size:clamp(1.8rem,3.6vw,3rem)}
+}
+ant;transform:none !important;transition:none}
   #sec7 .stack{position:relative}
   #sec7 .stack-inner{transform:none !important}
   #sec7 .stack-shade{opacity:0 !important}

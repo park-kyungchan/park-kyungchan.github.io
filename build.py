@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""
-content.json 의 텍스트를 index.html 에 박아 넣습니다(빌드).
-- 편집은 content.json 만 하고, 이 스크립트를 한 번 실행하면 사이트에 반영됩니다.
-- index.html 안에서 data-copy="키" 가 붙은 요소의 내용만 교체합니다(나머지는 그대로).
-사용법:  python build.py
-"""
+# Bake content.json text into index.html (elements marked with data-copy).
+# Usage:  py build.py        (Windows)   /   python3 build.py
+#
+# Edit your text in content.json, then run this once to apply it to index.html.
+# Source is ASCII-only on purpose, so it runs no matter how your editor saves it.
+# (The Korean text itself is read/written as UTF-8 via the explicit encoding= below.)
 import json, re, sys, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -26,17 +26,16 @@ for key, val in copy.items():
         missing.append(key)
 
 if missing:
-    print("ERROR: 다음 키를 index.html 에서 찾지 못했습니다:", missing[:8])
+    print("ERROR: data-copy keys not found in index.html:", missing[:8])
     sys.exit(1)
 
-# content.json 에 빠진 data-copy 요소 경고(있어도 진행)
 html_keys = set(re.findall(r'data-copy="([^"]+)"', html))
 orphans = sorted(html_keys - set(copy))
 if orphans:
-    print("주의: content.json 에 항목이 없는 요소:", orphans[:8])
+    print("WARNING: elements with no content.json entry:", orphans[:8])
 
 if html != orig:
     open(html_path, "w", encoding="utf-8").write(html)
-    print(f"build: index.html 갱신 완료 ({len(copy)}개 문구 적용)")
+    print("build: index.html updated (%d strings applied)" % len(copy))
 else:
-    print(f"build: 변경 없음 ({len(copy)}개 문구 이미 동기화됨)")
+    print("build: no change (%d strings already in sync)" % len(copy))
