@@ -428,7 +428,7 @@ body{font-family:'Pretendard Variable',Pretendard,-apple-system,system-ui,sans-s
 }
 
 
-/* sec6 headline: wider desktop slot for the longer 4-line copy (mobile keeps the @640 rules) */
+/* sec6 headline: wider desktop slot for longer copy (mobile keeps @640 rules) */
 @media (min-width:641px){
   #sec6 .intro-copy{max-width:680px}
   #sec6 .intro-h1.w240{width:auto;max-width:680px;font-size:clamp(1.8rem,3.6vw,3rem)}
