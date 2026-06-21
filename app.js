@@ -132,19 +132,23 @@ function setupPin(R){
   __FRAMES.push(apply);
 });
 
-/* ---- ORBIT (sec3, green 수업축): scroll-progress floor, a=min(4,floor(p*3.999)+1).
+/* ---- ORBIT (sec3, green 수업축): nearest-center to viewport (matches sec4) for consistent step timing.
    The 841 impl — DISTINCT from the nearest-center funnel. rAF-only (no scroll/resize). */
 (function(){
+  var de=document.documentElement;
   var stage=document.querySelector('#stageA');
   var steps=[].slice.call(document.querySelectorAll('[data-stepA]'));
   if(!stage||!steps.length) return;
-  var sec=stage.closest('section');
+  var last=-1;
   function frame(){
-    if(sec){
-      var vh=window.innerHeight, r=sec.getBoundingClientRect(), range=(sec.offsetHeight-vh)||1;
-      var p=Math.max(0,Math.min(1,(-r.top)/range));
-      var a=Math.min(4, Math.floor(p*3.999)+1);
-      if(stage.getAttribute('data-activeA')!==String(a)) stage.setAttribute('data-activeA',String(a));
+    var vh=window.innerHeight, st=window.scrollY||de.scrollTop||0;
+    if(st!==last){
+      last=st; var cy=vh/2, best='1', bestD=1e9;
+      for(var k=0;k<steps.length;k++){
+        var r=steps[k].getBoundingClientRect(), d=Math.abs((r.top+r.height/2)-cy);
+        if(d<bestD){ bestD=d; best=steps[k].getAttribute('data-stepA'); }
+      }
+      if(stage.getAttribute('data-activeA')!==best) stage.setAttribute('data-activeA',best);
     }
   }
   __FRAMES.push(frame);
