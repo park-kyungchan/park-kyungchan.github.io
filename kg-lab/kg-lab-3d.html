@@ -311,8 +311,16 @@
     });
   }
   var wantFit = true;   // auto-fit only on initial settle + explicit layout/spacing changes
-  Graph.onEngineStop(function(){ if(wantFit){ Graph.zoomToFit(600, 90); wantFit=false; } applyNodeGlow(); tuneLights(); });
+  // responsive fit: zoomToFit's padding is absolute px, so the old fixed 90
+  // swamped the small ~337px mobile iframe and shrank nodes to specks. Use a
+  // small pad on narrow viewports; keep desktop's 90 unchanged.
+  function isSmallView(){ return Math.min(window.innerWidth, window.innerHeight) < 600; }
+  function fitGraph(ms){ Graph.zoomToFit(ms==null?400:ms, isSmallView()?18:90); }
+  Graph.onEngineStop(function(){ if(wantFit){ fitGraph(600); wantFit=false; } applyNodeGlow(); tuneLights(); });
   setTimeout(function(){ applyNodeGlow(); tuneLights(); }, 700);
+  // safety-net frame (mobile only): onEngineStop can fire late/never on slow
+  // devices; guarantee an early framed graph. The settle fit above still refines.
+  setTimeout(function(){ if(isSmallView()) fitGraph(600); }, 1200);
 
   // ---- directional flow particles (DIRECTION-MODEL §A) ----------------------
   // flow goes from what's known -> what it enables; a link emits only when its
@@ -657,9 +665,17 @@
     { id:'boost2', label:'강렬', apply:function(){ FLOWMODE='boost2'; applyFlow(); } }
   ], 'std');
 
-  window.addEventListener('resize', function(){
+  // keep the canvas sized to the (iframe) viewport; re-frame on small screens
+  // when the viewport changes (e.g. mobile orientation flip). desktop keeps its
+  // manual zoom — only width/height update there, exactly as before.
+  var _refit;
+  function onViewport(){
     Graph.width(window.innerWidth).height(window.innerHeight);
-  });
+    clearTimeout(_refit);
+    _refit = setTimeout(function(){ if(isSmallView()) fitGraph(300); }, 200);
+  }
+  window.addEventListener('resize', onViewport);
+  window.addEventListener('orientationchange', onViewport);
 
   // ---- FPS meter (independent rAF sampler) ---------------------------------
   var fpsEl = document.getElementById('fps');
