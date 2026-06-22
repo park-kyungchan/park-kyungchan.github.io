@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KG Lab · 3D Constellation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#F4F3F0;overflow:hidden}
+  body{font-family:'Pretendard Variable',Pretendard,-apple-system,system-ui,sans-serif;color:#0B0B0B}
+  #graph{position:fixed;inset:0}
+  #graph canvas{display:block}
+  .hud{position:fixed;z-index:5;font-family:'JetBrains Mono',monospace;pointer-events:none}
+  .hud--tl{top:22px;left:24px}
+  .hud--tl .k{font-size:12px;font-weight:700;letter-spacing:.18em;color:#46464B}
+  .hud--tl .t{font-size:13px;font-weight:500;letter-spacing:.04em;color:#9a978d;margin-top:6px}
+  .legend{position:fixed;bottom:22px;left:24px;z-index:5;display:flex;flex-wrap:wrap;gap:8px 18px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#46464B;pointer-events:none}
+  .legend span{display:inline-flex;align-items:center;gap:8px}
+  .legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .meta{position:fixed;bottom:22px;right:24px;z-index:5;font-family:'JetBrains Mono',monospace;
+    font-size:12px;font-weight:700;letter-spacing:.04em;color:#9a978d;text-align:right;pointer-events:none}
+  .perf{position:fixed;top:22px;right:24px;z-index:6;font-family:'JetBrains Mono',monospace;
+    font-size:12px;font-weight:700;letter-spacing:.04em;text-align:right;pointer-events:none;color:#46464B}
+  .perf .fps{font-size:22px;font-weight:700;letter-spacing:0;color:#1F8A5B}
+  .perf .fps.warn{color:#D9911F}
+  .perf .fps.bad{color:#E0443E}
+  .perf .sub{font-size:11px;font-weight:500;color:#9a978d;margin-top:3px}
+  body.embed .perf, body.embed .meta{display:none}
+  /* onboarding hint (centred bottom) */
+  .hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:5;
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.04em;
+    color:#9a978d;pointer-events:none;white-space:nowrap;
+    display:flex;gap:18px;align-items:center;
+    background:rgba(252,251,248,0.66);border:1px solid rgba(70,70,75,0.08);border-radius:999px;
+    padding:7px 16px;backdrop-filter:blur(4px)}
+  .hint b{color:#46464B;font-weight:700}
+  /* detail panel (click) */
+  #panel{position:fixed;top:64px;right:24px;width:300px;z-index:7;
+    background:rgba(252,251,248,0.92);border:1px solid rgba(70,70,75,0.12);border-radius:10px;
+    box-shadow:0 8px 30px rgba(20,20,25,0.12);backdrop-filter:blur(6px);
+    padding:16px 18px;transform:translateX(24px);opacity:0;pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease}
+  #panel.show{opacity:1;transform:translateX(0);pointer-events:auto}
+  #panel .pclose{position:absolute;top:10px;right:12px;cursor:pointer;border:0;background:none;
+    font-size:18px;line-height:1;color:#9a978d;font-family:inherit}
+  #panel .pchip{display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;
+    font-size:11px;font-weight:700;letter-spacing:.04em;color:#46464B;margin-bottom:10px}
+  #panel .pchip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+  #panel .plabel{font-size:17px;font-weight:700;letter-spacing:-.01em;color:#0B0B0B;line-height:1.35;margin:0 0 8px}
+  #panel .prow{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#6b6860;margin-top:6px;
+    display:flex;justify-content:space-between;gap:12px}
+  #panel .prow b{color:#0B0B0B;font-weight:700}
+  /* learning-state panel (landing / parent-student view) */
+  #panel.learn .pchip, #panel.learn .plabel, #panel.learn .ptech{display:none}
+  #panel:not(.learn) #plearn{display:none}
+  #plearn{max-height:64vh;overflow-y:auto;margin-right:-4px;padding-right:4px}
+  #plearn .lbadge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;
+    font-weight:700;letter-spacing:.06em;color:#13B5A6;margin-bottom:8px}
+  #plearn .lstate{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.02em}
+  #plearn .ltitle{font-size:18px;font-weight:700;letter-spacing:-.01em;color:#0B0B0B;margin:4px 0 4px;line-height:1.3}
+  #plearn .lsub{font-size:12.5px;color:#6b6860;margin:0 0 6px;line-height:1.5}
+  #plearn .lsec{margin-top:14px}
+  #plearn .lsec-t{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;color:#9a978d;margin-bottom:7px}
+  #plearn .latoms{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px}
+  #plearn .latoms li{font-size:12px;color:#46464B;line-height:1.4;padding-left:13px;position:relative}
+  #plearn .latoms li:before{content:'·';position:absolute;left:3px;color:#C7C4BC;font-weight:700}
+  #plearn .latoms li.lmore{color:#9a978d}
+  #plearn .ln{display:flex;align-items:flex-start;gap:8px;padding:5px 0}
+  #plearn .ln i{width:9px;height:9px;border-radius:50%;flex:none;margin-top:3px}
+  #plearn .ln .lnmain{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0}
+  #plearn .ln .lnmain b{font-size:12.5px;font-weight:600;color:#0B0B0B;line-height:1.3}
+  #plearn .ln .lnmain small{font-size:10.5px;color:#9a978d;line-height:1.2}
+  #plearn .ln em{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;font-style:normal;flex:none;margin-top:2px}
+  /* control panel (T7) */
+  #ctrl{position:fixed;top:136px;left:24px;z-index:6;display:none;flex-direction:column;gap:14px;
+    background:rgba(252,251,248,0.82);border:1px solid rgba(70,70,75,0.10);border-radius:10px;
+    padding:13px 14px;backdrop-filter:blur(5px);box-shadow:0 4px 18px rgba(20,20,25,0.07);
+    max-height:calc(100vh - 160px);overflow-y:auto}
+  #ctrl.open{display:flex}
+  #ctrlToggle{position:fixed;top:92px;left:24px;z-index:7;width:36px;height:36px;border-radius:9px;
+    border:1px solid rgba(70,70,75,0.12);background:rgba(252,251,248,0.82);backdrop-filter:blur(5px);
+    cursor:pointer;font-size:15px;line-height:1;color:#6b6860;box-shadow:0 4px 18px rgba(20,20,25,0.07);
+    display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace}
+  #ctrlToggle:hover{border-color:rgba(70,70,75,0.34);color:#0B0B0B}
+  #ctrl .fxrow{margin-bottom:9px}
+  #ctrl .fxrow:last-child{margin-bottom:0}
+  #ctrl .fxname{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+    letter-spacing:.02em;color:#6b6860;margin-bottom:5px}
+  #ctrl .fxsep{height:1px;background:rgba(70,70,75,0.10);margin:2px 0 4px}
+  #ctrl .ctitle{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;
+    color:#9a978d;margin-bottom:7px;text-transform:uppercase}
+  #ctrl .cbtns{display:flex;gap:6px;flex-wrap:wrap}
+  #ctrl button{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;cursor:pointer;
+    border:1px solid rgba(70,70,75,0.16);background:#fff;color:#6b6860;border-radius:7px;padding:5px 10px;
+    transition:all .12s ease}
+  #ctrl button:hover{border-color:rgba(70,70,75,0.34)}
+  #ctrl button.on{background:#0B0B0B;color:#FCFBF8;border-color:#0B0B0B}
+  #ctrl .fxname b{color:#13B5A6;font-weight:700}
+  #ctrl button .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div id="graph"></div>
+
+<div class="hud hud--tl">
+  <div class="k">KNOWLEDGE GRAPH · 3D CONSTELLATION</div>
+  <div class="t" id="hudtitle">지식 그래프 — 개념 의존 신경망</div>
+</div>
+<div class="legend" id="legend"></div>
+<div class="meta" id="meta">boot…</div>
+<div class="perf"><div class="fps" id="fps">—</div><div class="sub" id="psub">WebGL · 3D-Force-Graph</div></div>
+<div class="hint" id="hint">
+  <span><b>드래그</b> 회전</span><span><b>스크롤</b> 확대</span><span><b>우드래그</b> 이동</span><span><b>클릭</b> 상세</span>
+</div>
+<div id="panel">
+  <button class="pclose" id="pclose" aria-label="close">×</button>
+  <div class="pchip" id="pchip"></div>
+  <p class="plabel" id="plabel"></p>
+  <div class="ptech">
+    <div class="prow"><span>레이어</span><b id="player"></b></div>
+    <div class="prow"><span>상태</span><b id="pstate"></b></div>
+    <div class="prow"><span>역할</span><b id="prole"></b></div>
+    <div class="prow"><span>연결</span><b id="pdeg"></b></div>
+  </div>
+  <div id="plearn"></div>
+</div>
+<button id="ctrlToggle" title="효과 패널 (교수자용)" aria-label="효과 패널 열기">⚙</button>
+<div id="ctrl">
+  <div class="cgrp">
+    <div class="ctitle">노드 간격</div>
+    <div class="cbtns" id="spacing">
+      <button data-sp="tight">좀게</button><button data-sp="normal" class="on">보통</button><button data-sp="wide">넓게</button>
+    </div>
+  </div>
+  <div class="cgrp">
+    <div class="ctitle">레이어 필터</div>
+    <div class="cbtns" id="filters">
+      <button data-ly="DATA" class="on"><span class="dot" style="background:#7048E8"></span>개념</button><button data-ly="LOGIC" class="on"><span class="dot" style="background:#2A6FDB"></span>논리</button><button data-ly="ACTION" class="on"><span class="dot" style="background:#1F8A5B"></span>동작</button><button data-ly="PROBLEM" class="on"><span class="dot" style="background:#D9911F"></span>문제</button>
+    </div>
+  </div>
+  <div class="cgrp">
+    <div class="ctitle">레이아웃</div>
+    <div class="cbtns" id="layout">
+      <button data-lay="free" class="on">자유</button><button data-lay="hier">계층</button><button data-lay="topic">토픽</button>
+    </div>
+  </div>
+  <div class="cgrp">
+    <div class="ctitle">표시</div>
+    <div class="cbtns">
+      <button id="lblBtn">라벨</button>
+    </div>
+  </div>
+  <div class="cgrp">
+    <div class="ctitle">효과 · 라이브 비교</div>
+    <div class="cbtns" id="fxpreset" style="margin-bottom:9px">
+      <button data-preset="demo">추천 연출</button><button data-preset="reset">전부 끔</button>
+    </div>
+    <div class="fxsep"></div>
+    <div id="fx"></div>
+  </div>
+</div>
+
+<!-- 3d-force-graph (bundles Three.js; global ForceGraph3D) -->
+<script src="https://cdn.jsdelivr.net/npm/3d-force-graph"></script>
+<!-- pilot ontology (window.__KGGRAPH / __KGSTATE) — swappable per student -->
+<script src="../kg-data.js"></script>
+<script>
+/* ============================================================================
+   KG LAB — 3D backend (3d-force-graph / Three.js).  PHASE T8: layout modes.
+   Free (force), Hierarchy (DAG top-down by edge direction), and Topic-cluster
+   (custom force anchoring nodes by topic on X and layer on Y).  Switchable
+   from the control panel; cycles tolerated via onDagError.
+   ============================================================================ */
+(function(){
+  'use strict';
+
+  if (typeof ForceGraph3D === 'undefined'){
+    document.getElementById('meta').textContent = 'ERROR: 3d-force-graph failed to load';
+    console.error('[KG-3D] ForceGraph3D global missing');
+    return;
+  }
+
+  var BG = '#F4F3F0';
+  var el = document.getElementById('graph');
+
+  // ---- layer palette (matches the 2D build) --------------------------------
+  var LAYER = {
+    DATA:    {color:'#7048E8', size:6.0, name:'DATA · 개념'},
+    LOGIC:   {color:'#2A6FDB', size:3.4, name:'LOGIC · 논리'},
+    ACTION:  {color:'#1F8A5B', size:3.4, name:'ACTION · 동작'},
+    PROBLEM: {color:'#D9911F', size:2.8, name:'PROBLEM · 문제'}
+  };
+  function layerOf(n){ return LAYER[n.layer] || LAYER.DATA; }
+
+  // ---- student state palette (DIRECTION-MODEL §B) --------------------------
+  var STATE = {
+    mastered: {color:'#1F8A5B', glow:0.40, name:'숙련'},
+    current:  {color:'#13B5A6', glow:0.48, name:'이번주'},
+    learning: {color:'#E0A50E', glow:0.34, name:'학습중'},
+    weak:     {color:'#E0443E', glow:0.34, name:'보강필요'},
+    todo:     {color:'#C7C4BC', glow:0.10, name:'예정'}
+  };
+  var STATE_ORDER = ['mastered','current','learning','weak','todo'];
+  var kgState = (window.__KGSTATE && window.__KGSTATE.state) || {};
+  function stateOf(n){ return kgState[n.id] || 'todo'; }
+
+  // ---- focus set (Q1c): explicit __KGSTATE.focus wins; else derive from --------
+  //      charged states (current/learning/weak = "이번 주 학습/약점보강").  This is the
+  //      SINGLE derivation point every effect (flow boost, camera) reads from, so
+  //      swapping the ontology/student data needs zero code change.
+  var kgFocus = (window.__KGSTATE && Array.isArray(window.__KGSTATE.focus) && window.__KGSTATE.focus.length)
+                  ? window.__KGSTATE.focus : null;
+  var FOCUS_DERIVED = { current:1, learning:1, weak:1 };
+  function isFocusNode(id){
+    if (kgFocus) return kgFocus.indexOf(id) !== -1;
+    return !!FOCUS_DERIVED[kgState[id] || 'todo'];
+  }
+  // an edge is "this week's activity" if it touches a focus node (boost_scope: widest)
+  function isFocusLink(l){ return isFocusNode(endId(l.source)) || isFocusNode(endId(l.target)); }
+
+  // colour channel switches with view mode (one channel at a time)
+  var mode = 'state';
+  function colorOf(n){ return mode==='state' ? (STATE[stateOf(n)]||STATE.todo).color : layerOf(n).color; }
+  function glowOf(n){ return mode==='state' ? (STATE[stateOf(n)]||STATE.todo).glow : 0.32; }
+
+  // ---- focus+context highlight state (T6) ----------------------------------
+  var hoverId = null, neighbor = {}, hLinks = (typeof Set!=='undefined'? new Set() : null);
+  function computeNeighbors(node){
+    neighbor = {}; hLinks = new Set();
+    if (!node) return;
+    neighbor[node.id] = 1;
+    Graph.graphData().links.forEach(function(l){
+      var s=endId(l.source), t=endId(l.target);
+      if (s===node.id || t===node.id){ neighbor[s]=1; neighbor[t]=1; hLinks.add(l); }
+    });
+  }
+  function nodeColorH(n){
+    if (hoverId && !neighbor[n.id]) return 'rgba(120,120,128,0.10)';   // dim non-neighbours
+    return colorOf(n);
+  }
+  function linkColorH(l){
+    if (hoverId) return hLinks.has(l) ? 'rgba(70,80,110,0.85)' : 'rgba(120,128,156,0.05)';
+    if (FLOWMODE==='boost' || FLOWMODE==='boost2'){            // P3: focus lines glow, rest go dark
+      if (isFocusLink(l)){ var f=flowBoost(l); var c=(f&&STATE[f.state])?STATE[f.state].color:'#13B5A6';
+        return hexA(c, FLOWMODE==='boost2'?0.9:0.6); }
+      return 'rgba(120,128,156,0.05)';
+    }
+    return l.kind==='topic-bridge' ? 'rgba(201,154,58,0.7)' : 'rgba(120,128,156,0.28)';
+  }
+  function linkWidthH(l){
+    if (hoverId && hLinks.has(l)) return 1.4;
+    if ((FLOWMODE==='boost'||FLOWMODE==='boost2') && isFocusLink(l)) return FLOWMODE==='boost2'?1.3:0.85;
+    return l.kind==='topic-bridge' ? 0.7 : 0.35;
+  }
+
+  // ---- scene from pilot ontology (swappable) -------------------------------
+  var graph = window.__KGGRAPH;
+  var nodeIds = {}; graph.nodes.forEach(function(n){ nodeIds[n.id]=1; });
+  var nodes = graph.nodes.map(function(n){
+    return { id:n.id, label:n.label, role:n.role, layer:n.layer, topic:n.topic };
+  });
+  var links = graph.edges.map(function(e){
+    if (!nodeIds[e.s] || !nodeIds[e.t]) return null;
+    return { source:e.s, target:e.t, kind:e.kind };
+  }).filter(Boolean);
+
+  function linkColor(l){ return l.kind==='topic-bridge' ? 'rgba(201,154,58,0.7)' : 'rgba(120,128,156,0.28)'; }
+
+  var Graph = ForceGraph3D({ rendererConfig: { antialias: true, preserveDrawingBuffer: true } })(el)
+    .backgroundColor(BG)
+    .showNavInfo(false)
+    .width(window.innerWidth)
+    .height(window.innerHeight)
+    .nodeRelSize(4)
+    .nodeVal(function(n){ return layerOf(n).size; })
+    .nodeColor(colorOf)
+    .nodeOpacity(0.95)
+    .nodeResolution(14)
+    .linkColor(linkColor)
+    .linkWidth(function(l){ return l.kind==='topic-bridge' ? 0.7 : 0.35; })
+    .linkOpacity(0.5)
+    .cooldownTicks(220)
+    .graphData({ nodes: nodes, links: links });
+
+  // density tuning: stronger repulsion + moderate link length so clusters
+  // separate and the graph fills space without collapsing into a hairball.
+  Graph.d3Force('charge').strength(-190);
+  Graph.d3Force('link').distance(50).strength(0.3);
+
+  // ---- light-theme glow: soft self-emission on the existing sphere material
+  //      (re-applied after each layout settle, so data swaps keep the look) ---
+  function applyNodeGlow(){
+    var ns = Graph.graphData().nodes;
+    for (var i=0;i<ns.length;i++){
+      var o = ns[i].__threeObj; if(!o || !o.material || !o.material.emissive) continue;
+      o.material.emissive.set(colorOf(ns[i]));
+      o.material.emissiveIntensity = (hoverId && !neighbor[ns[i].id]) ? 0.02 : glowOf(ns[i]);
+      o.material.needsUpdate = true;
+    }
+  }
+  function tuneLights(){
+    // re-applied after lights exist in the scene (library adds them post-construct)
+    Graph.scene().children.forEach(function(ch){
+      if (ch.type === 'DirectionalLight') ch.intensity = Math.min(ch.intensity, 1.4);
+    });
+  }
+  var wantFit = true;   // auto-fit only on initial settle + explicit layout/spacing changes
+  Graph.onEngineStop(function(){ if(wantFit){ Graph.zoomToFit(600, 90); wantFit=false; } applyNodeGlow(); tuneLights(); });
+  setTimeout(function(){ applyNodeGlow(); tuneLights(); }, 700);
+
+  // ---- directional flow particles (DIRECTION-MODEL §A) ----------------------
+  // flow goes from what's known -> what it enables; a link emits only when its
+  // flow-source node is charged.  Direction realised via signed particle speed.
+  var FLOWDIR = {
+    'has-prerequisite':'reverse', 'consumes-data':'reverse',
+    'requires-substitution-trace':'reverse', 'solves':'reverse',
+    'supports-action':'forward', 'parameter-affects':'forward',
+    'representation-of':'both', 'topic-includes':'both', 'topic-bridge':'both'
+  };
+  var EMIT = { mastered:1, current:1, learning:1 };
+  function endId(e){ return (e && e.id!=null) ? e.id : e; }
+  function flowOf(l){
+    var d = FLOWDIR[l.kind] || 'forward';
+    var sId = endId(l.source), tId = endId(l.target);
+    var cands = d==='forward' ? [[sId,tId]] : d==='reverse' ? [[tId,sId]] : [[sId,tId],[tId,sId]];
+    for (var i=0;i<cands.length;i++){
+      var st = kgState[cands[i][0]] || 'todo';
+      if (EMIT[st]) return { from:cands[i][0], state:st, sourceIsFrom:(cands[i][0]===sId) };
+    }
+    return null;
+  }
+  // ---- flow modes (P3) ------------------------------------------------------
+  // off / std / boost / boost2.  boost = focus-only flow: particles ONLY on
+  // edges touching a focus node (이번 주 활동), non-focus edges go silent, and
+  // boosted lines glow with bigger/brighter particles.  All derived from the
+  // focus-set — swap the ontology/student and it re-targets automatically.
+  var FLOW_SPEED = 0.0016, FLOWMODE = 'std';
+  function hexA(hex,a){ var h=hex.replace('#',''); return 'rgba('+parseInt(h.substr(0,2),16)+','+parseInt(h.substr(2,2),16)+','+parseInt(h.substr(4,2),16)+','+a+')'; }
+  function flowBoost(l){                       // emission for a focus-touching edge
+    var sId=endId(l.source), tId=endId(l.target);
+    var sF=isFocusNode(sId), tF=isFocusNode(tId);
+    if(!sF && !tF) return null;
+    var f=flowOf(l); if(f) return f;           // honour kind direction + charged source
+    var from = sF ? sId : tId;                 // else originate from the focus endpoint
+    return { from:from, state:(kgState[from]||'current'), sourceIsFrom:(from===sId) };
+  }
+  function flowEmit(l){                          // unified emission selector
+    if (FLOWMODE==='off') return null;
+    if (FLOWMODE==='std') return flowOf(l);
+    return isFocusLink(l) ? flowBoost(l) : null; // boost / boost2 = focus-only
+  }
+  var BOOST = { boost:{n:3,w:3.0}, boost2:{n:5,w:3.8} };
+  function applyFlow(){
+    Graph
+      .linkDirectionalParticles(function(l){ return flowEmit(l) ? (BOOST[FLOWMODE]?BOOST[FLOWMODE].n:2) : 0; })
+      .linkDirectionalParticleSpeed(function(l){ var f=flowEmit(l); return f ? (f.sourceIsFrom?FLOW_SPEED:-FLOW_SPEED) : 0; })
+      .linkDirectionalParticleColor(function(l){ var f=flowEmit(l); return f ? (STATE[f.state]||STATE.todo).color : 'rgba(0,0,0,0)'; })
+      .linkDirectionalParticleWidth(function(l){ return flowEmit(l) && BOOST[FLOWMODE] ? BOOST[FLOWMODE].w : 2.0; })
+      .linkDirectionalParticleResolution(8)
+      .linkColor(linkColorH).linkWidth(linkWidthH);
+  }
+  applyFlow();
+
+  // orbit controls: left-drag rotate · right-drag pan · wheel zoom
+  Graph.controls().enableDamping = true;
+  Graph.controls().dampingFactor = 0.12;
+  Graph.controls().rotateSpeed = 0.85;
+  Graph.controls().zoomSpeed = 0.9;
+
+  window.__KG3D = Graph;
+  window.__KGMETA = (window.__KGSTATE && window.__KGSTATE.meta) || {};
+  var kgMeta = window.__KGMETA;
+  // HUD subtitle is data-driven (meta.title) so swapping the ontology re-labels
+  // without code edits; falls back to a generic line.
+  if (kgMeta.title) document.getElementById('hudtitle').textContent = kgMeta.title;
+
+  // ---- legend (rebuilt per view mode) --------------------------------------
+  function buildLegend(entries){
+    var L = document.getElementById('legend');
+    L.innerHTML = '';
+    entries.forEach(function(e){
+      var s=document.createElement('span');
+      s.innerHTML='<i style="background:'+e.color+'"></i>'+e.name;
+      L.appendChild(s);
+    });
+  }
+  function setMeta(){
+    var wk = kgMeta.week ? (' · wk'+kgMeta.week+'/'+(kgMeta.totalWeeks||'')) : '';
+    document.getElementById('meta').textContent =
+      'fx-lab · ' + mode + ' · ' + (kgMeta.student||'student') + wk + ' · nodes ' + nodes.length;
+  }
+  function applyMode(){
+    Graph.nodeColor(nodeColorH).linkColor(linkColorH).linkWidth(linkWidthH);
+    applyNodeGlow();                // re-evaluate emissive
+    if (mode !== 'state'){           // structure view: no per-state motion
+      Graph.graphData().nodes.forEach(function(n){ if(n.__threeObj) n.__threeObj.scale.setScalar(1); });
+    }
+    if (mode === 'state')
+      buildLegend(STATE_ORDER.map(function(k){ return {color:STATE[k].color, name:STATE[k].name}; }));
+    else
+      buildLegend(Object.keys(LAYER).map(function(k){ return {color:LAYER[k].color, name:LAYER[k].name}; }));
+    setMeta();
+  }
+  applyMode();
+  window.addEventListener('keydown', function(ev){
+    if (ev.key==='v' || ev.key==='V'){ mode = (mode==='state'?'layer':'state'); applyMode(); }
+    else if (ev.key==='Escape'){ closePanel(); }
+  });
+
+  // ---- focus+context interaction (T6): hover highlight + click focus/panel --
+  function refreshHighlight(){
+    Graph.nodeColor(nodeColorH).linkColor(linkColorH).linkWidth(linkWidthH);
+    applyNodeGlow();
+  }
+  function degOf(id){
+    var d=0; Graph.graphData().links.forEach(function(l){ if(endId(l.source)===id||endId(l.target)===id) d++; });
+    return d;
+  }
+  var panel=document.getElementById('panel');
+  // ---- learning-state panel (landing parent/student view) -------------------
+  var PANELMODE = 'tech';                  // 'learn' on landing (embed), 'tech' for teachers
+  var LEARN = {
+    mastered: { word:'탄탄해요',          sub:'충분히 이해했어요.',          color:'#1F8A5B' },
+    current:  { word:'이번 주에 배우는 중', sub:'지금 집중하고 있는 개념이에요.', color:'#13B5A6' },
+    learning: { word:'배우고 있어요',      sub:'점점 익숙해지는 중이에요.',      color:'#E0A50E' },
+    weak:     { word:'조금 더 봐야 해요',    sub:'아직 헷갈리는 부분이 있어요.',    color:'#E0443E' },
+    todo:     { word:'아직 배우기 전',       sub:'앞으로 배울 개념이에요.',        color:'#9a978d' }
+  };
+  var nodeById = {}; nodes.forEach(function(n){ nodeById[n.id]=n; });
+  function escH(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function dirEnds(l){                       // resolve flow direction (DIRECTION-MODEL §A)
+    var d=FLOWDIR[l.kind]||'forward', s=endId(l.source), t=endId(l.target);
+    if(d==='reverse') return {from:t,to:s,both:false};
+    if(d==='both')    return {from:s,to:t,both:true};
+    return {from:s,to:t,both:false};
+  }
+  function lnChip(o){
+    var nn=nodeById[o.id]; if(!nn) return '';
+    var s=STATE[stateOf(nn)]||STATE.todo;
+    return '<div class="ln"><i style="background:'+s.color+'"></i>'+
+           '<span class="lnmain"><b>'+escH(nn.label||o.id)+'</b>'+(o.rel?'<small>'+o.rel+'</small>':'')+'</span>'+
+           '<em style="color:'+s.color+'">'+s.name+'</em></div>';
+  }
+  function relLabel(l, X){
+    var xIsS = (endId(l.source)===X);
+    switch(l.kind){
+      case 'has-prerequisite':            return xIsS ? '먼저 알아야 해요'   : '이걸 바탕으로 배워요';
+      case 'consumes-data':               return xIsS ? '사용하는 개념'     : '이 개념을 쓰는 동작';
+      case 'requires-substitution-trace': return xIsS ? '필요한 추론'       : '추론이 쓰이는 곳';
+      case 'solves':                      return xIsS ? '푸는 방법'         : '풀 수 있는 문제';
+      case 'supports-action':             return xIsS ? '뒷받침하는 동작'   : '근거가 되는 것';
+      case 'parameter-affects':           return xIsS ? '영향을 주는 대상' : '영향을 받는 값';
+      case 'representation-of':           return '다른 표현';
+      case 'topic-includes':              return xIsS ? '포함하는 내용'     : '속한 단원';
+      case 'topic-bridge':                return '연결된 단원';
+      default:                            return '연결됨';
+    }
+  }
+  function renderLearn(n){
+    var L=LEARN[stateOf(n)]||LEARN.todo;
+    var ats=(graph.atoms&&graph.atoms[n.id])||[];
+    var found=[], leads=[], seenF={}, seenL={};
+    Graph.graphData().links.forEach(function(l){
+      var sid=endId(l.source), tid=endId(l.target);
+      if(sid!==n.id && tid!==n.id) return;
+      var other = sid===n.id ? tid : sid, de=dirEnds(l), rel=relLabel(l,n.id);
+      if(de.both || de.to===n.id){ if(!seenF[other]){ seenF[other]=1; found.push({id:other,rel:rel}); } }
+      else { if(!seenL[other]){ seenL[other]=1; leads.push({id:other,rel:rel}); } }
+    });
+    var total=found.length+leads.length;
+    var h='';
+    h+='<div class="lhead">';
+    if(isFocusNode(n.id)) h+='<span class="lbadge">● 이번 주 학습</span>';
+    h+='<div class="lstate" style="color:'+L.color+'">'+L.word+'</div>';
+    h+='<h3 class="ltitle">'+escH(n.label||n.id)+'</h3>';
+    h+='<p class="lsub">'+L.sub+'</p></div>';
+    if(ats.length){
+      h+='<div class="lsec"><div class="lsec-t">여기서 익히는 것</div><ul class="latoms">';
+      ats.slice(0,6).forEach(function(a){ h+='<li>'+escH(a)+'</li>'; });
+      if(ats.length>6) h+='<li class="lmore">외 '+(ats.length-6)+'개</li>';
+      h+='</ul></div>';
+    }
+    if(found.length) h+='<div class="lsec"><div class="lsec-t">밑바탕이 되는 것 · '+found.length+'</div>'+found.map(lnChip).join('')+'</div>';
+    if(leads.length) h+='<div class="lsec"><div class="lsec-t">이어지는 것 · 풀 수 있는 것 · '+leads.length+'</div>'+leads.map(lnChip).join('')+'</div>';
+    document.getElementById('plearn').innerHTML=h;
+  }
+  function openPanel(n){
+    if(PANELMODE==='learn'){ renderLearn(n); panel.classList.add('show'); return; }
+    var st=STATE[stateOf(n)]||STATE.todo, ly=layerOf(n);
+    document.getElementById('pchip').innerHTML='<i style="background:'+ly.color+'"></i>'+ly.name;
+    document.getElementById('plabel').textContent=n.label||n.id;
+    document.getElementById('player').textContent=(ly.name.split(' · ')[1]||n.layer);
+    document.getElementById('pstate').innerHTML='<span style="color:'+st.color+'">●</span> '+st.name;
+    document.getElementById('prole').textContent=n.role||'—';
+    document.getElementById('pdeg').textContent=degOf(n.id)+' 개';
+    panel.classList.add('show');
+  }
+  function closePanel(){ panel.classList.remove('show'); }
+  document.getElementById('pclose').addEventListener('click', closePanel);
+
+  // control panel hidden by default (parents/students see a clean view);
+  // teachers reveal the effect controls via the ⚙ toggle.
+  (function(){
+    var ctrl=document.getElementById('ctrl'), tog=document.getElementById('ctrlToggle');
+    tog.addEventListener('click', function(){
+      var open=ctrl.classList.toggle('open');
+      tog.textContent = open ? '✕' : '⚙';
+      tog.setAttribute('aria-label', open ? '효과 패널 닫기' : '효과 패널 열기');
+    });
+  })();
+
+  Graph.nodeLabel(function(n){
+    var st=STATE[stateOf(n)]||STATE.todo;
+    return '<div style="font-family:Pretendard,sans-serif;font-size:13px;font-weight:600;color:#0B0B0B;'+
+      'background:rgba(252,251,248,0.95);border:1px solid rgba(70,70,75,0.12);border-radius:7px;'+
+      'padding:6px 10px;box-shadow:0 4px 16px rgba(20,20,25,0.14)">'+
+      (n.label||n.id)+'<br><span style="font-family:JetBrains Mono,monospace;font-size:10.5px;font-weight:700;color:'+st.color+'">'+st.name+'</span>'+
+      '<span style="font-family:JetBrains Mono,monospace;font-size:10.5px;color:#9a978d"> · '+(n.role||'')+'</span></div>';
+  });
+  Graph.onNodeHover(function(node){
+    hoverId = node ? node.id : null;
+    computeNeighbors(node);
+    refreshHighlight();
+    document.body.style.cursor = node ? 'pointer' : 'default';
+  });
+  Graph.onNodeClick(function(node){
+    // keep the user's current zoom + viewing angle: just pan so the clicked
+    // node becomes the new orbit centre (preserve the camera→target offset).
+    var cur = Graph.cameraPosition(), tgt = Graph.controls().target;
+    var ox=cur.x-tgt.x, oy=cur.y-tgt.y, oz=cur.z-tgt.z;
+    Graph.cameraPosition({ x:(node.x||0)+ox, y:(node.y||0)+oy, z:(node.z||0)+oz }, node, 700);
+    triggerClickFx(node);
+    openPanel(node);
+  });
+  Graph.onBackgroundClick(closePanel);
+
+  // ---- T8: layout modes (free / hierarchy / topic-cluster) -----------------
+  Graph.onDagError(function(){ return undefined; });   // tolerate cycles in DAG mode
+  var topicX = { 'function':-180, 'equation':180 };
+  var layerY = { DATA:135, LOGIC:45, ACTION:-45, PROBLEM:-135 };
+  function clusterForce(alpha){
+    var ns=Graph.graphData().nodes, k=0.085*alpha;
+    for(var i=0;i<ns.length;i++){ var n=ns[i];
+      var ax=(topicX[n.topic]||0), ay=(layerY[n.layer]||0);
+      n.vx += (ax-n.x)*k; n.vy += (ay-n.y)*k; n.vz += (0-(n.z||0))*k*0.6;
+    }
+  }
+  function setLayout(m){
+    if (m==='hier'){ Graph.dagMode('td').dagLevelDistance(36); Graph.d3Force('cluster', null); }
+    else if (m==='topic'){ Graph.dagMode(null); Graph.d3Force('cluster', clusterForce); }
+    else { Graph.dagMode(null); Graph.d3Force('cluster', null); }
+    wantFit=true; Graph.d3ReheatSimulation();
+  }
+  document.getElementById('layout').addEventListener('click', function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    [].forEach.call(this.children, function(x){ x.classList.remove('on'); }); b.classList.add('on');
+    setLayout(b.dataset.lay);
+  });
+
+  // ---- T7: density controls, layer filters, label LOD ----------------------
+  // layer filters via node/link visibility (no data removal)
+  var visLayer = {DATA:1, LOGIC:1, ACTION:1, PROBLEM:1};
+  var layerById = {}; nodes.forEach(function(n){ layerById[n.id]=n.layer; });
+  function lyOf(end){ return (end && end.layer) ? end.layer : layerById[endId(end)]; }
+  Graph.nodeVisibility(function(n){ return visLayer[n.layer]!==0; })
+       .linkVisibility(function(l){ return visLayer[lyOf(l.source)]!==0 && visLayer[lyOf(l.target)]!==0; });
+  document.getElementById('filters').addEventListener('click', function(e){
+    var b=e.target.closest('button'); if(!b) return; var ly=b.dataset.ly;
+    visLayer[ly] = visLayer[ly] ? 0 : 1; b.classList.toggle('on', !!visLayer[ly]);
+    Graph.nodeVisibility(Graph.nodeVisibility()).linkVisibility(Graph.linkVisibility());
+  });
+
+  // node spacing presets (charge + link distance) -> reheat
+  var SP = { tight:{c:-110,d:34}, normal:{c:-190,d:50}, wide:{c:-320,d:78} };
+  document.getElementById('spacing').addEventListener('click', function(e){
+    var b=e.target.closest('button'); if(!b) return; var s=SP[b.dataset.sp]; if(!s) return;
+    [].forEach.call(this.children, function(x){ x.classList.remove('on'); }); b.classList.add('on');
+    Graph.d3Force('charge').strength(s.c); Graph.d3Force('link').distance(s.d);
+    wantFit=true; Graph.d3ReheatSimulation();
+  });
+
+  // label LOD: HTML overlay for hub nodes only, projected each frame, toggle
+  var DEG = {}; links.forEach(function(l){ var a=endId(l.source),b=endId(l.target); DEG[a]=(DEG[a]||0)+1; DEG[b]=(DEG[b]||0)+1; });
+  var hubNodes = nodes.filter(function(n){ return (DEG[n.id]||0) >= 5; });
+  var labelBox = document.createElement('div');
+  labelBox.id='labels';
+  labelBox.style.cssText='position:fixed;inset:0;z-index:4;pointer-events:none;display:none';
+  document.body.appendChild(labelBox);
+  var labelEls = {};
+  hubNodes.forEach(function(n){
+    var d=document.createElement('div');
+    d.textContent=n.label||n.id;
+    d.style.cssText='position:absolute;transform:translate(-50%,-150%);font-family:Pretendard,sans-serif;'+
+      'font-size:11px;font-weight:600;color:#46464B;background:rgba(252,251,248,0.72);padding:1px 6px;'+
+      'border-radius:4px;white-space:nowrap;pointer-events:none;will-change:left,top';
+    labelBox.appendChild(d); labelEls[n.id]=d;
+  });
+  var labelsOn=false;
+  document.getElementById('lblBtn').addEventListener('click', function(){
+    labelsOn=!labelsOn; this.classList.toggle('on', labelsOn);
+  });
+  function updateLabels(){
+    if(!labelsOn){ if(labelBox.style.display!=='none') labelBox.style.display='none'; return; }
+    labelBox.style.display='block';
+    var W=window.innerWidth, H=window.innerHeight;
+    for(var i=0;i<hubNodes.length;i++){
+      var n=hubNodes[i], el=labelEls[n.id];
+      if(n.x==null){ el.style.display='none'; continue; }
+      var c=Graph.graph2ScreenCoords(n.x,n.y,n.z||0);
+      if(!c || c.x<0||c.x>W||c.y<0||c.y>H){ el.style.display='none'; continue; }
+      el.style.display='block'; el.style.left=c.x+'px'; el.style.top=c.y+'px';
+    }
+  }
+
+  // ---- P0: effect registry + live-compare panel ----------------------------
+  // Each effect family registers one row of variant buttons here.  P1–P5 add
+  // their families by calling registerFX(...); the renderer + state live in one
+  // place so variants stay comparable and nothing hardcodes node ids.
+  window.__FX = {};                       // name -> active variant id (introspectable)
+  var fxBox = document.getElementById('fx');
+  function registerFX(name, label, options, initialId){
+    var row = document.createElement('div'); row.className='fxrow';
+    var nm  = document.createElement('div'); nm.className='fxname'; nm.innerHTML=label; row.appendChild(nm);
+    var btns= document.createElement('div'); btns.className='cbtns';
+    var byId = {};
+    options.forEach(function(opt){
+      var b=document.createElement('button'); b.textContent=opt.label; b.dataset.id=opt.id;
+      byId[opt.id]=b;
+      b.addEventListener('click', function(){ setFX(name, opt.id); });
+      btns.appendChild(b);
+    });
+    row.appendChild(btns); fxBox.appendChild(row);
+    var fam = { name:name, options:options, byId:byId, apply:{} };
+    options.forEach(function(o){ fam.apply[o.id]=o.apply; });
+    registerFX._fams[name]=fam;
+    setFX(name, initialId || options[0].id);
+  }
+  registerFX._fams = {};
+  function setFX(name, optId){
+    var fam=registerFX._fams[name]; if(!fam) return;
+    Object.keys(fam.byId).forEach(function(id){ fam.byId[id].classList.toggle('on', id===optId); });
+    window.__FX[name]=optId;
+    var fn=fam.apply[optId]; if(typeof fn==='function') fn();
+  }
+
+  // flow family (migrated from the 'f' key): off / standard. P3 adds boosted variants.
+  registerFX('flow', '흐름 파티클', [
+    { id:'off',    label:'끔',   apply:function(){ FLOWMODE='off';    applyFlow(); } },
+    { id:'std',    label:'기본', apply:function(){ FLOWMODE='std';    applyFlow(); } },
+    { id:'boost',  label:'강화', apply:function(){ FLOWMODE='boost';  applyFlow(); } },
+    { id:'boost2', label:'강렬', apply:function(){ FLOWMODE='boost2'; applyFlow(); } }
+  ], 'std');
+
+  window.addEventListener('resize', function(){
+    Graph.width(window.innerWidth).height(window.innerHeight);
+  });
+
+  // ---- FPS meter (independent rAF sampler) ---------------------------------
+  var fpsEl = document.getElementById('fps');
+  var frames = 0, lastT = performance.now();
+
+  // ---- composed per-node animator (DIRECTION-MODEL §B) ----------------------
+  // final scale  = 1 × state-pulse × idle-breathe
+  // final glow   = base-glow + state-pulse + idle-twinkle
+  // runs only when something is actually animating (state view or idle on or
+  // hover active) — otherwise the static glow from applyNodeGlow stands, cost 0.
+  var phase = {}; nodes.forEach(function(n){ phase[n.id] = Math.random()*6.283; });
+  var IDLE = 'off';                       // off | breathe | twinkle | both (P1)
+  // ---- click feedback family (P4): std / pulse / chain ----------------------
+  // pulse = clicked node pops; chain = pulse propagates outward along edges
+  // (signal firing). Pure emissive/scale modulation, composes with animateNodes.
+  var clickFx = 'std';
+  var pulseStart = {};                    // nodeId -> { t0, dur, amp }
+  var ADJ = {}; nodes.forEach(function(n){ ADJ[n.id]=[]; });
+  links.forEach(function(l){ var a=endId(l.source),b=endId(l.target);
+    if(ADJ[a]) ADJ[a].push(b); if(ADJ[b]) ADJ[b].push(a); });
+  function hasPulses(){ for(var k in pulseStart){ return true; } return false; }
+  function firePulse(id, t0, delay, amp){ pulseStart[id] = { t0:t0+delay, dur:540, amp:amp }; }
+  function triggerClickFx(node){
+    if (clickFx==='std' || !node) return;
+    var now=performance.now();
+    if (clickFx==='pulse'){ firePulse(node.id, now, 0, 0.95); return; }
+    var seen={}, q=[[node.id,0]]; seen[node.id]=1;          // chain: BFS depth<=3 staggered
+    while(q.length){ var cur=q.shift(), id=cur[0], dep=cur[1];
+      firePulse(id, now, dep*120, Math.max(0.22, 0.95-dep*0.24));
+      if(dep<3) (ADJ[id]||[]).forEach(function(nb){ if(!seen[nb]){ seen[nb]=1; q.push([nb,dep+1]); } });
+    }
+  }
+  function baseEm(n){ return (hoverId && !neighbor[n.id]) ? 0.02 : glowOf(n); }
+  function animateNodes(now){
+    if (mode!=='state' && IDLE==='off' && !hoverId && !intro.active && !hasPulses()) return;
+    var t = now/1000, ns = Graph.graphData().nodes;
+    for (var i=0;i<ns.length;i++){
+      var n=ns[i], o=n.__threeObj; if(!o||!o.material) continue;
+      var ph=phase[n.id]||0, sc=1, em=baseEm(n);
+      if (mode==='state'){
+        var s=kgState[n.id]||'todo';
+        if (s==='current'){ sc*=1+0.12*Math.sin(t*2.2+ph); em=0.48+0.22*Math.sin(t*2.2+ph); }
+        else if (s==='learning'){ sc*=1+0.07*Math.sin(t*1.8+ph); }
+        else if (s==='weak'){ sc*=1+0.05*Math.sin(t*1.2+ph); em=0.34+0.12*Math.sin(t*1.2+ph); }
+      }
+      if (IDLE!=='off' && !(hoverId && !neighbor[n.id]) && !intro.active){
+        if (IDLE==='breathe'||IDLE==='both') sc *= 1 + 0.035*Math.sin(t*0.9+ph*1.7);
+        if (IDLE==='twinkle'||IDLE==='both') em += 0.10*(0.5+0.5*Math.sin(t*2.6+ph*2.3));
+      }
+      var pu=pulseStart[n.id];
+      if (pu){
+        var pt=now-pu.t0;
+        if (pt>=0 && pt<pu.dur){ var e2=Math.sin((pt/pu.dur)*Math.PI); sc*=1+pu.amp*0.6*e2; em+=pu.amp*0.7*e2; }
+        else if (pt>=pu.dur){ delete pulseStart[n.id]; }
+      }
+      if (intro.active){
+        var p = Math.max(0, Math.min(1, (now-intro.t0-(n.__revDelay||0))/(n.__revDur||500)));
+        var e = 1-Math.pow(1-p,3);                       // easeOutCubic
+        sc *= e;
+        o.material.opacity = 0.95*Math.min(1, p*1.3);
+        if (p>0) em *= (0.3+0.7*e);                       // ignite-in glow
+      }
+      o.scale.setScalar(sc);
+      o.material.emissiveIntensity = em;
+    }
+    if (intro.active){
+      var tt = now-intro.t0;
+      var lp = Math.max(0, Math.min(1, (tt-(intro.dur-900))/700));
+      Graph.linkOpacity(0.5*lp);
+      if (tt >= intro.dur) revealAll();
+    }
+  }
+  function resetNodeAnim(){
+    var ns=Graph.graphData().nodes;
+    for (var i=0;i<ns.length;i++){ var o=ns[i].__threeObj; if(o) o.scale.setScalar(1); }
+    applyNodeGlow();
+  }
+  // idle ambient family (P1). breathe = gentle global scale; twinkle = star-like
+  // emissive shimmer; 은은 = both. all phase-offset per node, all modes.
+  registerFX('idle', '앰비언트 모션', [
+    { id:'off',     label:'끔',     apply:function(){ IDLE='off'; resetNodeAnim(); } },
+    { id:'breathe', label:'호흡',   apply:function(){ IDLE='breathe'; } },
+    { id:'twinkle', label:'반짝임', apply:function(){ IDLE='twinkle'; } },
+    { id:'both',    label:'은은',   apply:function(){ IDLE='both'; } }
+  ], 'off');
+  // intro / reveal family (P2). assemble = layer-staggered pop-in;
+  // ignite = BFS wave from the focus set (이번 주 학습 영역) rippling outward.
+  // re-clicking a variant replays it; reads only graph + focus-set (swap-safe).
+  var intro = { mode:'off', active:false, t0:0, dur:0 };
+  var LAYER_ORDER = { DATA:0, LOGIC:1, ACTION:2, PROBLEM:3 };
+  var bfsDepth = {};
+  function computeBfsDepth(){
+    bfsDepth = {};
+    var adj={}; nodes.forEach(function(n){ adj[n.id]=[]; });
+    links.forEach(function(l){ var a=endId(l.source),b=endId(l.target);
+      if(adj[a]) adj[a].push(b); if(adj[b]) adj[b].push(a); });
+    var q=[], seen={};
+    nodes.forEach(function(n){ if(isFocusNode(n.id)){ bfsDepth[n.id]=0; seen[n.id]=1; q.push(n.id); } });
+    if(!q.length){                                       // no focus -> seed highest-degree hub
+      var top=nodes.slice().sort(function(a,b){ return (DEG[b.id]||0)-(DEG[a.id]||0); })[0];
+      if(top){ bfsDepth[top.id]=0; seen[top.id]=1; q.push(top.id); }
+    }
+    while(q.length){ var id=q.shift();
+      (adj[id]||[]).forEach(function(nb){ if(!seen[nb]){ seen[nb]=1; bfsDepth[nb]=bfsDepth[id]+1; q.push(nb); } }); }
+    var mx=0; Object.keys(bfsDepth).forEach(function(k){ mx=Math.max(mx,bfsDepth[k]); });
+    nodes.forEach(function(n){ if(bfsDepth[n.id]==null) bfsDepth[n.id]=mx+1; });
+  }
+  function revealAll(){
+    intro.active=false;
+    var ns=Graph.graphData().nodes;
+    for(var i=0;i<ns.length;i++){ var o=ns[i].__threeObj; if(o){ o.scale.setScalar(1); if(o.material) o.material.opacity=0.95; } }
+    Graph.linkOpacity(0.5);
+    applyNodeGlow();
+  }
+  function startIntro(m){
+    if(m==='off'){ revealAll(); intro.mode='off'; return; }
+    intro.mode=m;
+    if(m==='ignite') computeBfsDepth();
+    var maxEnd=0;
+    nodes.forEach(function(n){
+      var d = (m==='ignite') ? (bfsDepth[n.id]||0)*180 + Math.random()*80
+                             : (LAYER_ORDER[n.layer]||0)*260 + Math.random()*160;
+      n.__revDelay=d; n.__revDur=(m==='ignite')?460:540;
+      maxEnd=Math.max(maxEnd, d+n.__revDur);
+    });
+    intro.dur = maxEnd + 500;
+    intro.t0 = performance.now();
+    intro.active = true;
+    Graph.linkOpacity(0);
+  }
+  registerFX('intro', '인트로 / 리빌', [
+    { id:'off',      label:'끔',   apply:function(){ startIntro('off'); } },
+    { id:'assemble', label:'조립', apply:function(){ startIntro('assemble'); } },
+    { id:'ignite',   label:'점화', apply:function(){ startIntro('ignite'); } }
+  ], 'off');
+  // click feedback family (P4)
+  registerFX('click', '클릭 피드백', [
+    { id:'std',   label:'기본', apply:function(){ clickFx='std'; } },
+    { id:'pulse', label:'펄스', apply:function(){ clickFx='pulse'; } },
+    { id:'chain', label:'체인', apply:function(){ clickFx='chain'; } }
+  ], 'std');
+
+  // ---- camera direction family (P5): off / orbit / tour ---------------------
+  // orbit = gentle continuous auto-rotate; tour = cinematic fly between focus
+  // nodes (이번 주 영역 순회). tour targets come from the focus-set (swap-safe).
+  var CAM='off', tourTimer=null, tourIdx=0, tourNodes=[];
+  function camStop(){ Graph.controls().autoRotate=false; if(tourTimer){ clearInterval(tourTimer); tourTimer=null; } }
+  function flyToTour(){
+    if(!tourNodes.length) return;
+    var n=tourNodes[tourIdx % tourNodes.length]; tourIdx++;
+    if(n.x==null) return;
+    var d=90, r=1 + d/Math.max(1, Math.hypot(n.x||0,n.y||0,n.z||0));
+    Graph.cameraPosition({x:(n.x||0)*r, y:(n.y||0)*r, z:(n.z||0)*r}, n, 1600);
+  }
+  registerFX('camera', '카메라 연출', [
+    { id:'off',   label:'끔',   apply:function(){ camStop(); CAM='off'; } },
+    { id:'orbit', label:'회전', apply:function(){ camStop(); CAM='orbit';
+        Graph.controls().autoRotate=true; Graph.controls().autoRotateSpeed=0.6; } },
+    { id:'tour',  label:'투어', apply:function(){ camStop(); CAM='tour';
+        tourNodes = Graph.graphData().nodes.filter(function(n){ return isFocusNode(n.id); });
+        if(!tourNodes.length) tourNodes = Graph.graphData().nodes.slice()
+          .sort(function(a,b){ return (DEG[b.id]||0)-(DEG[a.id]||0); }).slice(0,6);
+        tourIdx=0; flyToTour(); tourTimer=setInterval(flyToTour, 3200); } }
+  ], 'off');
+
+  // one-click presets: curated combo vs. all-off (operates the same registry)
+  document.getElementById('fxpreset').addEventListener('click', function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    [].forEach.call(this.children, function(x){ x.classList.remove('on'); }); b.classList.add('on');
+    var P = b.dataset.preset==='demo'
+      ? { idle:'both', intro:'off', flow:'boost', click:'pulse', camera:'orbit' }
+      : { idle:'off',  intro:'off', flow:'std',   click:'std',   camera:'off' };
+    Object.keys(P).forEach(function(k){ setFX(k, P[k]); });
+  });
+
+  // embed mode (landing iframe): ?embed=1 → highlight this week's focus area by
+  // default (강화 flow + 은은 idle) and hide dev chrome. standalone lab stays neutral.
+  (function(){
+    var qs = new URLSearchParams(location.search);
+    var teacher = qs.has('teacher') || qs.has('tech');
+    PANELMODE = teacher ? 'tech' : 'learn';      // learning view is the default
+    panel.classList.toggle('learn', !teacher);
+    if (qs.has('embed') || qs.has('focus')){
+      document.body.classList.add('embed');
+      setFX('flow','boost'); setFX('idle','both');
+    }
+  })();
+
+  // mobile (embed only): 1 finger scrolls the page, 2 fingers manipulate the
+  // graph, tap selects. controls.enabled is toggled by touch-count in the
+  // CAPTURE phase (before the controls' own handler), and touch-action:pan-y
+  // lets one-finger vertical gestures fall through to page scroll.
+  (function(){
+    var isTouch = (window.matchMedia && matchMedia('(pointer:coarse)').matches) || ('ontouchstart' in window);
+    if (!isTouch || !document.body.classList.contains('embed')) return;
+    var ctl = Graph.controls(), dom = Graph.renderer().domElement;
+    dom.style.touchAction = 'pan-y';
+    ctl.enabled = false;                                   // 1 finger: no capture -> page scrolls
+    dom.addEventListener('touchstart', function(e){ ctl.enabled = e.touches.length >= 2; }, true);
+    dom.addEventListener('touchend',   function(e){ if(e.touches.length < 2) ctl.enabled = false; }, true);
+    var hint = document.getElementById('hint');
+    if (hint) hint.innerHTML = '<span><b>한 손가락</b> 스크롤</span><span><b>두 손가락</b> 확대·이동</span><span><b>탭</b> 상세</span>';
+  })();
+
+  (function loop(){
+    frames++;
+    var now = performance.now();
+    animateNodes(now);
+    updateLabels();
+    if (now - lastT >= 250){
+      var fps = Math.round(frames * 1000 / (now - lastT));
+      frames = 0; lastT = now;
+      fpsEl.textContent = fps;
+      fpsEl.className = 'fps' + (fps < 30 ? ' bad' : (fps < 50 ? ' warn' : ''));
+    }
+    requestAnimationFrame(loop);
+  })();
+
+  console.log('[KG-3D] T8 layout modes ok · free / hierarchy(dag) / topic-cluster');
+})();
+</script>
+</body>
+</html>
