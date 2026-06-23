@@ -874,7 +874,7 @@
     panel.classList.toggle('learn', !teacher);
     if (qs.has('embed') || qs.has('focus')){
       document.body.classList.add('embed');
-      setFX('flow','boost'); setFX('idle','both');
+      setFX('flow','off'); setFX('idle','both');
       if (!teacher){                                    // landing: hide dev chrome (⚙ gear). add ?teacher to reveal.
         var _tg=document.getElementById('ctrlToggle'); if(_tg) _tg.style.display='none';
       }
