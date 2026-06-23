@@ -31,6 +31,11 @@
   .perf .fps.bad{color:#E0443E}
   .perf .sub{font-size:11px;font-weight:500;color:#9a978d;margin-top:3px}
   body.embed .perf, body.embed .meta{display:none}
+  /* mobile landing: hide the legend (color key) — it overlapped the hint on the small box. viewport-based so it works regardless of touch detection. the hint stays (rewritten to touch gestures in JS). */
+  @media (max-width:600px){
+    body.embed .legend{display:none}
+    body.embed .hint{white-space:nowrap;gap:8px;font-size:10px;letter-spacing:0;padding:5px 10px;bottom:12px;max-width:96vw}
+  }
   /* onboarding hint (centred bottom) */
   .hint{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:5;
     font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:.04em;
@@ -470,7 +475,7 @@
       default:                            return '연결됨';
     }
   }
-  function renderLearn(n){
+  function learnHTML(n){
     var L=LEARN[stateOf(n)]||LEARN.todo;
     var ats=(graph.atoms&&graph.atoms[n.id])||[];
     var found=[], leads=[], seenF={}, seenL={};
@@ -496,10 +501,19 @@
     }
     if(found.length) h+='<div class="lsec"><div class="lsec-t">밑바탕이 되는 것 · '+found.length+'</div>'+found.map(lnChip).join('')+'</div>';
     if(leads.length) h+='<div class="lsec"><div class="lsec-t">이어지는 것 · 풀 수 있는 것 · '+leads.length+'</div>'+leads.map(lnChip).join('')+'</div>';
-    document.getElementById('plearn').innerHTML=h;
+    return h;
+  }
+  function renderLearn(n){ document.getElementById('plearn').innerHTML = learnHTML(n); }
+  function isEmbed(){ return document.body.classList.contains('embed'); }
+  function embedBelow(){ return isEmbed() && isSmallView(); }   // mobile landing → detail below the box
+  function postDetail(html){
+    try{ if(window.parent && window.parent!==window) window.parent.postMessage({source:'kg3d', kind: html?'open':'close', html: html||''}, '*'); }catch(e){}
   }
   function openPanel(n){
-    if(PANELMODE==='learn'){ renderLearn(n); panel.classList.add('show'); return; }
+    if(PANELMODE==='learn'){
+      if(embedBelow()){ postDetail(learnHTML(n)); return; }   // phone: parent renders it under the box
+      renderLearn(n); panel.classList.add('show'); return;
+    }
     var st=STATE[stateOf(n)]||STATE.todo, ly=layerOf(n);
     document.getElementById('pchip').innerHTML='<i style="background:'+ly.color+'"></i>'+ly.name;
     document.getElementById('plabel').textContent=n.label||n.id;
@@ -509,7 +523,7 @@
     document.getElementById('pdeg').textContent=degOf(n.id)+' 개';
     panel.classList.add('show');
   }
-  function closePanel(){ panel.classList.remove('show'); }
+  function closePanel(){ panel.classList.remove('show'); if(embedBelow()) postDetail(null); }
   document.getElementById('pclose').addEventListener('click', closePanel);
 
   // control panel hidden by default (parents/students see a clean view);
@@ -538,11 +552,7 @@
     document.body.style.cursor = node ? 'pointer' : 'default';
   });
   Graph.onNodeClick(function(node){
-    // keep the user's current zoom + viewing angle: just pan so the clicked
-    // node becomes the new orbit centre (preserve the camera→target offset).
-    var cur = Graph.cameraPosition(), tgt = Graph.controls().target;
-    var ox=cur.x-tgt.x, oy=cur.y-tgt.y, oz=cur.z-tgt.z;
-    Graph.cameraPosition({ x:(node.x||0)+ox, y:(node.y||0)+oy, z:(node.z||0)+oz }, node, 700);
+    // select only — keep the camera exactly where the user left it (no recentre/pan).
     triggerClickFx(node);
     openPanel(node);
   });
@@ -861,23 +871,29 @@
     if (qs.has('embed') || qs.has('focus')){
       document.body.classList.add('embed');
       setFX('flow','boost'); setFX('idle','both');
+      if (!teacher){                                    // landing: hide dev chrome (⚙ gear). add ?teacher to reveal.
+        var _tg=document.getElementById('ctrlToggle'); if(_tg) _tg.style.display='none';
+      }
+      if (isSmallView()){                               // mobile: swap mouse hint → touch gestures
+        var _hn=document.getElementById('hint');
+        if(_hn) _hn.innerHTML='<span><b>한 손</b> 터치 후 드래그</span><span><b>두 손</b> 확대/축소</span><span><b>구 모양</b> 탭 상세보기</span>';
+      }
     }
   })();
 
-  // mobile (embed only): 1 finger scrolls the page, 2 fingers manipulate the
-  // graph, tap selects. controls.enabled is toggled by touch-count in the
-  // CAPTURE phase (before the controls' own handler), and touch-action:pan-y
-  // lets one-finger vertical gestures fall through to page scroll.
+  // mobile (embed only): one finger rotates, two fingers pinch-zoom/pan, tap
+  // selects. OrbitControls needs touch-action:none to OWN the gestures — the old
+  // pan-y + enabled-toggle silently broke pinch (pan-y strips pinch; toggling
+  // enabled drops the first pointer so the 2-finger pair never forms). The graph
+  // is a short band of a long page, so page scroll still works by starting the
+  // swipe above/below the box. HUD chrome (hint/legend) hidden for a clean
+  // landing; node detail is rendered by the parent BELOW the box (postMessage).
   (function(){
     var isTouch = (window.matchMedia && matchMedia('(pointer:coarse)').matches) || ('ontouchstart' in window);
     if (!isTouch || !document.body.classList.contains('embed')) return;
-    var ctl = Graph.controls(), dom = Graph.renderer().domElement;
-    dom.style.touchAction = 'pan-y';
-    ctl.enabled = false;                                   // 1 finger: no capture -> page scrolls
-    dom.addEventListener('touchstart', function(e){ ctl.enabled = e.touches.length >= 2; }, true);
-    dom.addEventListener('touchend',   function(e){ if(e.touches.length < 2) ctl.enabled = false; }, true);
-    var hint = document.getElementById('hint');
-    if (hint) hint.innerHTML = '<span><b>한 손가락</b> 스크롤</span><span><b>두 손가락</b> 확대·이동</span><span><b>탭</b> 상세</span>';
+    var dom = Graph.renderer().domElement;
+    dom.style.touchAction = 'none';        // hand 1/2-finger gestures to OrbitControls
+    Graph.controls().enabled = true;       // default touches: 1=rotate, 2=dolly(pinch)+pan
   })();
 
   (function loop(){
