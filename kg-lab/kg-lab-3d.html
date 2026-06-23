@@ -259,12 +259,12 @@
         return hexA(c, FLOWMODE==='boost2'?0.9:0.6); }
       return 'rgba(120,128,156,0.05)';
     }
-    return l.kind==='topic-bridge' ? 'rgba(201,154,58,0.7)' : 'rgba(120,128,156,0.28)';
+    return l.kind==='topic-bridge' ? 'rgba(201,154,58,0.7)' : 'rgba(72,84,112,0.62)';
   }
   function linkWidthH(l){
     if (hoverId && hLinks.has(l)) return 1.4;
     if ((FLOWMODE==='boost'||FLOWMODE==='boost2') && isFocusLink(l)) return FLOWMODE==='boost2'?1.3:0.85;
-    return l.kind==='topic-bridge' ? 0.7 : 0.35;
+    return l.kind==='topic-bridge' ? 1.0 : 0.6;
   }
 
   // ---- scene from pilot ontology (swappable) -------------------------------
@@ -278,7 +278,7 @@
     return { source:e.s, target:e.t, kind:e.kind };
   }).filter(Boolean);
 
-  function linkColor(l){ return l.kind==='topic-bridge' ? 'rgba(201,154,58,0.7)' : 'rgba(120,128,156,0.28)'; }
+  function linkColor(l){ return l.kind==='topic-bridge' ? 'rgba(201,154,58,0.7)' : 'rgba(72,84,112,0.62)'; }
 
   var Graph = ForceGraph3D({ rendererConfig: { antialias: true, preserveDrawingBuffer: true } })(el)
     .backgroundColor(BG)
@@ -291,8 +291,8 @@
     .nodeOpacity(0.95)
     .nodeResolution(14)
     .linkColor(linkColor)
-    .linkWidth(function(l){ return l.kind==='topic-bridge' ? 0.7 : 0.35; })
-    .linkOpacity(0.5)
+    .linkWidth(function(l){ return l.kind==='topic-bridge' ? 1.0 : 0.6; })
+    .linkOpacity(0.9)
     .cooldownTicks(220)
     .graphData({ nodes: nodes, links: links });
 
@@ -801,7 +801,7 @@
     intro.active=false;
     var ns=Graph.graphData().nodes;
     for(var i=0;i<ns.length;i++){ var o=ns[i].__threeObj; if(o){ o.scale.setScalar(1); if(o.material) o.material.opacity=0.95; } }
-    Graph.linkOpacity(0.5);
+    Graph.linkOpacity(0.9);
     applyNodeGlow();
   }
   function startIntro(m){
@@ -874,13 +874,13 @@
     panel.classList.toggle('learn', !teacher);
     if (qs.has('embed') || qs.has('focus')){
       document.body.classList.add('embed');
-      setFX('flow','off'); setFX('idle','both');
+      setFX('flow','off'); setFX('idle','off');
       if (!teacher){                                    // landing: hide dev chrome (⚙ gear). add ?teacher to reveal.
         var _tg=document.getElementById('ctrlToggle'); if(_tg) _tg.style.display='none';
       }
       if (isSmallView()){                               // mobile: swap mouse hint → touch gestures
         var _hn=document.getElementById('hint');
-        if(_hn) _hn.innerHTML='<span><b>한 손</b> 터치 후 드래그</span><span><b>두 손</b> 확대/축소</span><span><b>구 모양</b> 탭 상세보기</span>';
+        if(_hn) _hn.innerHTML='<span><b>한 손</b> 터치 후 드래그</span><span><b>두 손</b> 확대/축소/이동</span><span><b>구</b> 탭</span>';
       }
     }
   })();
