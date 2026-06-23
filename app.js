@@ -313,7 +313,7 @@ function setupPin(R){
     return {lines:gE.children.length, nodes:gN.children.length};
   }
 
-  Promise.resolve(__KGGRAPH).then(function(graph){
+  if(document.querySelector('#sec5 #svg')) Promise.resolve(__KGGRAPH).then(function(graph){
     var sim=simulate(graph);
     var out=render(graph,sim);
     window.__render={nodes:graph.nodes.length, edges:graph.edges.length, drawnNodes:out.nodes, drawnLines:out.lines};

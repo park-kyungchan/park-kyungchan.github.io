@@ -235,7 +235,8 @@
   </section>
 
   <div class="wrap">
-    <div class="field" id="field"><svg id="svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" aria-label="개념 연결 그래프"></svg><div class="hoverlbl" id="hoverlbl"></div><div class="kg-guide" aria-hidden="true" data-copy="sec5_guide_1">점을 터치하거나 길게 눌러 보세요</div><aside class="apanel" id="apanel"><button class="close" id="aclose" aria-label="닫기">×</button><div class="meta" id="ameta"></div><h3 id="atitle" data-copy="sec5_title_2"></h3><div id="abody"></div></aside></div>
+    <div class="field" id="field"><iframe src="kg-lab/kg-lab-3d.html?embed=1" title="지식 그래프 (3D)" style="position:absolute;inset:0;width:100%;height:100%;border:0;display:block"></iframe></div>
+    <div id="kgDetail" class="kg-detail" aria-live="polite"></div>
     <p id="msg" data-copy="sec5_body_2">loading…</p>
   </div>
 
@@ -398,5 +399,21 @@
 <script>
 /* __kgfill: on mobile, make KG graph fill its box (slice instead of letterbox) */
 (function(){function f(){var svg=document.querySelector("#sec5 #svg");if(!svg)return;svg.setAttribute("preserveAspectRatio", window.innerWidth<=640 ? "xMidYMid slice" : "xMidYMid meet");}f();window.addEventListener("resize",f);})();
+</script>
+<script>
+/* KG 3D (mobile embed): show the tapped node's detail BELOW the graph box,
+   driven by postMessage from the iframe (the in-box panel is unreadable on phones). */
+(function(){
+  var box=document.getElementById('kgDetail'); if(!box) return;
+  function closeBox(){ box.classList.remove('open'); box.innerHTML=''; }
+  window.addEventListener('message', function(e){
+    var d=e.data; if(!d || d.source!=='kg3d') return;
+    if(d.kind==='open'){
+      box.innerHTML='<button type="button" class="kgd-close" aria-label="닫기">×</button>'+(d.html||'');
+      var c=box.querySelector('.kgd-close'); if(c) c.addEventListener('click', closeBox);
+      box.classList.add('open');
+    } else { closeBox(); }
+  });
+})();
 </script>
 </body></html>
