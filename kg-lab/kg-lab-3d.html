@@ -8,6 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/contrib/auto-render.min.js"></script>
 <style>
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;background:#F4F3F0;overflow:hidden}
@@ -174,7 +177,7 @@
 <!-- 3d-force-graph (bundles Three.js; global ForceGraph3D) -->
 <script src="https://cdn.jsdelivr.net/npm/3d-force-graph"></script>
 <!-- pilot ontology (window.__KGGRAPH / __KGSTATE) — swappable per student -->
-<script src="../kg-data.js"></script>
+<script src="../kg-data.js?v=1"></script>
 <script>
 /* ============================================================================
    KG LAB — 3D backend (3d-force-graph / Three.js).  PHASE T8: layout modes.
@@ -509,10 +512,11 @@
   function postDetail(html){
     try{ if(window.parent && window.parent!==window) window.parent.postMessage({source:'kg3d', kind: html?'open':'close', html: html||''}, '*'); }catch(e){}
   }
+  function renderKaTeX(el){ if(window.renderMathInElement){ try{ renderMathInElement(el,{delimiters:[{left:'$',right:'$',display:false}],throwOnError:false}); }catch(_){} } }
   function openPanel(n){
     if(PANELMODE==='learn'){
       if(embedBelow()){ postDetail(learnHTML(n)); return; }   // phone: parent renders it under the box
-      renderLearn(n); panel.classList.add('show'); return;
+      renderLearn(n); panel.classList.add('show'); renderKaTeX(panel); return;
     }
     var st=STATE[stateOf(n)]||STATE.todo, ly=layerOf(n);
     document.getElementById('pchip').innerHTML='<i style="background:'+ly.color+'"></i>'+ly.name;
@@ -521,7 +525,7 @@
     document.getElementById('pstate').innerHTML='<span style="color:'+st.color+'">●</span> '+st.name;
     document.getElementById('prole').textContent=n.role||'—';
     document.getElementById('pdeg').textContent=degOf(n.id)+' 개';
-    panel.classList.add('show');
+    panel.classList.add('show'); renderKaTeX(panel);
   }
   function closePanel(){ panel.classList.remove('show'); if(embedBelow()) postDetail(null); }
   document.getElementById('pclose').addEventListener('click', closePanel);
@@ -870,7 +874,7 @@
     panel.classList.toggle('learn', !teacher);
     if (qs.has('embed') || qs.has('focus')){
       document.body.classList.add('embed');
-      setFX('flow','boost'); setFX('idle','both');
+      setFX('flow','off'); setFX('idle','both');
       if (!teacher){                                    // landing: hide dev chrome (⚙ gear). add ?teacher to reveal.
         var _tg=document.getElementById('ctrlToggle'); if(_tg) _tg.style.display='none';
       }
