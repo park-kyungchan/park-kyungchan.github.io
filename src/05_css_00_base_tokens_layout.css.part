@@ -8,10 +8,13 @@
   --ink: #14233b;
   --ink-strong: #07162f;
   --muted: #5e718f;
-  --muted-2: #8090aa;
+  --muted-2: #5d6e8b;
   --line: rgba(53,78,117,.16);
   --line-strong: rgba(38,110,201,.34);
   --accent: #0a78ff;
+  /* P1-4: AA-safe sibling of --accent for TEXT. --accent itself stays
+     bright because it is also a fill, stroke and accent-color. */
+  --accent-text: #0067e6;
   --accent-2: #635bff;
   --accent-soft: rgba(10,120,255,.12);
   --cyan: #00a8d8;
@@ -121,7 +124,7 @@ button:disabled { cursor: not-allowed; opacity: .48; filter: saturate(.6); }
 .brand-mark svg { width: 31px; height: 31px; }
 .title-block { min-width: 0; }
 .title-block h1 { margin: 0; color: var(--ink-strong); font-size: clamp(1.35rem,2.2vw,2rem); line-height: 1.05; letter-spacing: -.05em; }
-.eyebrow { margin: 0 0 4px; color: var(--accent); font-size: .72rem; font-weight: 850; letter-spacing: .075em; text-transform: uppercase; }
+.eyebrow { margin: 0 0 4px; color: var(--accent-text); font-size: .72rem; font-weight: 850; letter-spacing: .075em; text-transform: uppercase; }
 .header-actions { display: flex; align-items: center; justify-content: flex-end; gap: 7px; flex-wrap: wrap; }
 
 .glass-button, .tool-button, .tab-button, .action-button, .choice-button, .chip-button, .quiet-button {
@@ -168,7 +171,7 @@ button:disabled { cursor: not-allowed; opacity: .48; filter: saturate(.6); }
 }
 .tab-symbol {
   width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center;
-  border-radius: 11px; color: var(--accent); background: rgba(10,120,255,.08);
+  border-radius: 11px; color: var(--accent-text); background: rgba(10,120,255,.08);
   border: 1px solid rgba(10,120,255,.10); font-size: 1rem; font-weight: 900;
   transition: transform .28s var(--spring), background .22s var(--spring), color .22s var(--spring);
 }
@@ -288,7 +291,7 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; accent-
 .status-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 5px rgba(19,168,117,.13),0 0 15px rgba(19,168,117,.34); animation: status-breathe 2.4s ease-in-out infinite; }
 @keyframes status-breathe { 50% { transform: scale(.78); opacity: .72; } }
 .fold-stage-badge { display: grid; grid-template-columns: auto auto; column-gap: 7px; align-items: center; }
-.fold-stage-step { color: var(--accent); font-size: .80rem; font-weight: 900; }
+.fold-stage-step { color: var(--accent-text); font-size: .80rem; font-weight: 900; }
 .fold-stage-title { color: var(--ink-strong); font-size: .78rem; }
 .viewer-toolbar {
   position: absolute; z-index: 9; left: 14px; top: 60px;
@@ -336,7 +339,7 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; accent-
 .variant-strip { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; padding: 3px 1px 8px; }
 .variant-strip .chip-button { min-width: 0; min-height: 48px; padding-inline: 8px; white-space: nowrap; }
 .progress-row { display: grid; grid-template-columns: auto 1fr auto; gap: 9px; align-items: center; }
-.progress-value { min-width: 56px; text-align: right; color: var(--accent); font-weight: 900; font-variant-numeric: tabular-nums; }
+.progress-value { min-width: 56px; text-align: right; color: var(--accent-text); font-weight: 900; font-variant-numeric: tabular-nums; }
 .fold-timeline { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 5px; margin: 5px 0 10px; }
 .fold-timeline span { min-height: 31px; display: grid; place-items: center; padding: 4px 3px; border-radius: 10px; color: #7588a4; background: rgba(255,255,255,.58); border: 1px solid var(--line); font-size: .62rem; font-weight: 780; text-align: center; }
 .fold-timeline span.is-active { color: white; background: linear-gradient(145deg,#0a8cff,#5e5bff); border-color: transparent; box-shadow: 0 6px 15px rgba(45,92,225,.22); }
@@ -428,7 +431,7 @@ tr:last-child td { border-bottom: 0; }
 /* why-five collision view */
 .collision-legend { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
 .collision-legend span { display: grid; place-items: center; min-height: 38px; padding: 5px; border-radius: 11px; background: rgba(255,255,255,.62); border: 1px solid var(--line); color: #3a587a; font-size: .80rem; line-height: 1.35; font-weight: 780; text-align: center; }
-.collision-legend span::before { content: attr(data-symbol); display: block; color: var(--accent); font-size: .95rem; }
+.collision-legend span::before { content: attr(data-symbol); display: block; color: var(--accent-text); font-size: .95rem; }
 
 /* dialog */
 .start-dialog { width: min(610px,calc(100% - 24px)); padding: 0; border: 0; background: transparent; color: var(--ink); }

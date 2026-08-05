@@ -77,7 +77,7 @@ input[type="range"] { accent-color: var(--r8-accent); }
   -webkit-backdrop-filter: blur(18px) saturate(145%);
   pointer-events: none;
 }
-.r008-spatial-title p { margin: 0 0 3px; color: var(--r8-accent); font-size: .80rem; font-weight: 850; }
+.r008-spatial-title p { margin: 0 0 3px; color: var(--r8-accent-text); font-size: .80rem; font-weight: 850; }
 .r008-spatial-title h2 { margin: 0; color: var(--r8-ink-strong); font-size: clamp(1.05rem, 1.9vw, 1.42rem); letter-spacing: -.045em; }
 .r008-spatial-title span { display: block; margin-top: 4px; color: var(--r8-ink-secondary); font-size: .72rem; }
 .r008-spatial-legend {

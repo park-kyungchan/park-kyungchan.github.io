@@ -24,7 +24,7 @@
   border:1px solid rgba(255,255,255,.92);box-shadow:var(--r8-shadow-control);
   backdrop-filter:blur(20px) saturate(148%);-webkit-backdrop-filter:blur(20px) saturate(148%);
 }
-.r009-spatial-heading p{margin:0 0 4px;color:var(--r8-accent);font-size:.80rem;font-weight:900;letter-spacing:.035em;}
+.r009-spatial-heading p{margin:0 0 4px;color:var(--r8-accent-text);font-size:.80rem;font-weight:900;letter-spacing:.035em;}
 .r009-spatial-heading h2{margin:0;color:var(--r8-ink-strong);font-size:clamp(1.05rem,1.8vw,1.38rem);line-height:1.18;letter-spacing:-.045em;}
 .r009-spatial-heading span{display:block;margin-top:6px;color:var(--r8-ink-secondary);font-size:.82rem;line-height:1.5;}
 .r009-phase-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;margin-top:10px;}
@@ -34,7 +34,13 @@
 .r009-spatial-legend{position:absolute;left:18px;bottom:52px;display:flex;flex-wrap:wrap;gap:6px;max-width:calc(100% - 380px);}
 .r009-spatial-legend span{min-height:28px;display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;color:#36516d;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.9);box-shadow:0 7px 18px rgba(31,55,92,.09);font-size:.80rem;font-weight:790;line-height:1.35;}
 .r009-spatial-legend b{width:9px;height:9px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px rgba(255,255,255,.65);}
-.r009-spatial-legend .axis{color:var(--r9-axis)}.r009-spatial-legend .surface{color:var(--r8-accent)}.r009-spatial-legend .plane{color:var(--r9-plane)}.r009-spatial-legend .focus{color:var(--r9-focus-rose)}.r009-spatial-legend .path{color:var(--r9-path)}
+/* P1-4: the label reads at AA; the dot keeps the bright hue so it still matches
+   the colour of the same feature in the 3D scene. */
+.r009-spatial-legend .axis b{background:var(--r9-axis)}
+.r009-spatial-legend .surface b{background:var(--r8-accent)}
+.r009-spatial-legend .plane b{background:var(--r9-plane)}
+.r009-spatial-legend .focus b{background:var(--r9-focus-rose)}
+.r009-spatial-legend .path b{background:var(--r9-path)}
 .r009-inset{position:absolute;right:18px;bottom:52px;width:218px;min-height:162px;padding:10px;border-radius:22px;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.92);box-shadow:var(--r8-shadow-float);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
 .r009-inset[hidden]{display:none!important}.r009-inset p{margin:0 0 6px;color:var(--r8-ink-secondary);font-size:.80rem;font-weight:850;line-height:1.35}.r009-inset canvas{display:block;width:100%;height:118px;border-radius:14px;background:linear-gradient(145deg,#fbfdff,#edf5ff)}
 .r009-inset .metric{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.r009-inset .metric span{padding:7px 5px;border-radius:10px;background:#fff;border:1px solid rgba(24,48,82,.09);text-align:center;font-size:.78rem;line-height:1.35;color:var(--r8-ink-secondary)}.r009-inset .metric strong{display:block;margin-top:2px;color:var(--r8-ink-strong);font-size:.88rem}

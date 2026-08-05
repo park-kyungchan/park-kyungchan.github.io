@@ -50,7 +50,7 @@ button, select, input, .formula-box, .metric-card strong, .proof-counter, .progr
 }
 .stage-map-guide .map-kicker {
   display: block;
-  color: var(--accent);
+  color: var(--accent-text);
   font-family: var(--font-ui);
   font-size: .72rem;
   font-weight: 850;
@@ -117,7 +117,7 @@ button, select, input, .formula-box, .metric-card strong, .proof-counter, .progr
   margin: 10px 0; padding: 9px 10px; border-radius: 15px;
   background: rgba(10,120,255,.065); border: 1px solid rgba(10,120,255,.12);
 }
-.fold-step-meter strong { color: var(--accent); }
+.fold-step-meter strong { color: var(--accent-text); }
 .camera-free-note { border-left: 4px solid var(--accent); padding-left: 10px; }
 
 .tool-button.icon-only { min-width: 48px; padding-inline: 11px; font-family: var(--font-ui); font-size: 1.15rem; }
@@ -197,7 +197,7 @@ button, select, input, .formula-box, .metric-card strong, .proof-counter, .progr
 .learning-guide-card b {
   display: block;
   margin-bottom: 2px;
-  color: var(--accent);
+  color: var(--accent-text);
   font-family: var(--font-ui);
   font-size: .69rem;
   letter-spacing: .035em;
