@@ -1,0 +1,30 @@
+{
+  "baseline_pack_role": "IMMUTABLE R008 HOLD baseline",
+  "baseline_standalone_sha256": "6072923d14e6fdce1826627a0e58e1c7a16b625c7b1265c6e5496630c9c76787",
+  "baseline_standalone_bytes": 1160280,
+  "baseline_tab_count": 12,
+  "baseline_center_dock_count": 1,
+  "baseline_transport_count": 1,
+  "baseline_spatial_drag_mean_pixel_diff": 0.0004447955750306334,
+  "baseline_findings": [
+    "A duplicate floating transport existed in addition to left-side controls.",
+    "The chapter model had 12 tabs, separating section/locus and distance/unfold and retaining transfer.",
+    "The R008 revolution/section display used a fixed spatial canvas rather than the shared PolyRenderer camera path."
+  ],
+  "candidate_standalone_sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+  "candidate_standalone_bytes": 1147558,
+  "evidence_files": [
+    "evidence/baseline/R008_07_revolution_floating_transport.png",
+    "evidence/candidate/R009_07_frustum_generation.png",
+    "evidence/candidate/R009_07_composite_generation.png",
+    "evidence/baseline/R008_08_section_fixed_canvas.png",
+    "evidence/candidate/R009_08_integrated_section_locus.png",
+    "evidence/candidate/R009_09_integrated_distance_unfold.png",
+    "evidence/P003_R009_BEFORE_AFTER_CONTACT_SHEET.png",
+    "evidence/P003_R009_MOTION_EVIDENCE.mp4"
+  ],
+  "motion_frames": 24,
+  "motion_fps": 6,
+  "motion_duration_seconds": 4.0,
+  "motion_capture_note": "Full-range deterministic samples from the same progress controls and exact state graph used by autoplay; camera orbit is injected mid-sequence to show interaction continuity."
+}

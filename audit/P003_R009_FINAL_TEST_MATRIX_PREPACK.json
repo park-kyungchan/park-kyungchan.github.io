@@ -1,0 +1,112 @@
+{
+  "matrix_id": "P003-R009-FINAL-PREPACK-1.0",
+  "status": "PASS",
+  "candidate_status": "HOLD_FOR_USER_REVIEW",
+  "user_go": "NONE",
+  "baseline_identity": {
+    "status": "PASS",
+    "pack_sha256": "ee7f7660bf3b87dcbb803f2dbe17816458c9aa5b50aef30630b297e914962115",
+    "standalone_sha256": "6072923d14e6fdce1826627a0e58e1c7a16b625c7b1265c6e5496630c9c76787",
+    "zip_integrity": "PASS",
+    "checksum_mismatch_count": 0,
+    "manifest_mismatch_count": 0,
+    "baseline_mutation": "NONE"
+  },
+  "candidate": {
+    "standalone_sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+    "standalone_bytes": 1147558,
+    "chapter_count": 9,
+    "floating_transport": false
+  },
+  "suites": [
+    {
+      "suite": "exact_math_state",
+      "status": "PASS",
+      "pass": 29,
+      "fail": 0
+    },
+    {
+      "suite": "static_contract",
+      "status": "PASS",
+      "pass": 19,
+      "fail": 0
+    },
+    {
+      "suite": "runtime_adversarial",
+      "status": "PASS",
+      "pass": 88,
+      "fail": 0
+    },
+    {
+      "suite": "runtime_resilience",
+      "status": "PASS",
+      "pass": 11,
+      "fail": 0
+    },
+    {
+      "suite": "local_server_byte_delivery",
+      "status": "PASS",
+      "pass": 1,
+      "fail": 0
+    },
+    {
+      "suite": "build_reproducibility",
+      "status": "PASS",
+      "runs": 3,
+      "same_sha256": true
+    },
+    {
+      "suite": "preserved_data_identity",
+      "status": "PASS",
+      "files": 3
+    },
+    {
+      "suite": "motion_evidence",
+      "status": "PASS",
+      "frames": 24,
+      "duration_seconds": 4.0
+    }
+  ],
+  "critical_check_rows": {
+    "pass": 148,
+    "fail": 0
+  },
+  "responsive_matrix": {
+    "profiles": 5,
+    "chapters_per_profile": 9,
+    "chapter_profile_states": 45,
+    "touch_profiles_are_emulated": true
+  },
+  "camera_during_autoplay": {
+    "revolution": {
+      "before": 0.0,
+      "after": 0.05,
+      "after_camera": 0.27,
+      "orbit_diff": 1.5538677758049306,
+      "zoom_diff": 6.261163328211171
+    },
+    "revsection": {
+      "before": 0.72,
+      "after": 0.76,
+      "after_camera": 0.99,
+      "orbit_diff": 9.84704100083077,
+      "zoom_diff": 37.043210329031076
+    },
+    "geodesic": {
+      "before": 0.0,
+      "after": 0.04,
+      "after_camera": 0.26,
+      "orbit_diff": 9.637734592335578,
+      "zoom_diff": 33.15949020906749
+    }
+  },
+  "known_unverified": [
+    "actual classroom touchscreen and pen",
+    "non-Chromium browsers",
+    "actual GPU WEBGL_lose_context extension path in this SwiftShader run",
+    "browser file:// and localhost navigation because the sandbox blocks navigation",
+    "full WCAG 2.2 conformance",
+    "empirical learning effect and classroom pacing"
+  ],
+  "judgment": "HOLD_FOR_USER_REVIEW"
+}

@@ -1,0 +1,48 @@
+/* P003 R009 shell — live explanation and evidence sheet without a duplicate transport bar. */
+  function r009ChapterTitle(){return R009_CHAPTER_NAMES[state.tab]||'입체 탐구';}
+  function r009CurrentProgress(){
+    if(state.tab==='net')return state.foldProgress||0;if(state.tab==='generator')return state.generatorDemoProgress||0;if(state.tab==='section')return state.sectionProgress||0;if(state.tab==='euler')return state.eulerMode==='direct'?Math.min(1,(state.eulerDirectHistory?.length||0)/10):(state.eulerAutoProgress||0);if(state.tab==='soccer')return state.soccerProgress||0;
+    if(state.tab==='revolution')return state.revolutionProgress||0;if(state.tab==='revsection')return state.revSectionProgress||0;if(state.tab==='geodesic')return state.pathProgress||0;return .1;
+  }
+  function r009GuideForCurrent(){
+    const p=r009CurrentProgress();
+    if(state.tab==='revolution'){
+      const item=R009_EXACT.revolution_profiles[state.revolutionProfile];
+      const copy=p<.14?['회전 전 평면도형과 축을 읽습니다.','도형의 어느 부분이 회전축에 닿거나 떨어져 있는지 먼저 보세요.']:p<.30?['한 점의 원운동을 예상합니다.','축에서 같은 거리를 유지하는 점은 원을 그립니다.']:p<.72?['평면도형이 곡면을 쓸고 갑니다.','카메라는 그대로 두거나 학생이 직접 움직일 수 있고, 수학 대상만 1회전합니다.']:p<.90?['생성선과 자취를 맞춥니다.','여러 점의 원운동 자취가 모여 회전체의 곡면이 됩니다.']:['완성된 회전체를 비교합니다.','축에서 떨어진 부분과 여러 도형의 조합이 만든 빈 공간·단차도 확인하세요.'];
+      return {kicker:`${Math.round(p*100)}% · ${r009PhaseLabel(p)}`,title:copy[0],body:copy[1],chips:[item.label,item.profile_label,item.axis_relation==='offset_from_axis'?'축에서 떨어짐':'축에 닿음']};
+    }
+    if(state.tab==='revsection'){
+      const item=r9SectionCase(),copy=p<.14?['평면이 아직 입체 밖에 있습니다.','결과를 보기 전에 평면이 어느 표면에 먼저 닿을지 예상하세요.']:p<.30?['첫 접촉 지점을 찾습니다.','평면과 회전체를 동시에 만족하는 점이 처음 생깁니다.']:p<.72?['교점들이 교선으로 이어집니다.','옆면뿐 아니라 윗면·밑면 또는 꼭짓점이 실제 경계에 참여하는지 보세요.']:p<.90?['교선이 닫힌 경계를 만듭니다.','오른쪽 아래 inset은 절단 평면에서 본 같은 경계입니다.']:['analytic 분류와 표시 곡선을 비교합니다.','화면의 polyline은 표시 근사이고, 분류와 수치는 exact data에서 옵니다.'];
+      return {kicker:`${Math.round(p*100)}% · ${r009PhaseLabel(p)}`,title:copy[0],body:copy[1],chips:[item.label,r9ClassificationLabel(item.classification),`${item.boundary_components.length}개 경계 구성`]};
+    }
+    if(state.tab==='geodesic'){
+      const label={cube:'정육면체',cylinder:'원기둥',cone:'원뿔',sphere:'구(심화)'}[state.pathCase],mode={interior:'내부 직선',surface:'겉면',edge:'모서리만'}[state.distanceFocus],copy=p<.14?['먼저 허용 경로를 정합니다.','같은 P와 Q라도 내부·겉면·모서리만은 서로 다른 문제입니다.']:p<.30?['P와 Q의 위치를 확인합니다.','경로가 지나갈 수 있는 면 또는 곡면을 함께 보세요.']:p<.72?['길이를 보존하며 펼칩니다.','자동재생 중에도 입체를 돌리고 확대해 3D 경로와 평면 직선의 대응을 확인할 수 있습니다.']:p<.90?['평면의 직선 후보를 다시 입체에 대응합니다.','seam 또는 face chain이 다른 후보도 유효한지 검사합니다.']:['여러 후보와 거리값을 비교합니다.','한 전개도만 보고 전역 최단이라고 결론내리지 않습니다.'];
+      return {kicker:`${Math.round(p*100)}% · ${r009PhaseLabel(p)}`,title:copy[0],body:copy[1],chips:[label,mode,'P ↔ Q']};
+    }
+    try{const data=r008GuideForCurrent();if(data)return data;}catch(_){ }
+    const mapping=currentMappingState?.();return {kicker:r009PhaseLabel(p),title:mapping?.focus||r009ChapterTitle(),body:mapping?.change||'현재 수학 변화를 관찰하세요.',chips:[mapping?.evidence||'예측',mapping?.next||'근거 확인']};
+  }
+  function r009UpdateLiveGuide(pulse=false){
+    const root=$('#liveGuide');if(!root)return;const data=r009GuideForCurrent();$('#liveGuideKicker',root).textContent=data.kicker||'';$('#liveGuideTitle',root).textContent=data.title||'';$('#liveGuideBody',root).textContent=data.body||'';$('#liveGuideChips',root).innerHTML=(data.chips||[]).slice(0,4).map(v=>`<span>${escapeHTML(String(v))}</span>`).join('');
+    if(pulse){root.classList.remove('is-pulsing');void root.offsetWidth;root.classList.add('is-pulsing');}
+  }
+  function r009OpenEvidence(trigger){
+    const dialog=$('#evidenceDialog');if(!dialog)return;R009.lastTrigger=trigger||document.activeElement;$('#evidenceDialogTitle',dialog).textContent=`${r009ChapterTitle()} · 정확 데이터와 근거`;
+    if(typeof dialog.showModal==='function'&&!dialog.open)dialog.showModal();else dialog.setAttribute('open','');requestAnimationFrame(()=>$('#evidenceClose',dialog)?.focus());
+  }
+  function r009CloseEvidence(){
+    const dialog=$('#evidenceDialog');if(!dialog)return;if(typeof dialog.close==='function'&&dialog.open)dialog.close();else dialog.removeAttribute('open');const target=R009.lastTrigger;if(target?.isConnected)target.focus();
+  }
+  function r009EnsureEvidenceButton(){
+    if(!refs.left||$('#r009EvidenceButton',refs.left))return;const section=document.createElement('section');section.className='panel-section';section.innerHTML='<button id="r009EvidenceButton" class="action-button r009-evidence-button" type="button">근거·정확 데이터 보기</button>';refs.left.appendChild(section);$('#r009EvidenceButton',section).addEventListener('click',event=>r009OpenEvidence(event.currentTarget));
+  }
+  function r009AfterRender(){
+    r009EnsureEvidenceButton();r009UpdateLiveGuide(true);updateChapterNav();
+    if(moduleSupports3D()){$('#viewerHint').textContent='한 손가락 드래그: 회전 · 두 손가락/휠/＋−: 확대·축소 · 자동재생 중에도 가능';}
+  }
+  function r009Install(){
+    const dialog=$('#evidenceDialog');$('#evidenceClose',dialog)?.addEventListener('click',r009CloseEvidence);dialog?.addEventListener('click',event=>{if(event.target===dialog)r009CloseEvidence();});dialog?.addEventListener('cancel',event=>{event.preventDefault();r009CloseEvidence();});
+    const baseApplyFold=applyFoldProgress;applyFoldProgress=function(){const out=baseApplyFold.apply(this,arguments);r009UpdateLiveGuide();return out;};
+    const observer=new ResizeObserver(()=>{if(R009.lastDraw)requestAnimationFrame(R009.lastDraw);});observer.observe(refs.stage);R009.resizeObserver=observer;
+    refs.controlsToggle?.setAttribute('aria-label','왼쪽 조작 패널 열기 또는 닫기');r009UpdateLiveGuide();
+  }

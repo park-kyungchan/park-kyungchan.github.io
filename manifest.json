@@ -1,0 +1,495 @@
+{
+  "schema_version": "P003-R009-MANIFEST-1.0",
+  "artifact_id": "P003_R009_Integrated_Spatial_Revolution_Lab",
+  "candidate_status": "HOLD_FOR_USER_REVIEW",
+  "user_go": "NONE",
+  "build_date": "2026-08-05",
+  "root_directory": "P003_R009_Integrated_Spatial_Revolution_Lab_Candidate",
+  "parent_baseline": {
+    "artifact": "P003_R008_Two_Panel_Spatial_Lab",
+    "pack_sha256": "ee7f7660bf3b87dcbb803f2dbe17816458c9aa5b50aef30630b297e914962115",
+    "standalone_sha256": "6072923d14e6fdce1826627a0e58e1c7a16b625c7b1265c6e5496630c9c76787",
+    "role": "IMMUTABLE_ADVERSARIAL_BASELINE / NOT_USER_GO"
+  },
+  "primary_standalone": {
+    "path": "P003_R009_Integrated_Spatial_Revolution_Lab_Standalone.html",
+    "bytes": 1147558,
+    "sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+    "role": "student_standalone"
+  },
+  "release_profiles_requested": [
+    "STUDENT_DIRECT_USE",
+    "CLASSROOM_TOUCHSCREEN",
+    "LOCAL_OFFLINE_WEB_APP",
+    "WEB_ACCESSIBLE_REVIEW"
+  ],
+  "runtime_external_requests_expected": 0,
+  "image_gen": "NOT_APPLICABLE_NO_IMAGE_GEN",
+  "promotion": "NONE",
+  "payload_file_count": 77,
+  "pack_file_count_including_integrity": 79,
+  "files": [
+    {
+      "path": "P003_R009_Integrated_Spatial_Revolution_Lab_Standalone.html",
+      "bytes": 1147558,
+      "sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+      "role": "student_standalone"
+    },
+    {
+      "path": "audit/P003_R009_ARTIFACT_AUDIT.json",
+      "bytes": 5559,
+      "sha256": "0bc85792fe2dbdba8a88fc1e83876203312e00610e79f2714ab3c0d48bd442e2",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_BASELINE_FAILURE_EVIDENCE.json",
+      "bytes": 1616,
+      "sha256": "690435b19e00ddcf58cb69665b4ead05fb2db31dd0025955ef14b5439bd6834c",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_BASELINE_IDENTITY.json",
+      "bytes": 977,
+      "sha256": "972fbaee3537e950d55f0105f24649d38a56dab0bd4d2df4bb1dd8e9c8055462",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_BUILD_REPRODUCIBILITY.json",
+      "bytes": 686,
+      "sha256": "674ad342d87e6ad8e2e071a2408158dcd85f7d15f153b4956120c29556f8b321",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_EXACT_VALIDATION.json",
+      "bytes": 5173,
+      "sha256": "89edb210c6f0ff86fc6aeb1570a93b1877ac1ea270bcc558abda7a35a803d984",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_FINAL_TEST_MATRIX_PREPACK.json",
+      "bytes": 2756,
+      "sha256": "c9cd7f6db9ec1065b94470893d69b617831ef33a7286ddf96ec1008d66ea54ae",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_LOCAL_MODES.json",
+      "bytes": 1284,
+      "sha256": "d032772703f1d6fd684b35d55fe5791bb0a8b0f7c810a125f1ea6947b9b9f5b3",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_MOTION_QA.json",
+      "bytes": 881,
+      "sha256": "b85212b2545ee679a5059710da387cf56589ea348b17660052ae7edd70ca1385",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_PRESERVED_DATA_IDENTITY.json",
+      "bytes": 963,
+      "sha256": "12038b7b5e9577a63961a0c8377685894c54d0a1687eb7145b95bdbc93d4b707",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_RUNTIME_ADVERSARIAL.json",
+      "bytes": 25258,
+      "sha256": "7a4e1a1bedbefadc550047c172912c5ea612987bd13ca40c089feff138cccca2",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_RUNTIME_RESILIENCE.json",
+      "bytes": 2234,
+      "sha256": "86dc21f10fe59ff4c21ab6e98c31a30419c1ebaee04b0901615ee676a2be5192",
+      "role": "machine_audit"
+    },
+    {
+      "path": "audit/P003_R009_STATIC_CONTRACT.json",
+      "bytes": 2760,
+      "sha256": "d87f20c0a08415a16d3a12bd4e2b78476db12e24cc0872fc21b691c72e26b5e5",
+      "role": "machine_audit"
+    },
+    {
+      "path": "data/P003_R007_EXACT_GEOMETRY_SPEC.json",
+      "bytes": 9822,
+      "sha256": "c4078ebeb5c16b31267c9a928822863e793caeeb72fe51cdedf77b3bbe580c50",
+      "role": "exact_or_state_data"
+    },
+    {
+      "path": "data/P003_R007_STATE_GRAPH.json",
+      "bytes": 16646,
+      "sha256": "dcf0f8f0bb6aa5a378e37b8694bd995fb6644c52bbc30794cf52a5f3af279309",
+      "role": "exact_or_state_data"
+    },
+    {
+      "path": "data/P003_R009_EXACT_SPATIAL_SPEC.json",
+      "bytes": 17771,
+      "sha256": "85c26628c6d8deb4e139d119b833351b25252460aaac152d4f31d6c1664d48b6",
+      "role": "exact_or_state_data"
+    },
+    {
+      "path": "data/P003_R009_STATE_GRAPH.json",
+      "bytes": 2546,
+      "sha256": "921e6447e85e78e378ba2c11cb89c5624366a09e46450037c3178e7099fdc233",
+      "role": "exact_or_state_data"
+    },
+    {
+      "path": "data/platonic_nets_r007.json",
+      "bytes": 1448074,
+      "sha256": "84bd36c06a7c987ad9d7eb7e490a731cc4162be2c4ff1188cb03a2954fbf0eef",
+      "role": "exact_or_state_data"
+    },
+    {
+      "path": "docs/P003_R009_ADVERSARIAL_EVAL_REPORT.md",
+      "bytes": 3798,
+      "sha256": "d2e7016470f6f1b992025fc314f8412bea6b540554515828141277a52565a6a5",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/P003_R009_CHANGE_LEDGER.md",
+      "bytes": 1719,
+      "sha256": "2d2f80e535e29b86e970270d6da4199e1374de3eec2eebadaa64ad43b90eb881",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/P003_R009_DEPENDENCIES_LICENSES.md",
+      "bytes": 931,
+      "sha256": "812210931771fa3143149c44486bc2ad025c103fe120e2809c4fbbe64cb09e7c",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/P003_R009_KNOWN_LIMITATIONS.md",
+      "bytes": 1400,
+      "sha256": "d83e18b6ae495b80722cba9215992984369d6e5e59fb98b6a4b698d813b259b8",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/P003_R009_LOCAL_USE.md",
+      "bytes": 1256,
+      "sha256": "e002d299d2cf95b64d0df728d33911c48bc5271a98e392421fe11a7fa6250302",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/P003_R009_MODEL_DISCLOSURE.md",
+      "bytes": 853,
+      "sha256": "9a9836ceb13aa7adddbee11e725683931f4daf5683ca2ce8a0ab771f2e72ce11",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/P003_R009_REGRESSION_REPORT.md",
+      "bytes": 2582,
+      "sha256": "9528586d9d19adb7238c7a988f5c09e6b58b0b1e576581094fe1e4652843a7c6",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/P003_R009_REVIEW_RECORD.md",
+      "bytes": 800,
+      "sha256": "1e28e968e8c6c9d80d7c6514163c6a6bec4540d5d1fc6e9dbbaef057fde90ce3",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/P003_R009_SOURCE_ROUTE.md",
+      "bytes": 1498,
+      "sha256": "b35b3d1cdf9ec8d7f7cd1b9add0c830faaf892c617083d71cfd20d04730e9553",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/P003_R009_UI_SPATIAL_SPEC.md",
+      "bytes": 2688,
+      "sha256": "d4a2b26a8372f686f428c8dbfb672a89fe97eed9844a0b0cbed3f6c9d913ec33",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/P003_R009_WEB_R0.md",
+      "bytes": 2133,
+      "sha256": "ebdde900137ad03a990a17b8677b064452c2e9c91338cef9b61e68279eb763ca",
+      "role": "documentation"
+    },
+    {
+      "path": "docs/README.md",
+      "bytes": 1750,
+      "sha256": "004e67f5be68b0612dae5dca5ade07149778a360eff3e130e8d5b4e3e70caeee",
+      "role": "documentation"
+    },
+    {
+      "path": "evidence/P003_R009_BEFORE_AFTER_CONTACT_SHEET.png",
+      "bytes": 1307063,
+      "sha256": "e7d8f6193f8c254a02c8972f681a3d95f34cf25d67715096fb17397dc93d035a",
+      "role": "review_evidence"
+    },
+    {
+      "path": "evidence/P003_R009_MOTION_EVIDENCE.mp4",
+      "bytes": 440704,
+      "sha256": "de732e3a2e7840ce4daa43cdd4c35c2e194eb7b930b2d1f52802fd422fc47878",
+      "role": "review_evidence"
+    },
+    {
+      "path": "evidence/baseline/R008_07_revolution_floating_transport.png",
+      "bytes": 720323,
+      "sha256": "7449bd68b9337f9197a3787e442162d24035f8970c3acdb5933c47c29d9c8d54",
+      "role": "baseline_failure_evidence"
+    },
+    {
+      "path": "evidence/baseline/R008_08_section_fixed_canvas.png",
+      "bytes": 720683,
+      "sha256": "3d4603f42d49e400e88f25134e317831198119538d789740de00e343a3bebb59",
+      "role": "baseline_failure_evidence"
+    },
+    {
+      "path": "evidence/candidate/R009_07_composite_generation.png",
+      "bytes": 898054,
+      "sha256": "5995ffd29edcb490d03bcb75bbc3b58e8836cda477e35dbae6d20f70ab1fb956",
+      "role": "candidate_visual_evidence"
+    },
+    {
+      "path": "evidence/candidate/R009_07_frustum_generation.png",
+      "bytes": 853803,
+      "sha256": "41971978e67a7809abcf35ee506f169cbcd4be6a25a0ac596939675cf8216587",
+      "role": "candidate_visual_evidence"
+    },
+    {
+      "path": "evidence/candidate/R009_08_integrated_section_locus.png",
+      "bytes": 890899,
+      "sha256": "bcf7a41f34b471233585dfc7163f24ffa1f68c852fe14819ff44443c5fc01ae3",
+      "role": "candidate_visual_evidence"
+    },
+    {
+      "path": "evidence/candidate/R009_09_integrated_distance_unfold.png",
+      "bytes": 910719,
+      "sha256": "27121bf1ce7768f709adc851e52cd4b69fe8c50ac003ee11eb6ce5bdbb642a74",
+      "role": "candidate_visual_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0000.jpg",
+      "bytes": 101896,
+      "sha256": "0011c99c8739959f1ce1530ad7bca0dc2c53054742a261269152a439d0eb9019",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0001.jpg",
+      "bytes": 102135,
+      "sha256": "9005ba8405753b988a053b2bcd4cb5f7d508b1ad88aa411896a6b40f3e7f578a",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0002.jpg",
+      "bytes": 107156,
+      "sha256": "a2cb44052c661bf2aee956a52584412a028ab0bac44741a73b80364e32116748",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0003.jpg",
+      "bytes": 110843,
+      "sha256": "0c850c00055cc8a48ba46206aa610cf9e93c116ab1d28fe8a6f86c28b77a4592",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0004.jpg",
+      "bytes": 110792,
+      "sha256": "db24e8038797fd870d39714681d94b5b628d1ec2da18698861de1bfcb0fd1dd5",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0005.jpg",
+      "bytes": 109808,
+      "sha256": "7996c81cd4d831207d565411272257afe4f282775f79805d74192d9f8b2cb1a6",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0006.jpg",
+      "bytes": 109448,
+      "sha256": "e724addd6a9b71b4383c0a80ab6b4e6214122212b5686abcb9be624eb298b67c",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0007.jpg",
+      "bytes": 110305,
+      "sha256": "cd7ebffca556e60493e5503c3b11afa3809710c2ef66d00beb53515a3e9c0c94",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0008.jpg",
+      "bytes": 102962,
+      "sha256": "acb09df36c5a18f7c98cfef51a4fef8ce7b8814b9edb4eed7395dae70f2cdf82",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0009.jpg",
+      "bytes": 102777,
+      "sha256": "88f5a2c9a86ad0031e183efaf7d4831c4b96ce18c39f8bbc1af40e0fc07166d3",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0010.jpg",
+      "bytes": 102833,
+      "sha256": "c09c5801aff738a51b82c0d432fb43c0bc4c320f7660dafd999324d74c90b00a",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0011.jpg",
+      "bytes": 107068,
+      "sha256": "6ee6928f3eb1ad240df86f6aebc26794da9956ef731efb1da79d202f51cbdff3",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0012.jpg",
+      "bytes": 106271,
+      "sha256": "e3f8ca49973a819cba8bcb32dcb0d87cf6f3e7b41969e192052f9ef0b2fdd59c",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0013.jpg",
+      "bytes": 107208,
+      "sha256": "e1806d78e8945ba46d93be3bdff802f2310cfc594b7e13360c6840d1b9428f4c",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0014.jpg",
+      "bytes": 111921,
+      "sha256": "0b14bf2bc1bc4421c3032fd83c324d494a18f185b060576e54b131483c8df55d",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0015.jpg",
+      "bytes": 113470,
+      "sha256": "0cc1eb1ebe894ca528b25a3f47a2b85474bb8b4a3710cc42b27a5d84b1ae296b",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0016.jpg",
+      "bytes": 106499,
+      "sha256": "91ceda04a1c1636e4fef84172ea4b82558c277de5e6ec029229c081c59747660",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0017.jpg",
+      "bytes": 107266,
+      "sha256": "90b826892f48073b54c66c567cf192d71e53966d9be5395114d97d2beffe9188",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0018.jpg",
+      "bytes": 106164,
+      "sha256": "b836db75817c0eeda3ad0f87898ae2edf0e85d423b5d907164bb73f1f6f59972",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0019.jpg",
+      "bytes": 105122,
+      "sha256": "dcd89d944c5f69f28d5828649640557858287cfdcf93253700726d3211af1735",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0020.jpg",
+      "bytes": 113416,
+      "sha256": "7f8a8b6b7d2cedd023eaf01eafdaeb133034531dbbfe0e62a521c78cb7dc5c56",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0021.jpg",
+      "bytes": 115695,
+      "sha256": "8d85ce8fc413839c153a94d4444bc4727b2cb3cd9b2ce63ac2b2cde6f3ff3fd2",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0022.jpg",
+      "bytes": 117811,
+      "sha256": "72263043ee3795cbc8b7272beb1ef941c8a564824fd2f1cbbffb45b42512241a",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "evidence/motion_frames/frame_0023.jpg",
+      "bytes": 116901,
+      "sha256": "530b6f57aa80098097cfad2072fd124ef4274e847bfbb8a3c7cc3996144c3e11",
+      "role": "motion_frame_evidence"
+    },
+    {
+      "path": "parent_baseline/P003_R008_Two_Panel_Spatial_Lab_Standalone.html",
+      "bytes": 1160280,
+      "sha256": "6072923d14e6fdce1826627a0e58e1c7a16b625c7b1265c6e5496630c9c76787",
+      "role": "immutable_parent_reference"
+    },
+    {
+      "path": "source/build/build_r009.py",
+      "bytes": 10461,
+      "sha256": "5284e6f5e55dafb9efe41cc3de11bde98718209a0019d733fff59948d342ef00",
+      "role": "editable_source"
+    },
+    {
+      "path": "source/generate_r009_data.py",
+      "bytes": 10938,
+      "sha256": "118bd7a81f28db674ece32162285215a13c3436bdc0a6e144d9ce921634da032",
+      "role": "editable_source"
+    },
+    {
+      "path": "source/modules/r009_chapters.js",
+      "bytes": 27488,
+      "sha256": "cc9b902a288d02d22773045ca32c1f629d45993b0e66d8be181ac290782f3448",
+      "role": "editable_source"
+    },
+    {
+      "path": "source/modules/r009_shell.js",
+      "bytes": 6997,
+      "sha256": "345b7dc068765c599ffc14bf1b2b11cdacdc7e792eb2c49aa76d3b702e74a118",
+      "role": "editable_source"
+    },
+    {
+      "path": "source/modules/r009_spatial_core.js",
+      "bytes": 26357,
+      "sha256": "0e1fd8f4d7e60db8f3c5a0fb724bac05000bebb7d085a29aa0aa9b968ea991f8",
+      "role": "editable_source"
+    },
+    {
+      "path": "source/ui/r009_integrated.css",
+      "bytes": 7112,
+      "sha256": "ddb56093a56335748fb7b4f8dbe6b8b28940d861414b4061d05842f989ecc600",
+      "role": "editable_source"
+    },
+    {
+      "path": "tests/capture_evidence_r009.py",
+      "bytes": 8375,
+      "sha256": "4db17b2c29ff04953f569550852aa021c74c4ff6b7b87cdeeb6c3d77e30a1197",
+      "role": "test_source"
+    },
+    {
+      "path": "tests/local_modes_r009.py",
+      "bytes": 3680,
+      "sha256": "333972ed2fe35a707dfd29474c316b5cf197b0001bd882c06c4f2b2126cc21c8",
+      "role": "test_source"
+    },
+    {
+      "path": "tests/runtime_adversarial_r009.py",
+      "bytes": 13994,
+      "sha256": "2e3794ecb6dc222a24925cb90e71ff35372f55813ecbbb3478deb0fc9093ecf7",
+      "role": "test_source"
+    },
+    {
+      "path": "tests/runtime_resilience_r009.py",
+      "bytes": 6187,
+      "sha256": "463c6ca28625f8fcbc2f8155cf7a5bbb4d5bfde9fa11b152851c75b949ebc23b",
+      "role": "test_source"
+    },
+    {
+      "path": "tests/static_contract_r009.py",
+      "bytes": 3583,
+      "sha256": "4c8ad7fb05a6cebc05f70de3146428d06720846ddee336b14726118cd27fc469",
+      "role": "test_source"
+    },
+    {
+      "path": "tests/validate_r009_exact.py",
+      "bytes": 5712,
+      "sha256": "2281538d35a78b6a2d7d1f27e6cd6498c3864c4876e2af2c29f6cb6635197968",
+      "role": "test_source"
+    },
+    {
+      "path": "tools/build_pack.py",
+      "bytes": 5319,
+      "sha256": "de3ec14f125d915484c72fe4537367c94def7ac4965836f432d18bbc40a974a0",
+      "role": "build_or_launch_tool"
+    },
+    {
+      "path": "tools/serve_local.py",
+      "bytes": 1261,
+      "sha256": "fc7d540f758ce5b101ba1374cbd3597b69f7686f206e493c6d1bc03e18371aca",
+      "role": "build_or_launch_tool"
+    }
+  ]
+}

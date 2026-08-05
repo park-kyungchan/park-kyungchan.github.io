@@ -1,0 +1,25 @@
+{
+  "suite": "P003-R009-BUILD-REPRODUCIBILITY",
+  "status": "PASS",
+  "build_command": "python source/build/build_r009.py",
+  "runs": [
+    {
+      "run": 1,
+      "sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+      "bytes": 1147558
+    },
+    {
+      "run": 2,
+      "sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+      "bytes": 1147558
+    },
+    {
+      "run": 3,
+      "sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+      "bytes": 1147558
+    }
+  ],
+  "same_sha256": true,
+  "same_bytes": true,
+  "parent_guard_sha256": "6072923d14e6fdce1826627a0e58e1c7a16b625c7b1265c6e5496630c9c76787"
+}

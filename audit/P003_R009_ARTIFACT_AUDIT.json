@@ -1,0 +1,167 @@
+{
+  "artifact_id": "P003_R009_Integrated_Spatial_Revolution_Lab",
+  "candidate_version": "R009",
+  "date": "2026-08-05",
+  "parent_artifact": "P003_R008_Two_Panel_Spatial_Lab",
+  "parent_sha256": "6072923d14e6fdce1826627a0e58e1c7a16b625c7b1265c6e5496630c9c76787",
+  "parent_pack_sha256": "ee7f7660bf3b87dcbb803f2dbe17816458c9aa5b50aef30630b297e914962115",
+  "candidate_status": "HOLD_FOR_USER_REVIEW",
+  "user_approval_scope": "PENDING_EXACT_PACK_AND_STANDALONE_HASH_REVIEW",
+  "medium_contract": {
+    "output_medium": "INTERACTIVE_WEB_3D",
+    "student_use": "STUDENT_DIRECT_USE",
+    "interaction": "AUTO_DEMO_PLUS_DIRECT",
+    "deployment": [
+      "FILE_STANDALONE",
+      "LOCALHOST_OFFLINE"
+    ],
+    "inputs": [
+      "TOUCH",
+      "PEN",
+      "MOUSE",
+      "KEYBOARD_OR_COMPARABLE_ALTERNATIVE"
+    ],
+    "network": "LOCAL_OFFLINE_EXTERNAL_RUNTIME_REQUESTS_0",
+    "audio": "NONE",
+    "login_or_student_data": "NONE"
+  },
+  "primary_standalone": {
+    "path": "P003_R009_Integrated_Spatial_Revolution_Lab_Standalone.html",
+    "sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+    "bytes": 1147558
+  },
+  "source_files": [
+    "source/build/build_r009.py",
+    "source/generate_r009_data.py",
+    "source/modules/r009_chapters.js",
+    "source/modules/r009_shell.js",
+    "source/modules/r009_spatial_core.js",
+    "source/ui/r009_integrated.css"
+  ],
+  "data_files": [
+    "data/P003_R007_EXACT_GEOMETRY_SPEC.json",
+    "data/P003_R007_STATE_GRAPH.json",
+    "data/P003_R009_EXACT_SPATIAL_SPEC.json",
+    "data/P003_R009_STATE_GRAPH.json",
+    "data/platonic_nets_r007.json"
+  ],
+  "build_command": "python source/build/build_r009.py",
+  "build_reproducibility": {
+    "suite": "P003-R009-BUILD-REPRODUCIBILITY",
+    "status": "PASS",
+    "build_command": "python source/build/build_r009.py",
+    "runs": [
+      {
+        "run": 1,
+        "sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+        "bytes": 1147558
+      },
+      {
+        "run": 2,
+        "sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+        "bytes": 1147558
+      },
+      {
+        "run": 3,
+        "sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+        "bytes": 1147558
+      }
+    ],
+    "same_sha256": true,
+    "same_bytes": true,
+    "parent_guard_sha256": "6072923d14e6fdce1826627a0e58e1c7a16b625c7b1265c6e5496630c9c76787"
+  },
+  "dependencies": {
+    "runtime": "none external; browser-native HTML/CSS/JavaScript/WebGL/Canvas2D",
+    "qa_only": [
+      "Python 3",
+      "Playwright",
+      "Pillow",
+      "ffmpeg/ffprobe"
+    ],
+    "external_runtime_requests_expected": 0
+  },
+  "exact_math": {
+    "source": "data/P003_R009_EXACT_SPATIAL_SPEC.json",
+    "profiles": 10,
+    "section_cases": 13,
+    "shortest_path_cases": 4,
+    "validation": {
+      "pass": 29,
+      "fail": 0
+    }
+  },
+  "geometry_model": {
+    "analytic_authority": "classification, displayed values, path lengths, and metric-domain decisions",
+    "display_model": "deterministic triangulated surface-of-revolution mesh rendered by the same PolyRenderer used for the polyhedron cross-section lab",
+    "section_curve": "mesh-plane intersection polyline is a display approximation; exact classification is separate",
+    "sweep_segments": 84,
+    "profile_segments": 36,
+    "max_circle_sagitta_error_radius_2_segments_84": 0.0013985904232030055,
+    "unfold_interpolation": "endpoints are exact developments; intermediate morph is explanatory interpolation except the cube rigid hinge rotation"
+  },
+  "state_graph": {
+    "source": "data/P003_R009_STATE_GRAPH.json",
+    "chapter_count": 9,
+    "removed": [
+      "locus",
+      "distance",
+      "transfer"
+    ],
+    "merged": {
+      "revsection": [
+        "revsection",
+        "locus"
+      ],
+      "geodesic": [
+        "distance",
+        "geodesic"
+      ]
+    },
+    "autoplay_and_direct_same_data": true
+  },
+  "public_labels": {
+    "visible_machine_id_count": 0,
+    "aria_machine_id_count": 0,
+    "student_surface_leaks": 0
+  },
+  "input_motion": {
+    "pointercancel_recovery": "PASS",
+    "camera_during_autoplay": "PASS_3_OF_3",
+    "hidden_state_stop_no_stale_resume": "PASS",
+    "reduced_motion_profile": "PASS",
+    "motion_evidence": "evidence/P003_R009_MOTION_EVIDENCE.mp4"
+  },
+  "browser_runtime": {
+    "automated_browser": "Chromium headless / SwiftShader",
+    "profiles": 5,
+    "touch": "emulated",
+    "external_requests": 0,
+    "console_or_page_critical_errors": 0,
+    "webgl_context_listener_path": "PASS_INJECTED; WEBGL_lose_context extension unavailable in this run",
+    "direct_file_and_localhost_browser_navigation": "UNVERIFIED_SANDBOX_POLICY"
+  },
+  "accessibility_scope": {
+    "native_controls": "PASS",
+    "targets_under_24_css_px": 0,
+    "primary_controls_under_40_css_px": 0,
+    "modal_focus_escape_return": "PASS",
+    "keyboard_camera": "PASS_INHERITED_AND_RUNTIME",
+    "wcag_claim": "NONE"
+  },
+  "evidence": [
+    "evidence/P003_R009_BEFORE_AFTER_CONTACT_SHEET.png",
+    "evidence/P003_R009_MOTION_EVIDENCE.mp4"
+  ],
+  "judgment": "HOLD",
+  "known_limitations": [
+    "actual classroom touchscreen and pen",
+    "non-Chromium browsers",
+    "actual GPU WEBGL_lose_context extension path in this SwiftShader run",
+    "browser file:// and localhost navigation because the sandbox blocks navigation",
+    "full WCAG 2.2 conformance",
+    "empirical learning effect and classroom pacing"
+  ],
+  "image_gen": "NOT_APPLICABLE_NO_IMAGE_GEN",
+  "promotion": "NONE"
+}

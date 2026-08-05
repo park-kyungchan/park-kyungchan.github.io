@@ -1,0 +1,125 @@
+{
+  "suite": "P003-R009-STATIC-CONTRACT",
+  "status": "PASS",
+  "standalone_sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+  "standalone_bytes": 1147558,
+  "parent_bytes": 1160280,
+  "checks": [
+    {
+      "id": "R009-STATIC-001-main-found",
+      "status": "PASS",
+      "actual": null,
+      "expected": null
+    },
+    {
+      "id": "R009-STATIC-002-direct-main-panels",
+      "status": "PASS",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "id": "R009-STATIC-003-nav-nine",
+      "status": "PASS",
+      "actual": 9,
+      "expected": 9
+    },
+    {
+      "id": "R009-STATIC-NAV-NO-locus",
+      "status": "PASS",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "R009-STATIC-NAV-NO-distance",
+      "status": "PASS",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "R009-STATIC-NAV-NO-transfer",
+      "status": "PASS",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "R009-STATIC-004-no-floating-dock-dom",
+      "status": "PASS",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "R009-STATIC-005-no-transport-dom",
+      "status": "PASS",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "R009-STATIC-006-no-resize-handle-dom",
+      "status": "PASS",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "R009-STATIC-007-no-section-12-dom",
+      "status": "PASS",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "R009-STATIC-008-no-old-render-functions",
+      "status": "PASS",
+      "actual": null,
+      "expected": null
+    },
+    {
+      "id": "R009-STATIC-009-no-old-spatial-render-implementation",
+      "status": "PASS",
+      "actual": false,
+      "expected": false
+    },
+    {
+      "id": "R009-STATIC-010-shared-poly-renderer-text",
+      "status": "PASS",
+      "actual": null,
+      "expected": null
+    },
+    {
+      "id": "R009-STATIC-011-no-http-runtime-url",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-STATIC-012-no-external-script",
+      "status": "PASS",
+      "actual": null,
+      "expected": null
+    },
+    {
+      "id": "R009-STATIC-013-no-external-stylesheet",
+      "status": "PASS",
+      "actual": null,
+      "expected": null
+    },
+    {
+      "id": "R009-STATIC-014-no-analytics",
+      "status": "PASS",
+      "actual": null,
+      "expected": null
+    },
+    {
+      "id": "R009-STATIC-015-parent-present",
+      "status": "PASS",
+      "actual": null,
+      "expected": null
+    },
+    {
+      "id": "R009-STATIC-016-code-lighter",
+      "status": "PASS",
+      "actual": 1147558,
+      "expected": 1160280
+    }
+  ],
+  "pass_count": 19,
+  "fail_count": 0
+}

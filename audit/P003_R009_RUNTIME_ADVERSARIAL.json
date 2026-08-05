@@ -1,0 +1,1061 @@
+{
+  "suite": "P003-R009-RUNTIME-ADVERSARIAL",
+  "status": "PASS",
+  "browser": "Chromium system executable",
+  "execution_mode": "Playwright headless; touch profiles are emulation, not actual classroom devices",
+  "profiles": [
+    {
+      "profile": "desktop_1440x900",
+      "chapters": [
+        {
+          "tab": "explorer",
+          "status": "PASS",
+          "heading": "1. 입체의 구조 읽기"
+        },
+        {
+          "tab": "generator",
+          "status": "PASS",
+          "heading": "꼭짓점 조건 조절"
+        },
+        {
+          "tab": "net",
+          "status": "PASS",
+          "heading": "3. 다섯 정다면체 전개도"
+        },
+        {
+          "tab": "section",
+          "status": "PASS",
+          "heading": "4. 단면과 교선"
+        },
+        {
+          "tab": "euler",
+          "status": "PASS",
+          "heading": "먼저 값 예측"
+        },
+        {
+          "tab": "soccer",
+          "status": "PASS",
+          "heading": "축구공 다면체 자동 영상"
+        },
+        {
+          "tab": "revolution",
+          "status": "PASS",
+          "heading": "평면도형을 1회전시키면"
+        },
+        {
+          "tab": "revsection",
+          "status": "PASS",
+          "heading": "평면과 곡면이 만나는 점을 추적"
+        },
+        {
+          "tab": "geodesic",
+          "status": "PASS",
+          "heading": "“어디를 따라가나”를 먼저 정하기"
+        }
+      ],
+      "overflow": {
+        "sw": 1440,
+        "cw": 1440,
+        "body": 1440
+      },
+      "machine_ids": [],
+      "requests": [],
+      "errors": [],
+      "targets": {
+        "count": 33,
+        "under24": [],
+        "primaryCount": 12,
+        "primaryUnder40": []
+      }
+    },
+    {
+      "profile": "class_touch_1180x820",
+      "chapters": [
+        {
+          "tab": "explorer",
+          "status": "PASS",
+          "heading": "1. 입체의 구조 읽기"
+        },
+        {
+          "tab": "generator",
+          "status": "PASS",
+          "heading": "꼭짓점 조건 조절"
+        },
+        {
+          "tab": "net",
+          "status": "PASS",
+          "heading": "3. 다섯 정다면체 전개도"
+        },
+        {
+          "tab": "section",
+          "status": "PASS",
+          "heading": "4. 단면과 교선"
+        },
+        {
+          "tab": "euler",
+          "status": "PASS",
+          "heading": "먼저 값 예측"
+        },
+        {
+          "tab": "soccer",
+          "status": "PASS",
+          "heading": "축구공 다면체 자동 영상"
+        },
+        {
+          "tab": "revolution",
+          "status": "PASS",
+          "heading": "평면도형을 1회전시키면"
+        },
+        {
+          "tab": "revsection",
+          "status": "PASS",
+          "heading": "평면과 곡면이 만나는 점을 추적"
+        },
+        {
+          "tab": "geodesic",
+          "status": "PASS",
+          "heading": "“어디를 따라가나”를 먼저 정하기"
+        }
+      ],
+      "overflow": {
+        "sw": 1180,
+        "cw": 1180,
+        "body": 1180
+      },
+      "machine_ids": [],
+      "requests": [],
+      "errors": [],
+      "targets": {
+        "count": 33,
+        "under24": [],
+        "primaryCount": 12,
+        "primaryUnder40": []
+      }
+    },
+    {
+      "profile": "tablet_touch_820x1180",
+      "chapters": [
+        {
+          "tab": "explorer",
+          "status": "PASS",
+          "heading": "1. 입체의 구조 읽기"
+        },
+        {
+          "tab": "generator",
+          "status": "PASS",
+          "heading": "꼭짓점 조건 조절"
+        },
+        {
+          "tab": "net",
+          "status": "PASS",
+          "heading": "3. 다섯 정다면체 전개도"
+        },
+        {
+          "tab": "section",
+          "status": "PASS",
+          "heading": "4. 단면과 교선"
+        },
+        {
+          "tab": "euler",
+          "status": "PASS",
+          "heading": "먼저 값 예측"
+        },
+        {
+          "tab": "soccer",
+          "status": "PASS",
+          "heading": "축구공 다면체 자동 영상"
+        },
+        {
+          "tab": "revolution",
+          "status": "PASS",
+          "heading": "평면도형을 1회전시키면"
+        },
+        {
+          "tab": "revsection",
+          "status": "PASS",
+          "heading": "평면과 곡면이 만나는 점을 추적"
+        },
+        {
+          "tab": "geodesic",
+          "status": "PASS",
+          "heading": "“어디를 따라가나”를 먼저 정하기"
+        }
+      ],
+      "overflow": {
+        "sw": 820,
+        "cw": 820,
+        "body": 820
+      },
+      "machine_ids": [],
+      "requests": [],
+      "errors": [],
+      "targets": {
+        "count": 33,
+        "under24": [],
+        "primaryCount": 12,
+        "primaryUnder40": []
+      }
+    },
+    {
+      "profile": "mobile_touch_390x844",
+      "chapters": [
+        {
+          "tab": "explorer",
+          "status": "PASS",
+          "heading": "1. 입체의 구조 읽기"
+        },
+        {
+          "tab": "generator",
+          "status": "PASS",
+          "heading": "꼭짓점 조건 조절"
+        },
+        {
+          "tab": "net",
+          "status": "PASS",
+          "heading": "3. 다섯 정다면체 전개도"
+        },
+        {
+          "tab": "section",
+          "status": "PASS",
+          "heading": "4. 단면과 교선"
+        },
+        {
+          "tab": "euler",
+          "status": "PASS",
+          "heading": "먼저 값 예측"
+        },
+        {
+          "tab": "soccer",
+          "status": "PASS",
+          "heading": "축구공 다면체 자동 영상"
+        },
+        {
+          "tab": "revolution",
+          "status": "PASS",
+          "heading": "평면도형을 1회전시키면"
+        },
+        {
+          "tab": "revsection",
+          "status": "PASS",
+          "heading": "평면과 곡면이 만나는 점을 추적"
+        },
+        {
+          "tab": "geodesic",
+          "status": "PASS",
+          "heading": "“어디를 따라가나”를 먼저 정하기"
+        }
+      ],
+      "overflow": {
+        "sw": 390,
+        "cw": 390,
+        "body": 390
+      },
+      "machine_ids": [],
+      "requests": [],
+      "errors": [],
+      "targets": {
+        "count": 28,
+        "under24": [],
+        "primaryCount": 7,
+        "primaryUnder40": []
+      }
+    },
+    {
+      "profile": "desktop_reduced_motion",
+      "chapters": [
+        {
+          "tab": "explorer",
+          "status": "PASS",
+          "heading": "1. 입체의 구조 읽기"
+        },
+        {
+          "tab": "generator",
+          "status": "PASS",
+          "heading": "꼭짓점 조건 조절"
+        },
+        {
+          "tab": "net",
+          "status": "PASS",
+          "heading": "3. 다섯 정다면체 전개도"
+        },
+        {
+          "tab": "section",
+          "status": "PASS",
+          "heading": "4. 단면과 교선"
+        },
+        {
+          "tab": "euler",
+          "status": "PASS",
+          "heading": "먼저 값 예측"
+        },
+        {
+          "tab": "soccer",
+          "status": "PASS",
+          "heading": "축구공 다면체 자동 영상"
+        },
+        {
+          "tab": "revolution",
+          "status": "PASS",
+          "heading": "평면도형을 1회전시키면"
+        },
+        {
+          "tab": "revsection",
+          "status": "PASS",
+          "heading": "평면과 곡면이 만나는 점을 추적"
+        },
+        {
+          "tab": "geodesic",
+          "status": "PASS",
+          "heading": "“어디를 따라가나”를 먼저 정하기"
+        }
+      ],
+      "overflow": {
+        "sw": 1440,
+        "cw": 1440,
+        "body": 1440
+      },
+      "machine_ids": [],
+      "requests": [],
+      "errors": [],
+      "targets": {
+        "count": 33,
+        "under24": [],
+        "primaryCount": 12,
+        "primaryUnder40": []
+      }
+    }
+  ],
+  "camera_during_autoplay": {
+    "revolution": {
+      "before": 0.0,
+      "after": 0.05,
+      "after_camera": 0.27,
+      "orbit_diff": 1.5538677758049306,
+      "zoom_diff": 6.261163328211171
+    },
+    "revsection": {
+      "before": 0.72,
+      "after": 0.76,
+      "after_camera": 0.99,
+      "orbit_diff": 9.84704100083077,
+      "zoom_diff": 37.043210329031076
+    },
+    "geodesic": {
+      "before": 0.0,
+      "after": 0.04,
+      "after_camera": 0.26,
+      "orbit_diff": 9.637734592335578,
+      "zoom_diff": 33.15949020906749
+    }
+  },
+  "checks": [
+    {
+      "id": "R009-RUNTIME-CHAPTER-COVERAGE",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": 9,
+      "expected": 9
+    },
+    {
+      "id": "R009-RUNTIME-NO-HORIZONTAL-OVERFLOW",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": {
+        "sw": 1440,
+        "cw": 1440,
+        "body": 1440
+      },
+      "expected": 1440
+    },
+    {
+      "id": "R009-RUNTIME-NO-VISIBLE-MACHINE-ID",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-ARIA-MACHINE-ID",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-STUDENT-LEAK",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-FLOATING-BAR",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "R009-RUNTIME-TWO-PANEL",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "id": "R009-RUNTIME-NO-SEPARATOR",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "R009-A11Y-TARGET-24",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-A11Y-PRIMARY-40",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NETWORK-0",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-ERROR-0",
+      "profile": "desktop_1440x900",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-CHAPTER-COVERAGE",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": 9,
+      "expected": 9
+    },
+    {
+      "id": "R009-RUNTIME-NO-HORIZONTAL-OVERFLOW",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": {
+        "sw": 1180,
+        "cw": 1180,
+        "body": 1180
+      },
+      "expected": 1180
+    },
+    {
+      "id": "R009-RUNTIME-NO-VISIBLE-MACHINE-ID",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-ARIA-MACHINE-ID",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-STUDENT-LEAK",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-FLOATING-BAR",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "R009-RUNTIME-TWO-PANEL",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "id": "R009-RUNTIME-NO-SEPARATOR",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "R009-A11Y-TARGET-24",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-A11Y-PRIMARY-40",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NETWORK-0",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-ERROR-0",
+      "profile": "class_touch_1180x820",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-CHAPTER-COVERAGE",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": 9,
+      "expected": 9
+    },
+    {
+      "id": "R009-RUNTIME-NO-HORIZONTAL-OVERFLOW",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": {
+        "sw": 820,
+        "cw": 820,
+        "body": 820
+      },
+      "expected": 820
+    },
+    {
+      "id": "R009-RUNTIME-NO-VISIBLE-MACHINE-ID",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-ARIA-MACHINE-ID",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-STUDENT-LEAK",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-FLOATING-BAR",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "R009-RUNTIME-TWO-PANEL",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "id": "R009-RUNTIME-NO-SEPARATOR",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "R009-A11Y-TARGET-24",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-A11Y-PRIMARY-40",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NETWORK-0",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-ERROR-0",
+      "profile": "tablet_touch_820x1180",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-CHAPTER-COVERAGE",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": 9,
+      "expected": 9
+    },
+    {
+      "id": "R009-RUNTIME-NO-HORIZONTAL-OVERFLOW",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": {
+        "sw": 390,
+        "cw": 390,
+        "body": 390
+      },
+      "expected": 390
+    },
+    {
+      "id": "R009-RUNTIME-NO-VISIBLE-MACHINE-ID",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-ARIA-MACHINE-ID",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-STUDENT-LEAK",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-FLOATING-BAR",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "R009-RUNTIME-TWO-PANEL",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "id": "R009-RUNTIME-NO-SEPARATOR",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "R009-A11Y-TARGET-24",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-A11Y-PRIMARY-40",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NETWORK-0",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-ERROR-0",
+      "profile": "mobile_touch_390x844",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-CHAPTER-COVERAGE",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": 9,
+      "expected": 9
+    },
+    {
+      "id": "R009-RUNTIME-NO-HORIZONTAL-OVERFLOW",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": {
+        "sw": 1440,
+        "cw": 1440,
+        "body": 1440
+      },
+      "expected": 1440
+    },
+    {
+      "id": "R009-RUNTIME-NO-VISIBLE-MACHINE-ID",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-ARIA-MACHINE-ID",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-STUDENT-LEAK",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NO-FLOATING-BAR",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "R009-RUNTIME-TWO-PANEL",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "id": "R009-RUNTIME-NO-SEPARATOR",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "R009-A11Y-TARGET-24",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-A11Y-PRIMARY-40",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-NETWORK-0",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-ERROR-0",
+      "profile": "desktop_reduced_motion",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RUNTIME-REVOLUTION-10-PROFILES",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 10,
+      "expected": 10
+    },
+    {
+      "id": "R009-RUNTIME-REVOLUTION-REQUIRED",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": [
+        "원기둥 — 직사각형",
+        "원뿔 — 직각삼각형",
+        "원뿔대 — 사다리꼴",
+        "구 — 반원",
+        "속 빈 원기둥 — 축에서 떨어진 직사각형",
+        "도넛 모양 회전체 — 축에서 떨어진 원",
+        "원기둥 + 원뿔 — 직사각형 + 삼각형",
+        "원기둥 + 반구 돔 — 직사각형 + 1/4원 곡선",
+        "원기둥 + 원뿔대 + 원뿔 — 세 평면도형 조합",
+        "단이 있는 회전체 — 크기가 다른 직사각형 조합"
+      ],
+      "expected": [
+        "원기둥",
+        "원뿔",
+        "원뿔대",
+        "구",
+        "속 빈 원기둥",
+        "도넛 모양 회전체",
+        "원기둥 + 원뿔",
+        "원기둥 + 반구 돔",
+        "원기둥 + 원뿔대 + 원뿔",
+        "단이 있는 회전체"
+      ]
+    },
+    {
+      "id": "R009-RUNTIME-PROFILE-frustum",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": "frustum",
+      "expected": "frustum"
+    },
+    {
+      "id": "R009-RUNTIME-PROFILE-torus",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": "torus",
+      "expected": "torus"
+    },
+    {
+      "id": "R009-RUNTIME-PROFILE-triple_stack",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": "triple_stack",
+      "expected": "triple_stack"
+    },
+    {
+      "id": "R009-RUNTIME-SECTION-13-CASES",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 13,
+      "expected": 13
+    },
+    {
+      "id": "R009-RUNTIME-SECTION-INSET",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "id": "R009-RUNTIME-DISTANCE-MODES",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 3,
+      "expected": 3
+    },
+    {
+      "id": "R009-RUNTIME-EDGE-DISABLED-NONPOLY",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "id": "R009-A11Y-EVIDENCE-OPEN",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": true,
+      "expected": true
+    },
+    {
+      "id": "R009-A11Y-EVIDENCE-FOCUS",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": "evidenceClose",
+      "expected": "evidenceClose"
+    },
+    {
+      "id": "R009-A11Y-EVIDENCE-RETURN",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": "r009EvidenceButton",
+      "expected": "r009EvidenceButton"
+    },
+    {
+      "id": "R009-MOTION-revolution-PLAY-PROGRESSES",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": {
+        "before": 0.0,
+        "after": 0.05,
+        "after_camera": 0.27,
+        "orbit_diff": 1.5538677758049306,
+        "zoom_diff": 6.261163328211171
+      },
+      "expected": {
+        "after": "> before"
+      }
+    },
+    {
+      "id": "R009-MOTION-revolution-ORBIT-LIVE",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 1.5538677758049306,
+      "expected": "> 0.12"
+    },
+    {
+      "id": "R009-MOTION-revolution-ZOOM-LIVE",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 6.261163328211171,
+      "expected": "> 0.12"
+    },
+    {
+      "id": "R009-MOTION-revolution-PLAY-CONTINUES",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": {
+        "before": 0.0,
+        "after": 0.05,
+        "after_camera": 0.27,
+        "orbit_diff": 1.5538677758049306,
+        "zoom_diff": 6.261163328211171
+      },
+      "expected": {
+        "after_camera": ">= after"
+      }
+    },
+    {
+      "id": "R009-MOTION-revsection-PLAY-PROGRESSES",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": {
+        "before": 0.72,
+        "after": 0.76,
+        "after_camera": 0.99,
+        "orbit_diff": 9.84704100083077,
+        "zoom_diff": 37.043210329031076
+      },
+      "expected": {
+        "after": "> before"
+      }
+    },
+    {
+      "id": "R009-MOTION-revsection-ORBIT-LIVE",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 9.84704100083077,
+      "expected": "> 0.12"
+    },
+    {
+      "id": "R009-MOTION-revsection-ZOOM-LIVE",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 37.043210329031076,
+      "expected": "> 0.12"
+    },
+    {
+      "id": "R009-MOTION-revsection-PLAY-CONTINUES",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": {
+        "before": 0.72,
+        "after": 0.76,
+        "after_camera": 0.99,
+        "orbit_diff": 9.84704100083077,
+        "zoom_diff": 37.043210329031076
+      },
+      "expected": {
+        "after_camera": ">= after"
+      }
+    },
+    {
+      "id": "R009-MOTION-geodesic-PLAY-PROGRESSES",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": {
+        "before": 0.0,
+        "after": 0.04,
+        "after_camera": 0.26,
+        "orbit_diff": 9.637734592335578,
+        "zoom_diff": 33.15949020906749
+      },
+      "expected": {
+        "after": "> before"
+      }
+    },
+    {
+      "id": "R009-MOTION-geodesic-ORBIT-LIVE",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 9.637734592335578,
+      "expected": "> 0.12"
+    },
+    {
+      "id": "R009-MOTION-geodesic-ZOOM-LIVE",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 33.15949020906749,
+      "expected": "> 0.12"
+    },
+    {
+      "id": "R009-MOTION-geodesic-PLAY-CONTINUES",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": {
+        "before": 0.0,
+        "after": 0.04,
+        "after_camera": 0.26,
+        "orbit_diff": 9.637734592335578,
+        "zoom_diff": 33.15949020906749
+      },
+      "expected": {
+        "after_camera": ">= after"
+      }
+    },
+    {
+      "id": "R009-INPUT-POINTERCANCEL-RECOVERY",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 5.319819330643746,
+      "expected": "> 0.12"
+    },
+    {
+      "id": "R009-STATE-RAPID-SWITCH-RECOVERY",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "id": "R009-ADVERSARIAL-ERROR-0",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-ADVERSARIAL-NETWORK-0",
+      "profile": "adversarial",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    }
+  ],
+  "pass_count": 88,
+  "fail_count": 0
+}

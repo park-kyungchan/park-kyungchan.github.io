@@ -1,0 +1,133 @@
+{
+  "schema_version": "P003-R009-STATE-GRAPH-1.0",
+  "chapter_count": 9,
+  "chapters": [
+    {
+      "module": "explorer",
+      "roles": [
+        "ENTRY",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
+      "floating_transport": false
+    },
+    {
+      "module": "generator",
+      "roles": [
+        "ENTRY",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
+      "floating_transport": false
+    },
+    {
+      "module": "net",
+      "roles": [
+        "ENTRY",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
+      "floating_transport": false
+    },
+    {
+      "module": "section",
+      "roles": [
+        "ENTRY",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
+      "floating_transport": false
+    },
+    {
+      "module": "euler",
+      "roles": [
+        "ENTRY",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
+      "floating_transport": false
+    },
+    {
+      "module": "soccer",
+      "roles": [
+        "ENTRY",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
+      "floating_transport": false
+    },
+    {
+      "module": "revolution",
+      "roles": [
+        "ENTRY",
+        "PREDICT",
+        "ANTICIPATION",
+        "TRANSFORM",
+        "SETTLE",
+        "HOLD",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": true,
+      "floating_transport": false
+    },
+    {
+      "module": "revsection",
+      "roles": [
+        "ENTRY",
+        "PREDICT",
+        "ANTICIPATION",
+        "TRANSFORM",
+        "SETTLE",
+        "HOLD",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": true,
+      "floating_transport": false
+    },
+    {
+      "module": "geodesic",
+      "roles": [
+        "ENTRY",
+        "PREDICT",
+        "ANTICIPATION",
+        "TRANSFORM",
+        "SETTLE",
+        "HOLD",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": true,
+      "floating_transport": false
+    }
+  ],
+  "removed": [
+    "locus",
+    "distance",
+    "transfer"
+  ],
+  "merged": {
+    "revsection": [
+      "revsection",
+      "locus"
+    ],
+    "geodesic": [
+      "distance",
+      "geodesic"
+    ]
+  },
+  "autoplay_and_direct_same_data": true
+}

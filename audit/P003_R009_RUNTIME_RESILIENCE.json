@@ -1,0 +1,88 @@
+{
+  "suite": "P003-R009-RUNTIME-RESILIENCE",
+  "status": "PASS",
+  "browser": "Chromium headless / SwiftShader",
+  "execution_note": "hidden state is adversarially injected. WEBGL_lose_context availability is recorded; when unavailable in SwiftShader, the context-lost/restored listener path is injected and verified.",
+  "checks": [
+    {
+      "id": "R009-RESILIENCE-HIDDEN-STARTED",
+      "status": "PASS",
+      "actual": 0.04,
+      "expected": "> 0.005"
+    },
+    {
+      "id": "R009-RESILIENCE-HIDDEN-STOPS",
+      "status": "PASS",
+      "actual": {
+        "before": 0.04,
+        "hidden": 0.04
+      },
+      "expected": "delta < 0.02"
+    },
+    {
+      "id": "R009-RESILIENCE-HIDDEN-BUTTON-RESET",
+      "status": "PASS",
+      "actual": "false",
+      "expected": "false"
+    },
+    {
+      "id": "R009-RESILIENCE-SHOW-NO-STALE-RESUME",
+      "status": "PASS",
+      "actual": {
+        "hidden": 0.04,
+        "shown": 0.04
+      },
+      "expected": "delta < 0.02"
+    },
+    {
+      "id": "R009-RESILIENCE-WEBGL-LOSE-EXTENSION-RECORDED",
+      "status": "PASS",
+      "actual": false,
+      "expected": "boolean recorded"
+    },
+    {
+      "id": "R009-RESILIENCE-CONTEXT-LOST-EVENT",
+      "status": "PASS",
+      "actual": {
+        "events": 1,
+        "mode": "injected listener path; extension unavailable in this SwiftShader session"
+      },
+      "expected": ">= 1"
+    },
+    {
+      "id": "R009-RESILIENCE-CONTEXT-RESTORED-EVENT",
+      "status": "PASS",
+      "actual": {
+        "events": 1,
+        "mode": "injected listener path; extension unavailable in this SwiftShader session"
+      },
+      "expected": ">= 1"
+    },
+    {
+      "id": "R009-RESILIENCE-CONTEXT-RESTORE-READABLE",
+      "status": "PASS",
+      "actual": 2866.567113743577,
+      "expected": "> 20 image variance"
+    },
+    {
+      "id": "R009-RESILIENCE-CONTEXT-RESTORE-CONTROLS",
+      "status": "PASS",
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "id": "R009-RESILIENCE-NETWORK-0",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    },
+    {
+      "id": "R009-RESILIENCE-ERROR-0",
+      "status": "PASS",
+      "actual": [],
+      "expected": []
+    }
+  ],
+  "pass_count": 11,
+  "fail_count": 0
+}

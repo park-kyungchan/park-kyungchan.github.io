@@ -1,0 +1,27 @@
+{
+  "suite": "P003-R009-MOTION-QA",
+  "status": "PASS",
+  "evidence_file": "evidence/P003_R009_MOTION_EVIDENCE.mp4",
+  "codec": "h264",
+  "pixel_format": "yuvj420p",
+  "width": 1180,
+  "height": 738,
+  "fps": "6/1",
+  "frames": 24,
+  "duration_seconds": 4.0,
+  "bytes": 440704,
+  "sequences": [
+    "composite revolution profile generation",
+    "finite cylinder section + intersection locus",
+    "cylinder lateral-surface unfolding + shortest path"
+  ],
+  "camera_interaction_during_sequence": "sampled orbit injected mid-sequence; runtime live orbit/zoom checks PASS for revolution, revsection, geodesic",
+  "motion_grammar": [
+    "PREVIEW",
+    "ANTICIPATION",
+    "TRANSFORM",
+    "SETTLE",
+    "HOLD"
+  ],
+  "note": "Evidence samples the same deterministic progress/state functions used by autoplay. The MP4 is audit media, not a replacement for the interactive artifact."
+}
