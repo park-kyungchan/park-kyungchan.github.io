@@ -95,6 +95,9 @@
     } else {
       [data.focus,data.change,data.evidence,data.next].forEach((value,index)=>{const el=$(`#mappingValue${index+1}`,guide);if(el)el.textContent=value;});
     }
+    // The stage live guide reads the same mapping state, so a selection must
+    // refresh both surfaces at once.
+    if (typeof r009UpdateLiveGuide === 'function') r009UpdateLiveGuide();
   }
 
 

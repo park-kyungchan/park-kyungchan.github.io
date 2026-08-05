@@ -96,6 +96,16 @@
     const token = publicVertexToken(solid, vertexIndex, localMap) || '이 부분의 꼭짓점';
     return withPrefix ? `꼭짓점 ${token}` : token;
   }
+  // R008 left a call to selectionPublicName() in the explorer mapping notebook but
+  // never shipped the helper, so every chapter-1 pick threw. Same dispatch the
+  // explorer already uses inline for its announcement string.
+  function selectionPublicName(solid, selection) {
+    if (!solid || !selection) return '';
+    const localMap = makeLocalVertexMap(solid, seedVerticesForSelection(solid, selection));
+    if (selection.type === 'face') return publicFaceName(solid, selection.index, localMap);
+    if (selection.type === 'edge') return publicEdgeName(solid, selection.index, localMap);
+    return publicVertexName(solid, selection.index, localMap);
+  }
   function seedVerticesForSelection(solid, selection) {
     if (!solid || !selection) return [];
     if (selection.type === 'face') return [...solid.faces[selection.index]];

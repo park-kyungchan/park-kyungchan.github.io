@@ -2245,6 +2245,16 @@ window.P003_MEASURE = {"schema_version":"P003-MEASURE-001-SURFACE-VOLUME","gener
     const token = publicVertexToken(solid, vertexIndex, localMap) || '이 부분의 꼭짓점';
     return withPrefix ? `꼭짓점 ${token}` : token;
   }
+  // R008 left a call to selectionPublicName() in the explorer mapping notebook but
+  // never shipped the helper, so every chapter-1 pick threw. Same dispatch the
+  // explorer already uses inline for its announcement string.
+  function selectionPublicName(solid, selection) {
+    if (!solid || !selection) return '';
+    const localMap = makeLocalVertexMap(solid, seedVerticesForSelection(solid, selection));
+    if (selection.type === 'face') return publicFaceName(solid, selection.index, localMap);
+    if (selection.type === 'edge') return publicEdgeName(solid, selection.index, localMap);
+    return publicVertexName(solid, selection.index, localMap);
+  }
   function seedVerticesForSelection(solid, selection) {
     if (!solid || !selection) return [];
     if (selection.type === 'face') return [...solid.faces[selection.index]];
@@ -3612,6 +3622,9 @@ window.P003_MEASURE = {"schema_version":"P003-MEASURE-001-SURFACE-VOLUME","gener
     } else {
       [data.focus,data.change,data.evidence,data.next].forEach((value,index)=>{const el=$(`#mappingValue${index+1}`,guide);if(el)el.textContent=value;});
     }
+    // The stage live guide reads the same mapping state, so a selection must
+    // refresh both surfaces at once.
+    if (typeof r009UpdateLiveGuide === 'function') r009UpdateLiveGuide();
   }
 
 
