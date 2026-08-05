@@ -80,7 +80,7 @@
     renderer.countedFaces.clear(); renderer.countedEdges.clear(); renderer.countedVertices.clear();
     renderer.cutEdges = new Set();
     renderer.setRelationEdgeHighlights([]);
-    if (state.tab !== 'explorer') { state.counting = false; state.randomTarget = null; }
+    if (state.tab !== 'explorer') resetExplorerActivityState();
     if (state.tab !== 'net') { state.cutMode = false; state.netMode = 'autoplay'; }
     if (state.tab === 'explorer') renderExplorer();
     else if (state.tab === 'net') renderNetLab();

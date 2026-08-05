@@ -8,7 +8,7 @@
     if(!['revolution','revsection','geodesic'].includes(state.tab))stopR007Playback();
     refs.main.hidden=false;if(refs.foldStageBadge)refs.foldStageBadge.hidden=true;if(refs.stageContext)refs.stageContext.textContent=R009_CONTEXT_LABELS[state.tab]||'입체 탐구';
     renderer.selectedFaces.clear();renderer.selectedEdges.clear();renderer.selectedVertices.clear();renderer.countedFaces.clear();renderer.countedEdges.clear();renderer.countedVertices.clear();renderer.cutEdges=new Set();renderer.setRelationEdgeHighlights([]);
-    state.counting=false;state.randomTarget=null;state.cutMode=false;state.netMode='autoplay';
+    resetExplorerActivityState();state.cutMode=false;state.netMode='autoplay';
     if(state.tab==='revolution')renderRevolution();else if(state.tab==='revsection')renderRevSections();else renderShortestPaths();
     r009AfterRender();
   };

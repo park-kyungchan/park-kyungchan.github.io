@@ -1,3 +1,17 @@
+  const PRISM_PATTERN_ROWS = ['FAMILY_PRISM_3', 'FAMILY_PRISM_4', 'FAMILY_PRISM_5'];
+  const PRISM_PATTERN_COLUMNS = [
+    { key: 'V', label: '꼭짓점 V', target: 'vertex', options: ['2n', 'n+2', '3n'] },
+    { key: 'E', label: '모서리 E', target: 'edge', options: ['3n', '2n', 'n+3'] },
+    { key: 'F', label: '면 F', target: 'face', options: ['n+2', '2n', 'n'] },
+  ];
+  function prismPatternTruth() {
+    return window.P003_MEASURE?.explorer_patterns?.prism || { V: '2n', E: '3n', F: 'n+2' };
+  }
+  function patternCellValue(solidId, key) {
+    const value = state.patternCells?.[`${solidId}|${key}`];
+    return Number.isFinite(value) ? value : null;
+  }
+
   function renderExplorer() {
     const solid = currentExplorerSolid();
     renderer.setSolid(state.solidId);
@@ -45,7 +59,8 @@
         <p class="small-note">꼭짓점이 많은 입체는 선택한 부분만 문자로 표시해 화면을 가리지 않습니다.</p>
         ${isFamily ? '<div id="baseLateralLegend" class="p13-face-legend" hidden aria-label="밑면과 옆면 색 안내"><span><i class="is-base"></i>밑면</span><span><i class="is-lateral"></i>옆면</span></div>' : ''}
       </section>
-      <section class="panel-section" id="explorerCountingSection"><div id="countingBody"></div></section>`;
+      <section class="panel-section" id="explorerCountingSection"><div id="countingBody"></div></section>
+      ${isFamily ? '<section class="panel-section" id="explorerPatternSection"><div id="patternBody"></div></section>' : ''}`;
 
     refs.right.innerHTML = `
       <section class="panel-section"><h2>${solid.korean_name} 관찰 기록</h2>${metricsHTML(solid)}</section>
@@ -138,16 +153,19 @@
       if (feedback) feedback.innerHTML = '';
       announce(already ? `이미 센 ${countLabel[target].name}입니다.` : `${countLabel[target].name} ${bucket.size}개째를 세었습니다.`);
     }
+    function startCountingActivity() {
+      state.counting = true;
+      state.randomTarget = null;
+      resetCounting();
+      renderer.onPick = countingPick;
+      renderCountingBody();
+    }
     function renderCountingBody() {
       const host = $('#countingBody', refs.left);
       if (!host) return;
       host.innerHTML = countingBodyHTML();
       $('#countingStartButton', host)?.addEventListener('click', () => {
-        state.counting = true;
-        state.randomTarget = null;
-        resetCounting();
-        renderer.onPick = countingPick;
-        renderCountingBody();
+        startCountingActivity();
         announce('세기 활동을 시작했습니다. 무엇을 셀지 고르세요.');
       });
       $$('[data-count-target]', host).forEach(button => button.addEventListener('click', () => {
@@ -165,7 +183,8 @@
       $('#countingCheckButton', host)?.addEventListener('click', () => {
         const target = state.randomTarget;
         const found = countBucket(target).size, truth = countTruth(target), correct = found === truth;
-        const message = correct ? `정확합니다. ${countLabel[target].topic} ${truth}개입니다.` : `다시 세어 보세요. 아직 ${found}개를 찾았습니다.`;
+        let message = correct ? `정확합니다. ${countLabel[target].topic} ${truth}개입니다.` : `다시 세어 보세요. 아직 ${found}개를 찾았습니다.`;
+        if (correct && recordPatternCell(target, truth)) message += ` 규칙 찾기 표의 ${solid.korean_name} · ${countLabel[target].name} 칸을 채웠습니다.`;
         const feedback = $('#countingFeedback', host);
         if (feedback) feedback.innerHTML = `<div class="callout ${correct ? 'success' : 'warning'}"><strong>${correct ? '맞았습니다' : '조금 더 찾아보세요'}</strong>${message}</div>`;
         announce(message);
@@ -186,7 +205,107 @@
         announce('세기 활동을 마치고 관찰 모드로 돌아왔습니다.');
       });
     }
+
+    function patternFilledRows(key) {
+      return PRISM_PATTERN_ROWS.filter(id => patternCellValue(id, key) !== null);
+    }
+    function patternHint(column) {
+      const rowId = patternFilledRows(column.key)[0];
+      if (!rowId) return '표를 먼저 채운 뒤, n에 값을 넣어 확인해 보세요.';
+      const row = DATA.solids[rowId], n = row.family_params.n, value = patternCellValue(rowId, column.key);
+      return `${row.korean_name}은 n=${n}이고 ${column.label}가 ${value}였습니다. n에 ${n}을 넣어 ${value}가 되는 식을 골라 보세요.`;
+    }
+    function patternAllCorrect() {
+      const truth = prismPatternTruth();
+      return PRISM_PATTERN_COLUMNS.every(column => state.patternChoices[column.key] === truth[column.key]);
+    }
+    function patternBodyHTML() {
+      if (!state.patternActive) return `<button id="patternStartButton" class="action-button" type="button">규칙 찾기 (n각기둥)</button>
+        <p class="small-note">삼각기둥·사각기둥·오각기둥을 차례로 세어 표를 채우고, n각기둥의 V·E·F를 식으로 정리하는 활동입니다.</p>`;
+      const truth = prismPatternTruth(), solved = patternAllCorrect();
+      const bodyRows = PRISM_PATTERN_ROWS.map(id => {
+        const row = DATA.solids[id];
+        const cells = PRISM_PATTERN_COLUMNS.map(column => {
+          const value = patternCellValue(id, column.key);
+          return value === null ? '<td class="is-empty">?</td>' : `<td>${value}</td>`;
+        }).join('');
+        return `<tr class="${id === state.solidId ? 'is-current' : ''}"><td>${row.korean_name} (n=${row.family_params.n})</td>${cells}</tr>`;
+      }).join('');
+      const generalRow = solved ? `<tr class="is-general"><td>n각기둥</td><td>${truth.V}</td><td>${truth.E}</td><td>${truth.F}</td></tr>` : '';
+      const switchButtons = PRISM_PATTERN_ROWS.map(id => `<button class="action-button" type="button" data-pattern-row="${id}" ${id === state.solidId ? 'disabled' : ''}>${DATA.solids[id].korean_name} — 이 입체로 바꾸기</button>`).join('');
+      const selectors = PRISM_PATTERN_COLUMNS.map(column => {
+        const unlocked = patternFilledRows(column.key).length >= 2;
+        const choice = state.patternChoices[column.key] || '';
+        return `<div><label class="control-label" for="patternSelect${column.key}">${column.label}</label>
+          <select id="patternSelect${column.key}" data-pattern-select="${column.key}" ${unlocked ? '' : 'disabled'}>
+            <option value="" ${choice ? '' : 'selected'}>${unlocked ? '식 고르기' : '두 줄 이상 필요'}</option>
+            ${column.options.map(option => `<option value="${option}" ${choice === option ? 'selected' : ''}>${option}</option>`).join('')}
+          </select></div>`;
+      }).join('');
+      const feedback = state.patternFeedback
+        ? `<div class="callout ${state.patternFeedback.ok ? 'success' : 'warning'}"><strong>${state.patternFeedback.ok ? '맞았습니다' : '다시 생각해 보세요'}</strong>${state.patternFeedback.message}</div>`
+        : '';
+      const closing = solved
+        ? `<div class="callout success"><strong>세 식이 모두 맞았습니다</strong>세 식을 확인해 보세요: ${truth.V} − ${truth.E} + (${truth.F}) = 2 — 오일러 관계가 항상 성립합니다.</div>`
+        : '';
+      return `<p class="small-note">한 칸은 “다 세었어요”가 맞았을 때만 채워집니다. 아래에서 입체를 바꾸고 직접 세어 보세요.</p>
+        <table class="p13-pattern-table"><thead><tr><th>각기둥</th><th>꼭짓점 V</th><th>모서리 E</th><th>면 F</th></tr></thead><tbody>${bodyRows}${generalRow}</tbody></table>
+        <div class="p13-row-actions">${switchButtons}</div>
+        <h4 class="p13-subhead">n각기둥으로 일반화하기</h4>
+        <div class="p13-general-grid">${selectors}</div>
+        ${feedback}${closing}
+        <p class="small-note">각뿔은 어떨까요? 직접 세어 비교해 보세요.</p>
+        <div class="button-stack"><button id="patternEndButton" class="action-button" type="button">규칙 찾기 마치기</button></div>`;
+    }
+    function renderPatternBody() {
+      const host = $('#patternBody', refs.left);
+      if (!host) return;
+      host.innerHTML = patternBodyHTML();
+      $('#patternStartButton', host)?.addEventListener('click', () => {
+        state.patternActive = true;
+        state.patternFeedback = null;
+        renderPatternBody();
+        announce('규칙 찾기를 시작했습니다. 표의 각기둥을 하나씩 세어 채워 보세요.');
+      });
+      $('#patternEndButton', host)?.addEventListener('click', () => {
+        state.patternActive = false;
+        renderPatternBody();
+        announce('규칙 찾기를 마쳤습니다.');
+      });
+      $$('[data-pattern-row]', host).forEach(button => button.addEventListener('click', () => {
+        const rowId = button.dataset.patternRow;
+        state.solidId = rowId;
+        state.explorerLabelsVisible = DATA.solids[rowId].topology.V <= 26 && state.explorerLabelsVisible;
+        state.patternResume = true;
+        renderCurrentTab();
+        announce(`${DATA.solids[rowId].korean_name}으로 바꾸고 세기 활동을 열었습니다. 무엇을 셀지 고르세요.`);
+      }));
+      $$('[data-pattern-select]', host).forEach(select => select.addEventListener('change', () => {
+        const column = PRISM_PATTERN_COLUMNS.find(item => item.key === select.dataset.patternSelect);
+        const choice = select.value;
+        state.patternChoices[column.key] = choice;
+        if (!choice) { state.patternFeedback = null; renderPatternBody(); return; }
+        const ok = choice === prismPatternTruth()[column.key];
+        const message = ok
+          ? `맞습니다. n각기둥의 ${column.label}는 ${choice}입니다.`
+          : `고른 식이 표의 수와 맞지 않습니다. ${patternHint(column)}`;
+        state.patternFeedback = { ok, message };
+        renderPatternBody();
+        announce(message);
+      }));
+    }
+    function recordPatternCell(target, value) {
+      const column = PRISM_PATTERN_COLUMNS.find(item => item.target === target);
+      if (!state.patternActive || !column || !PRISM_PATTERN_ROWS.includes(state.solidId)) return false;
+      state.patternCells[`${state.solidId}|${column.key}`] = value;
+      state.patternFeedback = null;
+      renderPatternBody();
+      return true;
+    }
+
+    renderPatternBody();
     renderCountingBody();
+    if (state.patternResume) { state.patternResume = false; startCountingActivity(); }
     refreshUniversalMapping({ force: true });
   }
 

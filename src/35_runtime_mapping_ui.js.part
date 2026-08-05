@@ -194,6 +194,18 @@
       : `${state.selectionType === 'face' ? '면' : state.selectionType === 'edge' ? '모서리' : '꼭짓점'}을 탭하여 선택 · 두 손가락: 확대/축소`) + compatibility;
   }
 
+  function resetExplorerActivityState() {
+    state.counting = false;
+    state.randomTarget = null;
+    state.baseLateralVisible = false;
+    state.patternActive = false;
+    state.patternCells = {};
+    state.patternChoices = { V: '', E: '', F: '' };
+    state.patternFeedback = null;
+    state.patternResume = false;
+    renderer.faceTints = null;
+  }
+
   function resetCounting() {
     renderer.countedFaces.clear(); renderer.countedEdges.clear(); renderer.countedVertices.clear();
     renderer.uploadGeometry();

@@ -3,7 +3,7 @@
     "index.html",
     "P003_R009_Integrated_Spatial_Revolution_Lab_Standalone.html"
   ],
-  "expected_sha256": "cfc228eef26cfe35b394a566665c8a476e44273eacc3608357cf0f9f5c2ad60b",
+  "expected_sha256": "fc0e0a2714abe15e5c7969e267597f8ad68584d15019ddc26e234f490db7556e",
   "parts": [
     "00_document_head.html.part",
     "05_css_00_base_tokens_layout.css.part",

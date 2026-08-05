@@ -99,3 +99,18 @@ body.reduced-motion .r009-focus-ring{animation:none!important;display:none!impor
 .p13-face-legend i{width:12px;height:12px;border-radius:4px;box-shadow:inset 0 0 0 1px rgba(15,23,42,.16)}
 .p13-face-legend i.is-base{background:#d44c85}
 .p13-face-legend i.is-lateral{background:#3380d9}
+
+/* ===== P1-3 explorer family: n각기둥 규칙 찾기 table ===== */
+.p13-pattern-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.82rem;font-variant-numeric:tabular-nums}
+.p13-pattern-table th,.p13-pattern-table td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:center}
+.p13-pattern-table th{color:var(--muted);font-size:.74rem;font-weight:850}
+.p13-pattern-table th:first-child,.p13-pattern-table td:first-child{text-align:left;white-space:nowrap}
+.p13-pattern-table td{color:var(--ink-strong);font-weight:820}
+.p13-pattern-table td.is-empty{color:var(--muted);font-weight:700}
+.p13-pattern-table tr.is-current td{background:rgba(255,255,255,.62)}
+.p13-pattern-table tr.is-general td{color:#004da8;font-weight:920;background:rgba(234,243,255,.72);border-bottom:none}
+.p13-row-actions{display:grid;gap:7px;margin-top:9px}
+.p13-subhead{margin:14px 0 0;color:var(--ink-strong);font-size:.88rem;font-weight:850}
+.p13-general-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.p13-general-grid .control-label{margin:6px 0 4px;font-size:.74rem}
+.p13-general-grid select{width:100%;min-width:0}
