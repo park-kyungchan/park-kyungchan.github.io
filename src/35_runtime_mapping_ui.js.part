@@ -133,6 +133,49 @@
     return variants[state.netVariantIndex];
   }
 
+  const POLYHEDRON_DEFINITION = '다면체: 여러 개의 평면 다각형으로만 둘러싸인 입체도형입니다.';
+  const FAMILY_DEFINITIONS = {
+    prism: '각기둥: 두 밑면이 서로 평행하고 합동인 다각형이며, 옆면이 모두 직사각형인 다면체입니다.',
+    pyramid: '각뿔: 밑면이 다각형이고 옆면이 모두 삼각형인 다면체입니다.',
+    frustum_pyramid: '각뿔대: 각뿔을 밑면에 평행한 평면으로 잘라서 생기는 두 입체 중 밑면을 포함하는 쪽입니다.',
+  };
+  const REGULAR_POLYGON_NAMES = { 3: '정삼각형', 4: '정사각형', 5: '정오각형', 6: '정육각형', 7: '정칠각형', 8: '정팔각형', 10: '정십각형' };
+  const LATERAL_SHAPE_FALLBACK = { prism: '직사각형', pyramid: '이등변삼각형', frustum_pyramid: '사다리꼴' };
+
+  function isFamilySolid(solid) {
+    return !!(solid && Array.isArray(solid.base_face_ids) && Array.isArray(solid.lateral_face_ids));
+  }
+  function familyFaceShapes(solid) {
+    // face_description is authored as "<밑면 모양> N개 + <옆면 모양> M개"; read the two
+    // shape names from it and fall back to the base polygon and the family kind.
+    const segments = String(solid.face_description || '').split('+').map(text => text.trim());
+    const shapeOf = text => (String(text).match(/^(\S+?)\s*\d+개$/) || [])[1] || '';
+    const baseSides = solid.faces?.[solid.base_face_ids?.[0]]?.length || 0;
+    return {
+      base: shapeOf(segments[0]) || REGULAR_POLYGON_NAMES[baseSides] || `${baseSides}각형`,
+      lateral: shapeOf(segments[1]) || LATERAL_SHAPE_FALLBACK[solid.family] || '옆면 다각형',
+    };
+  }
+  function familyStructureLine(solid) {
+    const shapes = familyFaceShapes(solid);
+    return `밑면 ${solid.base_face_ids.length}개 — ${shapes.base} / 옆면 ${solid.lateral_face_ids.length}개 — ${shapes.lateral}`;
+  }
+  function faceShapeLabel(solid, faceIndex) {
+    if (isFamilySolid(solid)) {
+      const shapes = familyFaceShapes(solid);
+      if (solid.base_face_ids.includes(faceIndex)) return shapes.base;
+      if (solid.lateral_face_ids.includes(faceIndex)) return shapes.lateral;
+    }
+    return `정${solid.faces[faceIndex].length}각형`;
+  }
+  function baseLateralTints(solid) {
+    const tints = new Map();
+    if (!isFamilySolid(solid)) return tints;
+    solid.base_face_ids.forEach(faceIndex => tints.set(faceIndex, palette.baseFace));
+    solid.lateral_face_ids.forEach(faceIndex => tints.set(faceIndex, palette.lateralFace));
+    return tints;
+  }
+
   function solidOptions(selected, includeExtensions = true) {
     const make = (ids, label) => `<optgroup label="${label}">${ids.map(id => `<option value="${id}" ${id === selected ? 'selected' : ''}>${DATA.solids[id].korean_name}</option>`).join('')}</optgroup>`;
     const family = DATA.ui.family_order?.length ? make(DATA.ui.family_order, '각기둥·각뿔·각뿔대') : '';
@@ -183,7 +226,7 @@
         const edgeIndex = solid.topology.edges.findIndex(edge => edge.includes(a) && edge.includes(b));
         if (edgeIndex >= 0) faceEdges.push(publicEdgeName(solid, edgeIndex, localMap));
       }
-      return `<dl class="definition-list"><dt>선택</dt><dd>${publicFaceName(solid, selection.index, localMap)}</dd><dt>면의 모양</dt><dd>정${face.length}각형</dd><dt>둘레 꼭짓점</dt><dd>${face.map(v => publicVertexName(solid, v, localMap)).join(' → ')}</dd><dt>둘레 모서리</dt><dd>${faceEdges.join(', ')}</dd></dl>${localNote}`;
+      return `<dl class="definition-list"><dt>선택</dt><dd>${publicFaceName(solid, selection.index, localMap)}</dd><dt>면의 모양</dt><dd>${faceShapeLabel(solid, selection.index)}</dd><dt>둘레 꼭짓점</dt><dd>${face.map(v => publicVertexName(solid, v, localMap)).join(' → ')}</dd><dt>둘레 모서리</dt><dd>${faceEdges.join(', ')}</dd></dl>${localNote}`;
     }
     if (selection.type === 'edge') {
       const edge = solid.topology.edges[selection.index];

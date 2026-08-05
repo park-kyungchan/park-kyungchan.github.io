@@ -24,6 +24,7 @@
       this.countedEdges = new Set();
       this.countedVertices = new Set();
       this.cutEdges = new Set();
+      this.faceTints = null;
       this.currentSolid = null;
       this.sharedMode = true;
       this.facePolygons = [];
@@ -533,6 +534,7 @@
       this.selectedFaces.clear(); this.selectedEdges.clear(); this.selectedVertices.clear();
       this.countedFaces.clear(); this.countedEdges.clear(); this.countedVertices.clear();
       this.cutEdges.clear();
+      this.faceTints = null;
     }
 
     setInteractionMode(mode) { this.interactionMode = mode; }
@@ -553,10 +555,15 @@
       this.requestRender();
     }
 
+    setFaceTints(tints = null) {
+      this.faceTints = tints && tints.size ? tints : null;
+      this.uploadGeometry();
+    }
+
     faceColor(side, faceIndex) {
       if (this.selectedFaces.has(faceIndex)) return palette.selected;
       if (this.countedFaces.has(faceIndex)) return palette.counted;
-      const base = palette[side] || palette.default;
+      const base = this.faceTints?.get(faceIndex) || palette[side] || palette.default;
       const alpha = this.viewStyle === 'transparent' ? 0.38 : 0.94;
       return [base[0], base[1], base[2], alpha];
     }

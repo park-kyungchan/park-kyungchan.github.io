@@ -8,6 +8,8 @@
     state.lastSelection = null;
     state.counting = false;
     state.randomTarget = null;
+    state.baseLateralVisible = false;
+    const isFamily = isFamilySolid(solid);
     setInteractionUI('navigate');
     showModuleOverlay(false);
 
@@ -22,6 +24,10 @@
         <select id="solidSelect">${solidOptions(state.solidId, true)}</select>
         <div class="callout"><strong>${solid.korean_name}</strong>${solid.face_description}<br>한 꼭짓점에 모이는 면: ${solid.vertex_configuration_label}</div>
       </section>
+      ${isFamily ? `<section class="panel-section" id="explorerFamilySection"><h3>밑면과 옆면</h3>
+        <p class="small-note">${POLYHEDRON_DEFINITION}</p>
+        <div class="callout"><strong>${familyStructureLine(solid)}</strong>${FAMILY_DEFINITIONS[solid.family] || ''}</div>
+      </section>` : ''}
       <section class="panel-section"><h3>선택할 요소</h3>
         <div class="button-grid">
           <button class="choice-button ${state.selectionType === 'face' ? 'is-active' : ''}" data-select-type="face" type="button">면</button>
@@ -34,8 +40,10 @@
           <button class="chip-button is-active" data-style="solid" type="button">면과 골격</button>
           <button class="chip-button" data-style="transparent" type="button">반투명</button>
           <button id="labelToggle" class="chip-button ${state.explorerLabelsVisible ? 'is-active' : ''}" type="button">꼭짓점 문자</button>
+          ${isFamily ? '<button id="baseLateralToggle" class="chip-button" type="button" aria-pressed="false">밑면·옆면 구분</button>' : ''}
         </div>
         <p class="small-note">꼭짓점이 많은 입체는 선택한 부분만 문자로 표시해 화면을 가리지 않습니다.</p>
+        ${isFamily ? '<div id="baseLateralLegend" class="p13-face-legend" hidden aria-label="밑면과 옆면 색 안내"><span><i class="is-base"></i>밑면</span><span><i class="is-lateral"></i>옆면</span></div>' : ''}
       </section>
       <section class="panel-section" id="explorerCountingSection"><div id="countingBody"></div></section>`;
 
@@ -66,6 +74,16 @@
       event.currentTarget.classList.toggle('is-active', state.explorerLabelsVisible);
       renderer.setLabelMode(state.explorerLabelsVisible && solid.topology.V <= 26 ? 'vertices' : 'none');
       announce(state.explorerLabelsVisible ? '꼭짓점 문자를 표시합니다.' : '꼭짓점 문자를 숨겼습니다.');
+    });
+    $('#baseLateralToggle', refs.left)?.addEventListener('click', event => {
+      state.baseLateralVisible = !state.baseLateralVisible;
+      const button = event.currentTarget;
+      button.classList.toggle('is-active', state.baseLateralVisible);
+      button.setAttribute('aria-pressed', String(state.baseLateralVisible));
+      renderer.setFaceTints(state.baseLateralVisible ? baseLateralTints(solid) : null);
+      const legend = $('#baseLateralLegend', refs.left);
+      if (legend) legend.hidden = !state.baseLateralVisible;
+      announce(state.baseLateralVisible ? '밑면과 옆면을 서로 다른 색으로 구분해 표시합니다.' : '밑면·옆면 구분 색을 껐습니다.');
     });
     const explorerObservePick = selection => {
       state.lastSelection = selection;

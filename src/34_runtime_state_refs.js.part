@@ -6,6 +6,7 @@
     lastSelection: null,
     randomTarget: null,
     explorerLabelsVisible: true,
+    baseLateralVisible: false,
     netSolidId: 'PLATONIC_CUBE',
     netMode: 'edge',
     netVariantIndex: 0,
