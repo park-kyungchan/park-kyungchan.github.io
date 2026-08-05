@@ -89,6 +89,12 @@ artifact on one runner differ by ~7 pixels, but a different GPU, font stack or
 Chromium version differs by far more than the gate allows. CI does exactly this
 on pull requests, rendering the base and head builds on one runner.
 
+## Fonts
+
+The Korean handwriting face (**Gaegu**, SIL OFL 1.1) is subset and base64-embedded
+into the artifact by `tools/content_gen/build_font_subset.py`, because the build
+must make zero external requests; see `docs/P1-4_FONT_LICENSE.md`.
+
 ## History
 
 R007 through R009 were built by *sedimentation*: each release applied ordered

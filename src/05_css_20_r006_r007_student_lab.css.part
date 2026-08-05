@@ -366,7 +366,7 @@ body { overflow-x: hidden; }
 .r007-module-heading p { margin:3px 0 0; color:var(--muted); font-size:.78rem; }
 .r007-phase-badge { flex:0 0 auto; padding:6px 10px; border-radius:999px; background:#fff; border:1px solid rgba(0,110,230,.25); color:#005bbb; font-size:.72rem; font-weight:900; }
 .r007-svg-card { min-height:360px; border-radius:18px; background:#fff; border:1px solid rgba(37,73,115,.13); box-shadow:0 12px 30px rgba(37,73,115,.10); overflow:hidden; }
-.r007-svg-card svg { display:block; width:100%; height:100%; min-height:360px; font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR","Malgun Gothic",system-ui,sans-serif; }
+.r007-svg-card svg { display:block; width:100%; height:100%; min-height:360px; font-family:"Gaegu",-apple-system,BlinkMacSystemFont,"Noto Sans KR","Malgun Gothic",system-ui,sans-serif; }
 .r007-caption { padding:9px 12px; border-radius:12px; background:#fff; border:1px solid rgba(37,73,115,.13); color:#36516e; font-size:.78rem; }
 .r007-predict-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
 .r007-predict-grid button { min-height:46px; }

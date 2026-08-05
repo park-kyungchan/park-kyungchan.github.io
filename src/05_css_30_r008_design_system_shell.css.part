@@ -32,8 +32,8 @@
   --r8-focus: #005ce6;
 
   /* Type scale */
-  --r8-font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
-  --r8-font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+  --r8-font-ui: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  --r8-font-display: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
   --r8-type-11: .6875rem;
   --r8-type-12: .75rem;
   --r8-type-13: .8125rem;

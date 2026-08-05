@@ -32,6 +32,9 @@
   --shadow-float: 0 14px 36px rgba(35,62,105,.18), inset 0 1px 0 rgba(255,255,255,.9);
   --shadow-press: 0 5px 14px rgba(35,62,105,.13), inset 0 1px 0 rgba(255,255,255,.8);
   --spring: cubic-bezier(.22,.8,.25,1);
+  /* P1-4: numeric readouts stay on the sans stack. Gaegu has no tabular
+     figures, so a live-updating digit run visibly reflows on it. */
+  --p14-font-num: -apple-system, BlinkMacSystemFont, "SF Pro Text", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -47,7 +50,7 @@ body {
     radial-gradient(circle at 95% 8%, rgba(119,83,255,.16), transparent 31%),
     radial-gradient(circle at 54% 103%, rgba(255,163,72,.14), transparent 37%),
     linear-gradient(155deg, #f4f8ff 0%, #eef6ff 44%, #fff7f0 100%);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  font-family: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   line-height: 1.5;
   letter-spacing: -.014em;
   overscroll-behavior: none;

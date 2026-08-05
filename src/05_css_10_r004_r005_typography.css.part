@@ -11,8 +11,8 @@
   font-display: swap;
 }
 :root {
-  --font-hand: "P003 Korean Hand", "Nanum Pen Script", "Gaegu", "Gamja Flower", "Poor Story", "Apple SD Gothic Neo", "Malgun Gothic", cursive;
-  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-hand: "Gaegu", "P003 Korean Hand", "Nanum Pen Script", "Gamja Flower", "Poor Story", "Apple SD Gothic Neo", "Malgun Gothic", cursive;
+  --font-ui: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Text", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --font-math: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 body {

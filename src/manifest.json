@@ -3,10 +3,11 @@
     "index.html",
     "P003_R009_Integrated_Spatial_Revolution_Lab_Standalone.html"
   ],
-  "expected_sha256": "c122ba43744d097f8a8b4d574947f2a5a95de1360c92cc3cdb890ab041ab20d9",
+  "expected_sha256": "8452f621f270385d8b95525672388142528be0004d59cd0bd09d11fc5a6bfeea",
   "parts": [
     "00_document_head.html.part",
     "05_css_00_base_tokens_layout.css.part",
+    "05_css_05_p14_handwriting_font.css.part",
     "05_css_10_r004_r005_typography.css.part",
     "05_css_20_r006_r007_student_lab.css.part",
     "05_css_30_r008_design_system_shell.css.part",
