@@ -1,0 +1,52 @@
+  function renderSoccer() {
+    stopSoccerPlayback();
+    if(!state.soccerViewInitialized){renderer.resetView('soccer');state.soccerViewInitialized=true;}
+    showModuleOverlay(false);
+    renderer.setSoccer(state.soccerProgress,state.soccerInflated);
+    renderer.setViewStyle('solid');renderer.setLabelMode(state.soccerProgress<.001?'vertices':'none');setInteractionUI('navigate');
+    const endpoint=state.soccerProgress>=.999,stage=soccerStage();
+    refs.left.innerHTML=`<section class="panel-section"><h2>축구공 다면체 자동 영상</h2>
+      <div class="fold-step-meter"><strong>현재 장면</strong><span id="soccerStageTitle">${stage.title}</span><strong id="soccerStageMeter">${stage.index}/${stage.total}</strong></div>
+      <div class="fold-readout"><div><strong>${stage.title}</strong><small id="soccerStageDetail">${stage.detail}</small></div><span aria-hidden="true">⬡</span></div>
+      <div class="progress-row"><span>0%</span><input id="soccerSlider" aria-label="축구공 다면체 변환 진행" type="range" min="0" max="100" value="${Math.round(state.soccerProgress*100)}"><span id="soccerValue" class="progress-value">${Math.round(state.soccerProgress*100)}%</span></div>
+      <div class="inline-actions"><button id="soccerPlayToggle" class="action-button primary" type="button" aria-pressed="false">▶ 자동 영상</button><button id="soccerPrev" class="action-button" type="button">← 이전 장면</button><button id="soccerNext" class="action-button" type="button">다음 장면 →</button></div>
+      <div class="inline-actions"><button id="soccerStart" class="action-button" type="button">처음</button><button id="soccerHalf" class="action-button" type="button">자르는 중</button><button id="soccerEnd" class="action-button success" type="button">완성</button></div>
+      <label class="control-label" for="soccerSpeed">자동 영상 시간: <strong id="soccerSecondsValue">${state.soccerSeconds.toFixed(0)}초</strong></label><input id="soccerSpeed" type="range" min="14" max="36" step="1" value="${state.soccerSeconds}">
+      <p class="small-note camera-free-note"><strong>자동 영상 중에도 시점은 자유롭습니다.</strong> 회전·확대·축소로 꼭짓점이 잘려 새 면이 되는 과정을 여러 방향에서 확인하세요.</p>
+      </section>
+      <section class="panel-section"><h3>보기 방식</h3><label class="control-label"><input id="inflatedToggle" type="checkbox" ${state.soccerInflated?'checked':''}> 둥글게 보이도록 한 시각 모형</label><p class="small-note">V/E/F 계산은 평평한 면과 곧은 모서리를 가진 다면체 모양에 적용합니다.</p></section>
+      <section class="panel-section"><h3>완성 뒤 면 구분</h3><div class="button-stack"><button id="highlightPentagons" class="action-button" type="button" ${endpoint?'':'disabled'}>새 오각형 12개 강조</button><button id="highlightHexagons" class="action-button" type="button" ${endpoint?'':'disabled'}>바뀐 육각형 20개 강조</button><button id="clearSoccerHighlight" class="action-button" type="button">강조 지우기</button></div></section>`;
+    refs.right.innerHTML=soccerRightHTML(endpoint);refreshUniversalMapping({force:true});
+    $('#soccerSlider',refs.left).addEventListener('input',e=>{stopSoccerPlayback();applySoccerProgress(Number(e.target.value)/100);renderSoccerDockOnly();});
+    $('#soccerPlayToggle',refs.left).addEventListener('click',()=>{if(state.soccerPlaying)stopSoccerPlayback();else startSoccerPlayback();});
+    const stages=[0,.38,.78,1];
+    const step=dir=>{stopSoccerPlayback();let index=stages.findIndex(v=>state.soccerProgress<=v+.03);if(index<0)index=stages.length-1;index=clamp(index+dir,0,stages.length-1);applySoccerProgress(stages[index]);renderSoccerDockOnly();};
+    $('#soccerPrev',refs.left).addEventListener('click',()=>step(-1));$('#soccerNext',refs.left).addEventListener('click',()=>step(1));
+    $('#soccerStart',refs.left).addEventListener('click',()=>{stopSoccerPlayback();applySoccerProgress(0);renderSoccerDockOnly();});
+    $('#soccerHalf',refs.left).addEventListener('click',()=>{stopSoccerPlayback();applySoccerProgress(.55);renderSoccerDockOnly();});
+    $('#soccerEnd',refs.left).addEventListener('click',()=>{stopSoccerPlayback();applySoccerProgress(1);renderSoccerDockOnly();});
+    $('#soccerSpeed',refs.left).addEventListener('input',e=>{state.soccerSeconds=Number(e.target.value);$('#soccerSecondsValue',refs.left).textContent=`${state.soccerSeconds.toFixed(0)}초`;});
+    $('#inflatedToggle',refs.left).addEventListener('change',e=>{state.soccerInflated=e.target.checked;applySoccerProgress(state.soccerProgress,{announceChange:false});});
+    $('#highlightPentagons',refs.left)?.addEventListener('click',()=>{renderer.selectedFaces=new Set(Array.from({length:12},(_,i)=>20+i));renderer.uploadGeometry();renderer.setLabelMode('none');announce('원래 꼭짓점 12개 자리에서 생긴 오각형 12개를 강조했습니다.');});
+    $('#highlightHexagons',refs.left)?.addEventListener('click',()=>{renderer.selectedFaces=new Set(Array.from({length:20},(_,i)=>i));renderer.uploadGeometry();renderer.setLabelMode('none');announce('원래 삼각형 20개가 바뀐 육각형 20개를 강조했습니다.');});
+    $('#clearSoccerHighlight',refs.left).addEventListener('click',()=>{renderer.selectedFaces.clear();renderer.setLabelMode(state.soccerProgress<.001?'vertices':'none');renderer.uploadGeometry();});
+    renderer.onPick=null;
+  }
+  function renderSoccerDockOnly(){
+    if(state.tab!=='soccer')return;
+    const endpoint=state.soccerProgress>=.999;
+    refs.right.innerHTML=soccerRightHTML(endpoint);
+    refreshUniversalMapping({force:true});
+  }
+  function soccerRightHTML(endpoint) {
+    if (!endpoint) {
+      const pct = Math.round(state.soccerProgress * 100);
+      return `<section class="panel-section"><h2>변환 과정</h2><div class="callout"><strong>${pct === 0 ? '정이십면체 시작' : '모든 꼭짓점을 같은 비율로 자르는 중'}</strong>${pct === 0 ? '정삼각형 20개, V=12, E=30, F=20' : '한 꼭짓점에 모이던 정삼각형 5개가 잘리면서 새 정오각형 면이 자랍니다.'}</div>${pct === 0 ? metricsHTML(DATA.solids.PLATONIC_ICOSA) : '<p>자르기가 끝나기 전에는 새 면들이 아직 완성되지 않았습니다. 끝점에서 정확한 V/E/F를 확인합니다.</p>'}</section>
+      <section class="panel-section"><h3>무엇이 무엇으로 바뀔까?</h3><ul><li>원래 꼭짓점 12개 → 정오각형 12개</li><li>원래 정삼각형 20개 → 정육각형 20개</li><li>각 새 꼭짓점에는 오각형 1개와 육각형 2개가 모임</li></ul></section>`;
+    }
+    const solid = DATA.solids.ARCH_TRUNC_ICOSA;
+    return `<section class="panel-section"><h2>깎은 정이십면체 완성</h2>${metricsHTML(solid)}<div class="callout success"><strong>고전적인 축구공 다면체 모형</strong>정오각형 12개 + 정육각형 20개 = 32개 면</div></section>
+      <section class="panel-section"><h3>면의 변을 세어 E와 V 구하기</h3><div class="formula-box">12×5 + 20×6 = 180<br>2E = 180 → E = 90<br>3V = 180 → V = 60<br>60 − 90 + 32 = 2</div></section>
+      <section class="panel-section"><h3>자르기 전후의 수 변화</h3><div class="formula-box">한 꼭짓점(q=5): V 변화=4, E 변화=5, F 변화=1<br>12개 꼭짓점 부분 자르기: V 변화=48, E 변화=60, F 변화=12<br>(12,30,20) → (60,90,32)</div></section>`;
+  }
+

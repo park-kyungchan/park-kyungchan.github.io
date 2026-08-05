@@ -1,0 +1,142 @@
+  const rigidFoldPlanCache = new Map();
+  function buildRigidFoldPlan(solidId, netOverride = null) {
+    const net = netOverride || DATA.nets[solidId];
+    const cacheKey = `${solidId}::${net?.net_id || 'BASE'}`;
+    if (rigidFoldPlanCache.has(cacheKey)) return rigidFoldPlanCache.get(cacheKey);
+    const solid = DATA.solids[solidId];
+    if (!solid || !net) return null;
+    const faces = solid.faces, vertices = solid.vertices;
+    const root = Number(net.root_face_id.slice(1)) - 1;
+    const adjacency = Array.from({ length: faces.length }, () => []);
+    net.hinges.forEach(hinge => {
+      const edgeIndex = Number(hinge.solid_edge_id.slice(1)) - 1;
+      const [fa, fb] = solid.topology.edge_incident_faces[edgeIndex];
+      const [u, v] = solid.topology.edges[edgeIndex];
+      adjacency[fa].push({ face: fb, edgeIndex, u, v });
+      adjacency[fb].push({ face: fa, edgeIndex, u, v });
+    });
+    const parent = Array(faces.length).fill(-1), depth = Array(faces.length).fill(0), hingeForFace = Array(faces.length).fill(null);
+    parent[root] = root;
+    const order = [root];
+    for (let cursor = 0; cursor < order.length; cursor++) {
+      const faceIndex = order[cursor];
+      adjacency[faceIndex].forEach(link => {
+        if (parent[link.face] !== -1) return;
+        parent[link.face] = faceIndex;
+        depth[link.face] = depth[faceIndex] + 1;
+        hingeForFace[link.face] = link;
+        order.push(link.face);
+      });
+    }
+    const maxDepth = Math.max(...depth);
+    const flatMaps = net.assembly_faces.map((af, fi) => {
+      const map = new Map();
+      faces[fi].forEach((vertexIndex, cornerIndex) => map.set(vertexIndex, af.flat_points[cornerIndex]));
+      return map;
+    });
+    const foldAngles = Array(faces.length).fill(0);
+    order.slice(1).forEach(child => {
+      const p = parent[child];
+      let { u, v } = hingeForFace[child];
+      const pf = faces[p], ui = pf.indexOf(u);
+      if (pf[(ui + 1) % pf.length] !== v) [u, v] = [v, u];
+      const axis = vec3Unit(vec3Sub(vertices[v], vertices[u]));
+      const pn = faceNormalFromIndices(vertices, pf);
+      const cn = faceNormalFromIndices(vertices, faces[child]);
+      foldAngles[child] = Math.atan2(vec3Dot(axis, vec3Cross(pn, cn)), clamp(vec3Dot(pn, cn), -1, 1));
+      hingeForFace[child] = { ...hingeForFace[child], u, v };
+    });
+    const rootAssembly = net.assembly_faces[root];
+    const displayScale = rootAssembly.flat_scale / rootAssembly.target_scale;
+    const alignment = {
+      q: quaternionMultiply(rootAssembly.target_quaternion, quaternionConjugate(rootAssembly.flat_quaternion)),
+      scale: 1,
+      displayScale,
+      flatTranslation: rootAssembly.flat_translation,
+      targetTranslation: vec3Scale(rootAssembly.target_translation, displayScale),
+    };
+    const alignPoint = point => vec3Add(
+      quaternionRotate(alignment.q, vec3Scale(vec3Sub(point, alignment.flatTranslation), alignment.scale)),
+      alignment.targetTranslation,
+    );
+    const targetEdges = solid.topology.edges.map(([a, b]) => [vec3Scale(vertices[a], displayScale), vec3Scale(vertices[b], displayScale)]);
+    const sequence = order.slice(1);
+    const sequenceIndexByFace = new Map(sequence.map((faceIndex, index) => [faceIndex, index]));
+    const plan = { solidId, solid, net, faces, vertices, root, parent, depth, maxDepth, hingeForFace, order, sequence, sequenceIndexByFace, flatMaps, foldAngles, alignment, alignPoint, targetEdges };
+    rigidFoldPlanCache.set(cacheKey, plan);
+    return plan;
+  }
+
+  const FOLD_PHASES = Object.freeze({ previewEnd: .12, anticipationEnd: .24, transformEnd: .70, settleEnd: .82, holdEnd: 1 });
+  function foldPhaseForLocal(local) {
+    if (local < FOLD_PHASES.previewEnd) return 'preview';
+    if (local < FOLD_PHASES.anticipationEnd) return 'anticipation';
+    if (local < FOLD_PHASES.transformEnd) return 'transform';
+    if (local < FOLD_PHASES.settleEnd) return 'settle';
+    return 'hold';
+  }
+  function foldFrameForProgress(plan, progress) {
+    const sequence = plan?.sequence || plan?.order?.slice(1) || [];
+    const total = Math.max(1, sequence.length);
+    const p = clamp(progress, 0, 1);
+    if (!sequence.length) return { unitIndex: 0, total: 0, faceIndex: plan?.root ?? 0, local: 1, phase: 'hold', transformT: 1, completed: 0 };
+    if (p >= 1) return { unitIndex: total - 1, total, faceIndex: sequence[total - 1], local: 1, phase: 'hold', transformT: 1, completed: total };
+    const scaled = p * total;
+    const unitIndex = clamp(Math.floor(scaled), 0, total - 1);
+    const local = clamp(scaled - unitIndex, 0, 1);
+    const phase = foldPhaseForLocal(local);
+    const rawTransform = clamp((local - FOLD_PHASES.anticipationEnd) / (FOLD_PHASES.transformEnd - FOLD_PHASES.anticipationEnd), 0, 1);
+    const transformT = document.body.classList.contains('reduced-motion')
+      ? (rawTransform < .5 ? 0 : 1)
+      : smoothstep01(rawTransform);
+    const completed = unitIndex + (phase === 'hold' ? 1 : 0);
+    return { unitIndex, total, faceIndex: sequence[unitIndex], local, phase, transformT, completed };
+  }
+  function sequentialHingeProgress(plan, progress, faceIndex) {
+    if (faceIndex === plan.root) return 1;
+    const sequenceIndex = plan.sequenceIndexByFace?.get(faceIndex) ?? plan.sequence?.indexOf(faceIndex) ?? -1;
+    if (sequenceIndex < 0) return 0;
+    const frame = foldFrameForProgress(plan, progress);
+    if (sequenceIndex < frame.unitIndex) return 1;
+    if (sequenceIndex > frame.unitIndex) return 0;
+    return frame.transformT;
+  }
+  function foldProgressForUnit(plan, unitIndex, phase = 'hold') {
+    const total = Math.max(1, plan?.sequence?.length || 1);
+    const marks = { preview: .04, anticipation: .18, transform: .47, settle: .76, hold: .92 };
+    return clamp((clamp(unitIndex, 0, total - 1) + (marks[phase] ?? marks.hold)) / total, 0, 1);
+  }
+  function foldStageForProgress(progress, plan = null) {
+    if (!plan?.sequence?.length) {
+      const p = clamp(progress, 0, 1);
+      if (p < .08) return { index: 1, title: '전개도 살펴보기', detail: '접는 선과 꼭짓점 문자를 확인합니다.', phase: 'preview', total: 1 };
+      if (p < .93) return { index: 1, title: '한 면씩 접기', detail: '두 면이 함께 가진 모서리를 기준으로 한 면씩 접습니다.', phase: 'transform', total: 1 };
+      return { index: 1, title: '입체 완성', detail: '여러 꼭짓점 문자가 같은 한 점으로 모였습니다.', phase: 'hold', total: 1 };
+    }
+    const frame = foldFrameForProgress(plan, progress);
+    const phaseText = {
+      preview: '이번에 움직일 면과 가까워질 꼭짓점을 먼저 확인합니다.',
+      anticipation: '두 면이 함께 가진 모서리와 만날 꼭짓점에 표시가 나타납니다.',
+      transform: '면의 크기와 모양을 바꾸지 않고 천천히 접습니다.',
+      settle: '가까워진 꼭짓점들이 한 점으로 모이는지 확인합니다.',
+      hold: '시점을 바꾸며 어떤 꼭짓점 문자가 하나가 되었는지 살펴봅니다.',
+    }[frame.phase];
+    return { index: frame.unitIndex + 1, total: frame.total, title: `${frame.unitIndex + 1}번째 면 · ${frame.phase === 'hold' ? '겹침 확인' : '천천히 접기'}`, detail: phaseText, phase: frame.phase, faceIndex: frame.faceIndex, frame };
+  }
+  function foldMappingInfo(plan, frame) {
+    if (!plan || !frame) return null;
+    return {
+      faceIndex: frame.faceIndex,
+      faceId: faceIdFromIndex(frame.faceIndex),
+      faceName: `${frame.unitIndex + 1}번째 면`,
+      foldLineText: '두 면이 함께 가진 모서리',
+      mergeVertices: [],
+      closingEdges: [],
+      step: frame.unitIndex + 1,
+      total: frame.total,
+      phase: frame.phase,
+      phaseLabel: ({preview:'미리 보기',anticipation:'공통 모서리 확인',transform:'한 면 접기',settle:'꼭짓점 모이기',hold:'겹침 확인'})[frame.phase],
+    };
+  }
+
+

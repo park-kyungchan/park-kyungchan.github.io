@@ -1,5 +1,5 @@
 {
-  "schema_version": "P003-R009-INTEGRATED-SPATIAL-1.0",
+  "schema_version": "P003-R009-INTEGRATED-SPATIAL-1.1",
   "axis_convention": "all R009 solids of revolution use the +y object-local axis",
   "revolution_profiles": {
     "cylinder": {
@@ -530,6 +530,7 @@
         "d": 0.0
       },
       "classification": "ellipse",
+      "scope": "ENRICHMENT_NOT_ASSESSMENT",
       "exact": {
         "semi_minor": 1.5,
         "semi_major": 1.5461646096066226
@@ -619,6 +620,7 @@
         "d": 0.19611613513818402
       },
       "classification": "ellipse",
+      "scope": "ENRICHMENT_NOT_ASSESSMENT",
       "exact": {
         "passes_apex": false
       },
@@ -734,8 +736,9 @@
         },
         {
           "id": "three_face_strip",
-          "length": 3.0,
-          "valid": true
+          "length": 3.1622776601683795,
+          "valid": false,
+          "reason": "sqrt(10) is the diagonal of the 1x3 three-face strip, but in that development the far corner is the vertex (0,1,1), not the opposite vertex, so the straight segment is not a P-Q path. Every three-face chain between opposite vertices folds at a path endpoint and degenerates to the two-face development sqrt(5)."
         }
       ]
     },
@@ -795,17 +798,21 @@
         {
           "k": -1,
           "sector_delta_angle": -2.220054368432491,
-          "length": 4.067285654982911
+          "length": 4.067285654982911,
+          "valid": true
         },
         {
           "k": 0,
           "sector_delta_angle": 1.1100271842162452,
-          "length": 2.455052851944554
+          "length": 2.455052851944554,
+          "valid": true
         },
         {
           "k": 1,
           "sector_delta_angle": 4.440108736864981,
-          "length": 3.6302504433014895
+          "length": 3.6302504433014895,
+          "valid": false,
+          "reason": "|sector_delta_angle| = 4.4401 rad > pi, so in the developed sector the straight chord leaves the wedge spanned by the two rays and is not realizable on the lateral surface; the shortest path of this seam class runs through the apex and measures 4.5283109433871696."
         }
       ],
       "surface_minimum": 2.455052851944554,
@@ -823,14 +830,16 @@
   },
   "chapter_order": [
     "explorer",
-    "generator",
     "net",
     "section",
-    "euler",
-    "soccer",
     "revolution",
     "revsection",
-    "geodesic"
+    "surfacearea",
+    "volume",
+    "geodesic",
+    "generator",
+    "euler",
+    "soccer"
   ],
   "model_disclosure": {
     "analytic_authority": "classification, displayed values, path lengths, and metric-domain decisions",

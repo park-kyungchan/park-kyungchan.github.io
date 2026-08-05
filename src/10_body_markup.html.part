@@ -1,0 +1,100 @@
+</style>
+</head>
+<body>
+  <!-- P003 R009 deterministic integrated spatial lab; no image_gen; local/offline -->
+  <a class="skip-link" href="#appMain">탐구 화면으로 바로 가기</a>
+  <div class="ambient-field" aria-hidden="true">
+    <span class="ambient-aurora aurora-a"></span>
+    <span class="ambient-aurora aurora-b"></span>
+    <span class="ambient-noise"></span>
+  </div>
+
+  <header class="app-header glass-surface">
+    <div class="brand-lockup">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" role="img"><path d="M32 6 55 19v26L32 58 9 45V19Z" fill="none" stroke="currentColor" stroke-width="4"/><path d="M9 19 32 33l23-14M32 33v25" fill="none" stroke="currentColor" stroke-width="3"/></svg>
+      </span>
+      <div class="title-block">
+        <p class="eyebrow">중학교 1학년 · 하나의 3D 탐구 무대에서 다면체·회전체·최단거리</p>
+        <h1>입체 탐구랩 R009</h1>
+      </div>
+    </div>
+    <div class="header-actions" role="group" aria-label="화면 설정">
+      <button id="studentHelpButton" class="glass-button compact" type="button" aria-haspopup="dialog">
+        <span aria-hidden="true">?</span><span>탐구 시작</span>
+      </button>
+      <button id="controlsToggleButton" class="glass-button compact" type="button" aria-controls="leftPanel" aria-expanded="true">
+        <span aria-hidden="true">◫</span><span>조작 패널 숨기기</span>
+      </button>
+            <button id="motionToggle" class="glass-button compact" type="button" aria-pressed="false">
+        <span aria-hidden="true">◌</span><span>동작 줄이기</span>
+      </button>
+      <button id="fullscreenButton" class="glass-button compact" type="button">
+        <span aria-hidden="true">⛶</span><span>전체 화면</span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="lab-tabs glass-surface" aria-label="탐구 순서">
+    <span class="tab-group-label">기본 과정</span>
+    <button class="tab-button is-active" data-tab="explorer" type="button" aria-current="page"><span class="tab-symbol" aria-hidden="true">1</span><span class="tab-copy"><strong>입체 읽기</strong><small>V·E·F 관찰</small></span></button>
+    <button class="tab-button" data-tab="net" type="button"><span class="tab-symbol" aria-hidden="true">2</span><span class="tab-copy"><strong>전개도 조립</strong><small>5종 정다면체</small></span></button>
+    <button class="tab-button" data-tab="section" type="button"><span class="tab-symbol" aria-hidden="true">3</span><span class="tab-copy"><strong>다면체 단면</strong><small>면의 교선</small></span></button>
+    <button class="tab-button" data-tab="revolution" type="button"><span class="tab-symbol" aria-hidden="true">4</span><span class="tab-copy"><strong>회전체 생성</strong><small>기본·이격·조합</small></span></button>
+    <button class="tab-button" data-tab="revsection" type="button"><span class="tab-symbol" aria-hidden="true">5</span><span class="tab-copy"><strong>회전체 단면·교선</strong><small>단면+자취 통합</small></span></button>
+    <button class="tab-button" data-tab="surfacearea" type="button"><span class="tab-symbol" aria-hidden="true">6</span><span class="tab-copy"><strong>겉넓이</strong><small>전개도로 계산</small></span></button>
+    <button class="tab-button" data-tab="volume" type="button"><span class="tab-symbol" aria-hidden="true">7</span><span class="tab-copy"><strong>부피</strong><small>쌓기·비교</small></span></button>
+    <button class="tab-button" data-tab="geodesic" type="button"><span class="tab-symbol" aria-hidden="true">8</span><span class="tab-copy"><strong>거리·펼친 최단길</strong><small>활용 · 조건+후보 비교</small></span></button>
+    <span class="tab-group-label is-enrichment">심화 탐구</span>
+    <button class="tab-button is-enrichment" data-tab="generator" type="button"><span class="tab-symbol" aria-hidden="true">★1</span><span class="tab-copy"><strong>왜 5개?</strong><small>꼭짓점 각의 합</small></span></button>
+    <button class="tab-button is-enrichment" data-tab="euler" type="button"><span class="tab-symbol" aria-hidden="true">★2</span><span class="tab-copy"><strong>오일러 증명</strong><small>줄이고 되돌리기</small></span></button>
+    <button class="tab-button is-enrichment" data-tab="soccer" type="button"><span class="tab-symbol" aria-hidden="true">★3</span><span class="tab-copy"><strong>축구공 확장</strong><small>꼭짓점 자르기</small></span></button>
+  </nav>
+
+  <main id="appMain" class="app-main" tabindex="-1">
+    <aside id="leftPanel" class="panel controls-panel glass-surface" aria-label="현재 탐구 조작"></aside>
+    <section id="viewerStage" class="viewer-stage" aria-label="수학 대상 3D 탐구 화면">
+      <div class="stage-background" aria-hidden="true"></div>
+      <canvas id="glCanvas" aria-label="회전·확대할 수 있는 다면체와 회전체 3D 화면">이 브라우저에서 입체도형 화면을 바로 열 수 없습니다.</canvas>
+      <canvas id="labelCanvas" aria-hidden="true"></canvas>
+      <div id="moduleOverlay" class="module-overlay" hidden></div>
+      <div id="viewerFallback" class="viewer-fallback" hidden role="status"><strong>입체도형 표시 방식을 바꿉니다.</strong><span>다른 표시 방식으로 계속 탐구합니다.</span></div>
+      <div class="stage-topline"><div class="stage-status glass-chip"><span class="status-pulse" aria-hidden="true"></span><span id="stageContextLabel">입체 읽기</span></div><div id="foldStageBadge" class="fold-stage-badge glass-chip" hidden><span class="fold-stage-step">1단계</span><strong class="fold-stage-title">전개도 읽기</strong></div></div>
+      <div class="viewer-toolbar glass-surface" role="group" aria-label="입체도형 화면 조작"><button id="navigateModeButton" class="tool-button is-active" type="button" aria-pressed="true"><span aria-hidden="true">↻</span><span>회전</span></button><button id="selectModeButton" class="tool-button" type="button" aria-pressed="false"><span aria-hidden="true">⌖</span><span>선택</span></button><button id="zoomOutButton" class="tool-button icon-only" type="button" aria-label="축소">−</button><button id="zoomInButton" class="tool-button icon-only" type="button" aria-label="확대">＋</button><button id="resetViewButton" class="tool-button" type="button"><span aria-hidden="true">◎</span><span>시점 초기화</span></button></div>
+      <div id="viewerHint" class="viewer-hint glass-chip">한 손가락 드래그: 회전 · 두 손가락/＋−: 확대·축소</div>
+      <aside id="liveGuide" class="live-guide glass-surface" tabindex="0" aria-live="polite" aria-atomic="true"><p id="liveGuideKicker" class="live-guide-kicker"></p><h2 id="liveGuideTitle"></h2><p id="liveGuideBody"></p><div id="liveGuideChips" class="live-guide-chips"></div></aside>
+      <section id="r009SpatialHud" class="r009-spatial-hud" hidden aria-hidden="true">
+        <div class="r009-spatial-heading"><p id="r009HudKicker"></p><h2 id="r009HudTitle"></h2><span id="r009HudSubtitle"></span><div id="r009PhaseStrip" class="r009-phase-strip"></div></div>
+        <div id="r009SpatialLegend" class="r009-spatial-legend"></div>
+        <aside id="r009Inset" class="r009-inset" hidden><p id="r009InsetLabel"></p><canvas id="r009InsetCanvas" aria-hidden="true"></canvas><div id="r009InsetMetrics" class="metric" hidden></div></aside>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="evidenceDialog" class="evidence-dialog" aria-labelledby="evidenceDialogTitle"><div class="evidence-dialog-shell glass-surface"><header class="evidence-dialog-header"><div><p class="eyebrow">정확 데이터 · 이유 · 표현 대응</p><h2 id="evidenceDialogTitle">근거 보기</h2></div><button id="evidenceClose" class="evidence-dialog-close" type="button" aria-label="근거 시트 닫기">×</button></header><div id="rightPanelContent" class="evidence-content"></div></div></dialog>
+
+  <footer class="app-footer glass-surface">
+    <div id="statusLive" role="status" aria-live="polite">탐구 준비됨</div>
+    <div class="chapter-nav" aria-label="탐구 순서 이동"><button id="chapterPrevButton" type="button">← 처음</button><span id="chapterProgress" class="chapter-progress">기본 1/8 · 입체 읽기</span><button id="chapterNextButton" type="button">전개도 조립 →</button></div>
+    <div class="footer-scope">오프라인 · 외부 요청 0 · 로그인·저장 없음</div>
+  </footer>
+
+  <dialog id="studentStartDialog" class="start-dialog" aria-labelledby="startDialogTitle">
+    <form method="dialog" class="start-card glass-surface">
+      <button class="dialog-close" value="close" aria-label="탐구 시작 안내 닫기">×</button>
+      <div class="dialog-hero" aria-hidden="true"><span>◇</span><span>⌁</span><span>∠</span><span>2</span></div>
+      <p class="eyebrow">탐구를 시작하기 전에</p>
+      <h2 id="startDialogTitle">입체를 읽고, 만들고, 자르고, 펼쳐서 넓이와 부피까지 설명하세요.</h2>
+      <p class="small-note">기본 8장을 순서대로 탐구하고, 심화 3장은 원할 때 열어 보세요.</p>
+      <ol class="start-steps">
+        <li><div><strong>먼저 예측</strong><span>정답 표시 전에 어느 요소가 만날지 스스로 고릅니다.</span></div></li>
+        <li><div><strong>그다음 움직임 관찰</strong><span>같은 3D 탐구 무대에서 전개도 접촉, 절단 교선, 회전체 생성, 펼친 최단경로를 봅니다.</span></div></li>
+        <li><div><strong>마지막으로 말로 설명</strong><span>어떤 표면을 지나고 어떤 경로를 허용했는지 자신의 말로 설명합니다.</span></div></li>
+      </ol>
+      <div class="dialog-actions">
+        <button id="startExploreButton" class="action-button primary" value="start">바로 탐구하기</button>
+      </div>
+      <p class="small-note">모든 드래그 활동에는 버튼이나 단계 이동 방식도 함께 제공됩니다.</p>
+    </form>
+  </dialog>
+

@@ -1,0 +1,183 @@
+  const foldViewDistance = {
+    PLATONIC_TETRA: [5.5, 4.7, 3.75],
+    PLATONIC_CUBE: [5.8, 5.15, 3.8],
+    PLATONIC_OCTA: [5.8, 5.15, 3.85],
+    PLATONIC_DODECA: [6.45, 5.65, 4.0],
+    PLATONIC_ICOSA: [6.7, 5.85, 4.05],
+  };
+  let foldPlaybackHandle = null;
+  let foldPlaybackLast = 0;
+  let foldReducedTimers = [];
+
+  function foldDistanceAt(solidId, progress) {
+    const [wide] = foldViewDistance[solidId] || [7.6];
+    const confirmation = smoothstep01((progress - 0.95) / 0.05);
+    return lerp(wide, wide * 0.91, confirmation);
+  }
+
+  function updateFoldStageUI(progress = state.foldProgress) {
+    const plan = renderer.foldPlan || buildRigidFoldPlan(state.netSolidId, currentNet());
+    const stage = foldStageForProgress(progress, plan);
+    if (refs.foldStageBadge) {
+      refs.foldStageBadge.hidden = state.tab !== 'net';
+      const step = $('.fold-stage-step', refs.foldStageBadge);
+      const title = $('.fold-stage-title', refs.foldStageBadge);
+      if (step) step.textContent = `${stage.index}/${stage.total}면`;
+      if (title) title.textContent = stage.title;
+    }
+    if (refs.stageContext) refs.stageContext.textContent = state.tab === 'net' ? '한 면씩 모양을 유지한 조립' : '입체 탐구';
+    $$('.fold-timeline span', refs.left).forEach(item => item.classList.toggle('is-active', item.dataset.phase === stage.phase));
+    const readoutTitle = $('#foldReadoutTitle', refs.left), readoutDetail = $('#foldReadoutDetail', refs.left);
+    if (readoutTitle) readoutTitle.textContent = `${stage.index}/${stage.total} · ${stage.title}`;
+    if (readoutDetail) readoutDetail.textContent = stage.detail;
+    const meter = $('#foldFaceMeter', refs.left);
+    if (meter) meter.textContent = `${stage.index}/${stage.total}`;
+  }
+
+  function stopFoldPlayback({ keepButton = false } = {}) {
+    state.foldPlaying = false;
+    if (foldPlaybackHandle) cancelAnimationFrame(foldPlaybackHandle);
+    foldPlaybackHandle = null;
+    foldPlaybackLast = 0;
+    foldReducedTimers.forEach(clearTimeout);
+    foldReducedTimers = [];
+    if (!keepButton) {
+      const button = $('#foldPlayToggle', refs.left);
+      if (button) { button.textContent = '▶ 자동 조립'; button.setAttribute('aria-pressed', 'false'); }
+    }
+  }
+
+  function startFoldPlayback() {
+    stopFoldPlayback({ keepButton: true });
+    const plan = buildRigidFoldPlan(state.netSolidId, currentNet());
+    if (!plan?.sequence?.length) return;
+    state.foldPlaying = true;
+    const button = $('#foldPlayToggle', refs.left);
+    if (button) { button.textContent = 'Ⅱ 일시정지'; button.setAttribute('aria-pressed', 'true'); }
+    if (state.reducedMotion) {
+      let unit = foldFrameForProgress(plan, state.foldProgress).unitIndex;
+      const advance = () => {
+        if (!state.foldPlaying || state.tab !== 'net' || document.hidden) { stopFoldPlayback(); return; }
+        const target = foldProgressForUnit(plan, unit, 'hold');
+        applyFoldProgress(target, { announceChange: true, syncSlider: true });
+        unit += 1;
+        if (unit >= plan.sequence.length) {
+          foldReducedTimers.push(setTimeout(() => { applyFoldProgress(1, { announceChange: true, syncSlider: true }); stopFoldPlayback(); }, 2200));
+          return;
+        }
+        foldReducedTimers.push(setTimeout(advance, Math.max(3200, state.foldSecondsPerFace * 620)));
+      };
+      advance();
+      return;
+    }
+    const duration = Math.max(1, plan.sequence.length) * state.foldSecondsPerFace;
+    const tick = timestamp => {
+      if (!state.foldPlaying || state.tab !== 'net' || document.hidden) { stopFoldPlayback(); return; }
+      if (!foldPlaybackLast) foldPlaybackLast = timestamp;
+      const dt = Math.min(.05, (timestamp - foldPlaybackLast) / 1000);
+      foldPlaybackLast = timestamp;
+      const next = Math.min(1, state.foldProgress + dt / duration);
+      applyFoldProgress(next, { announceChange: false, syncSlider: true });
+      if (next >= 1) { stopFoldPlayback(); announce('모든 면의 조립과 대응 확인이 끝났습니다.'); return; }
+      foldPlaybackHandle = requestAnimationFrame(tick);
+    };
+    foldPlaybackHandle = requestAnimationFrame(tick);
+  }
+
+  function applyFoldProgress(progress, { announceChange = true, syncSlider = false } = {}) {
+    state.foldProgress = clamp(progress, 0, 1);
+    const value = Math.round(state.foldProgress * 100);
+    const slider = $('#foldSlider', refs.left), valueLabel = $('#foldValue', refs.left);
+    if (syncSlider && slider) slider.value = String(value);
+    if (valueLabel) valueLabel.textContent = `${value}%`;
+    renderer.setAssembly(state.netSolidId, state.foldProgress, currentNet(), { ghost: state.showFoldGhost, showVertexLabels: true });
+    renderer.requestRender();
+    updateFoldStageUI(state.foldProgress);
+    refreshUniversalMapping();
+    if (announceChange) {
+      const stage = foldStageForProgress(state.foldProgress, renderer.foldPlan);
+      announce(`${stage.index}/${stage.total} · ${stage.title}: ${stage.detail}`);
+    }
+  }
+
+  function renderNetLab() {
+    stopFoldPlayback();
+    showModuleOverlay(false);
+    state.netMode = 'autoplay';
+    state.cutMode = false;
+    state.netSolidId = 'PLATONIC_CUBE';
+    const variants = netVariantsFor('PLATONIC_CUBE');
+    state.netVariantIndex = clamp(state.netVariantIndex,0,Math.max(0,variants.length-1));
+    const net = currentNet();
+    const solid = DATA.solids.PLATONIC_CUBE;
+    renderer.resetView('net');
+    renderer.setSelectionType('face');
+    renderer.setPublicLabelMap(makeLocalVertexMap(solid));
+    renderer.setLabelMode('none');
+    renderer.setViewStyle('solid');
+    renderer.setRelationEdgeHighlights([]);
+    setInteractionUI('navigate');
+    renderer.onPick = null;
+
+    const plan = buildRigidFoldPlan('PLATONIC_CUBE', net);
+    const stage = foldStageForProgress(state.foldProgress, plan);
+    refs.left.innerHTML = `
+      <section class="panel-section"><h2>${r009ChapterNo('net')}. 전개도에서 입체로</h2>
+        <div class="narrative-step"><span class="step-no">1</span><div><strong>전개도 종류를 고릅니다.</strong><span>평면에서 면이 붙어 있는 모양 자체가 달라집니다.</span></div></div>
+        <div class="narrative-step"><span class="step-no">2</span><div><strong>자동 조립을 재생합니다.</strong><span>한 번에 한 면만 움직이고, 공유한 모서리를 기준으로 모양을 유지합니다.</span></div></div>
+        <div class="narrative-step"><span class="step-no">3</span><div><strong>꼭짓점이 닿는 순간을 확인합니다.</strong><span>미리 겹쳐 보이지 않고, 실제 접촉 뒤에만 문자가 합쳐집니다.</span></div></div>
+      </section>
+      <section class="panel-section">
+        <h3>정육면체의 서로 다른 전개도 11개</h3>
+        <label class="control-label" for="netTypeSelect">전개도 종류</label>
+        <select id="netTypeSelect" class="net-type-select">${variants.map((variant,index) => `<option value="${index}" ${index === state.netVariantIndex ? 'selected' : ''}>${variant.variant_label || `전개도 ${index+1}`}</option>`).join('')}</select>
+        <div class="net-shape-meta"><strong>조립 경로와 종류를 분리했습니다.</strong><span>회전하거나 뒤집어서 같아지는 평면 모양은 하나로 세고, 각 모양에는 검증된 기본 자동 조립 경로 하나를 사용합니다.</span></div>
+      </section>
+      <section class="panel-section"><h3>자동 조립</h3>
+        <div class="progress-row"><span>처음</span><input id="foldSlider" aria-label="전개도 조립 진행" type="range" min="0" max="100" value="${Math.round(state.foldProgress*100)}"><span id="foldValue" class="progress-value">${Math.round(state.foldProgress*100)}%</span></div>
+        <div class="fold-timeline" aria-label="조립의 의미 단계"><span data-phase="preview" class="${stage.phase==='preview'?'is-active':''}">미리 보기</span><span data-phase="anticipation" class="${stage.phase==='anticipation'?'is-active':''}">접을 선</span><span data-phase="transform" class="${stage.phase==='transform'?'is-active':''}">한 면 이동</span><span data-phase="settle" class="${stage.phase==='settle'?'is-active':''}">접촉</span><span data-phase="hold" class="${stage.phase==='hold'?'is-active':''}">관찰 정지</span></div>
+        <div class="fold-readout"><div><strong id="foldReadoutTitle">${stage.title}</strong><small id="foldReadoutDetail">${stage.detail}</small></div><span id="foldFaceMeter">${stage.index}/${stage.total}</span></div>
+        <div class="inline-actions">
+          <button id="foldPlayToggle" class="action-button primary" type="button" aria-pressed="false">▶ 자동 조립</button>
+          <button id="foldPrev" class="action-button" type="button">← 이전</button>
+          <button id="foldNext" class="action-button" type="button">다음 →</button>
+        </div>
+        <div class="inline-actions"><button id="foldFlat" class="action-button" type="button">펼친 모양</button><button id="foldHalf" class="action-button" type="button">현재 면 접는 중</button><button id="foldSolid" class="action-button success" type="button">완성 입체</button></div>
+        <label class="control-label" for="foldSpeed">한 면 시간 <strong id="foldSecondsValue">${state.foldSecondsPerFace.toFixed(1)}초</strong></label>
+        <input id="foldSpeed" aria-label="한 면 조립 시간" type="range" min="5" max="11" step="0.5" value="${state.foldSecondsPerFace}">
+        <label class="control-label"><input id="showFoldGhost" type="checkbox" ${state.showFoldGhost?'checked':''}> 펼친 전개도 투명하게 남기기</label>
+        <p class="small-note"><strong>재생 중에도 회전·확대·축소할 수 있습니다.</strong> 시점 변화는 조립 시간축과 분리되어 있습니다.</p>
+      </section>`;
+
+    updateNetRightOnly();
+    applyFoldProgress(state.foldProgress, { announceChange: false, syncSlider: true });
+
+    $('#netTypeSelect').addEventListener('change', event => {
+      stopFoldPlayback();
+      state.netVariantIndex = Number(event.target.value);
+      state.foldProgress = 0;
+      renderCurrentTab();
+      announce(`${currentNet().variant_label || `전개도 ${state.netVariantIndex+1}`}를 선택했습니다. 평면 모양이 실제로 달라졌습니다.`);
+    });
+    $('#foldSlider').addEventListener('input', event => { stopFoldPlayback(); applyFoldProgress(Number(event.target.value)/100); });
+    $('#foldPlayToggle').addEventListener('click', () => {
+      if (state.foldPlaying) { stopFoldPlayback(); announce('자동 조립을 일시정지했습니다.'); return; }
+      if (state.foldProgress >= .999) applyFoldProgress(0, { announceChange:false, syncSlider:true });
+      startFoldPlayback();
+    });
+    const stepFold = direction => {
+      stopFoldPlayback();
+      const currentPlan = buildRigidFoldPlan(state.netSolidId,currentNet());
+      const frame = foldFrameForProgress(currentPlan,state.foldProgress);
+      const targetUnit = clamp(frame.unitIndex + direction,0,currentPlan.sequence.length-1);
+      applyFoldProgress(foldProgressForUnit(currentPlan,targetUnit,'hold'),{syncSlider:true});
+    };
+    $('#foldPrev').addEventListener('click',()=>stepFold(-1));
+    $('#foldNext').addEventListener('click',()=>stepFold(1));
+    $('#foldFlat').addEventListener('click',()=>{stopFoldPlayback();applyFoldProgress(0,{syncSlider:true});});
+    $('#foldHalf').addEventListener('click',()=>{stopFoldPlayback();const currentPlan=buildRigidFoldPlan(state.netSolidId,currentNet());const frame=foldFrameForProgress(currentPlan,state.foldProgress);applyFoldProgress(foldProgressForUnit(currentPlan,frame.unitIndex,'transform'),{syncSlider:true});});
+    $('#foldSolid').addEventListener('click',()=>{stopFoldPlayback();applyFoldProgress(1,{syncSlider:true});});
+    $('#foldSpeed').addEventListener('input',event=>{state.foldSecondsPerFace=Number(event.target.value);$('#foldSecondsValue',refs.left).textContent=`${state.foldSecondsPerFace.toFixed(1)}초`;});
+    $('#showFoldGhost').addEventListener('change',event=>{state.showFoldGhost=event.target.checked;applyFoldProgress(state.foldProgress,{announceChange:false});});
+  }
+

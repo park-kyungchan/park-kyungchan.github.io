@@ -1,0 +1,299 @@
+/* P003 R004 — local-only Korean handwriting typography + mapped notebook */
+@font-face {
+  font-family: "P003 Korean Hand";
+  src:
+    local("UnPenheulim"), local("은 펜흘림"),
+    local("UnPen"), local("은 펜"),
+    local("Nanum Pen Script"), local("나눔손글씨 펜"),
+    local("Gaegu"), local("개구"),
+    local("Gamja Flower"), local("감자꽃"),
+    local("Poor Story");
+  font-display: swap;
+}
+:root {
+  --font-hand: "Gaegu", "P003 Korean Hand", "Nanum Pen Script", "Gamja Flower", "Poor Story", "Apple SD Gothic Neo", "Malgun Gothic", cursive;
+  --font-ui: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Text", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-math: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+body {
+  font-family: var(--font-hand);
+  line-height: 1.58;
+  letter-spacing: .006em;
+  font-size: 1.04rem;
+}
+button, select, input, .formula-box, .metric-card strong, .proof-counter, .progress-value,
+.table-wrap, .scope-chip, .status-pill, .session-value {
+  font-family: var(--font-ui);
+}
+.formula-box, .proof-counter strong { font-family: var(--font-math); }
+.title-block h1, .panel h2, .panel h3, .tab-copy strong, .mapping-notebook h2,
+.mapping-card strong, .stage-map-guide strong, .fold-readout strong { font-family: var(--font-hand); }
+.panel h2 { font-size: 1.34rem; }
+.panel h3 { font-size: 1.08rem; }
+.panel p, .panel li, .small-note, .callout { font-size: 1rem; }
+
+.stage-map-guide {
+  position: absolute;
+  z-index: 9;
+  right: 14px;
+  bottom: 60px;
+  width: min(330px, calc(100% - 28px));
+  padding: 11px 13px;
+  border-radius: 18px;
+  pointer-events: none;
+  color: var(--ink-strong);
+  background: linear-gradient(145deg, rgba(255,255,255,.92), rgba(238,247,255,.78));
+  border: 1px solid rgba(10,120,255,.22);
+  box-shadow: 0 12px 30px rgba(30,65,112,.14), inset 0 1px white;
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+}
+.stage-map-guide .map-kicker {
+  display: block;
+  color: var(--accent-text);
+  font-family: var(--font-ui);
+  font-size: .72rem;
+  font-weight: 850;
+  letter-spacing: .05em;
+}
+.stage-map-guide strong { display: block; margin-top: 3px; font-size: 1.05rem; line-height: 1.24; }
+.stage-map-guide small { display: block; margin-top: 4px; color: var(--muted); font-size: .84rem; line-height: 1.36; }
+
+.mapping-notebook {
+  position: sticky;
+  top: -16px;
+  z-index: 7;
+  margin: -16px -16px 16px;
+  padding: 16px;
+  border-radius: 0 0 24px 24px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.97), rgba(236,246,255,.92)),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(32,104,184,.08) 31px 32px);
+  border-bottom: 1px solid rgba(10,120,255,.20);
+  box-shadow: 0 13px 28px rgba(35,72,120,.13);
+  backdrop-filter: blur(22px) saturate(138%);
+  -webkit-backdrop-filter: blur(22px) saturate(138%);
+}
+.mapping-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.mapping-heading h2 { margin: 0; font-size: 1.25rem; }
+.mapping-link-chip {
+  flex: 0 0 auto; padding: 5px 9px; border-radius: 999px; color: #0757a9;
+  background: rgba(10,120,255,.09); border: 1px solid rgba(10,120,255,.15);
+  font-family: var(--font-ui); font-size: .70rem; font-weight: 820;
+}
+.mapping-grid { display: grid; gap: 7px; }
+.mapping-card {
+  display: grid;
+  grid-template-columns: 32px minmax(0,1fr);
+  gap: 9px;
+  align-items: start;
+  padding: 9px 10px;
+  border-radius: 15px;
+  background: rgba(255,255,255,.74);
+  border: 1px solid rgba(51,96,155,.12);
+}
+.mapping-number {
+  width: 30px; height: 30px; display: grid; place-items: center; border-radius: 10px;
+  color: white; background: linear-gradient(145deg, #0a8cff, #635bff);
+  font-family: var(--font-ui); font-weight: 900; font-size: .82rem;
+  box-shadow: 0 6px 13px rgba(41,89,221,.20);
+}
+.mapping-card:nth-child(2) .mapping-number { background: linear-gradient(145deg,#13a875,#0098a5); }
+.mapping-card:nth-child(3) .mapping-number { background: linear-gradient(145deg,#e08500,#c85424); }
+.mapping-card:nth-child(4) .mapping-number { background: linear-gradient(145deg,#dc3f67,#8c5cff); }
+.mapping-card strong { display: block; color: var(--ink-strong); font-size: .98rem; line-height: 1.22; }
+.mapping-card span:last-child { display: block; margin-top: 2px; color: var(--muted); font-size: .88rem; line-height: 1.36; }
+.activity-panel { scroll-padding-top: 380px; }
+.activity-panel :is(button, input, select, [tabindex]) { scroll-margin-top: 380px; }
+
+.vertex-key {
+  display: flex; gap: 7px; align-items: center; flex-wrap: wrap; margin-top: 8px;
+  color: var(--muted); font-size: .84rem;
+}
+.vertex-dot-key { width: 10px; height: 10px; border-radius: 50%; background: white; border: 2px solid #173c63; box-shadow: 0 0 0 4px rgba(10,120,255,.10); }
+.merge-dot-key { width: 11px; height: 11px; border-radius: 50%; background: #ffd36b; border: 2px solid #8e5700; box-shadow: 0 0 0 5px rgba(255,181,60,.16); }
+.fold-step-meter {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 9px; align-items: center;
+  margin: 10px 0; padding: 9px 10px; border-radius: 15px;
+  background: rgba(10,120,255,.065); border: 1px solid rgba(10,120,255,.12);
+}
+.fold-step-meter strong { color: var(--accent-text); }
+.camera-free-note { border-left: 4px solid var(--accent); padding-left: 10px; }
+
+.tool-button.icon-only { min-width: 48px; padding-inline: 11px; font-family: var(--font-ui); font-size: 1.15rem; }
+
+@media (max-width: 900px) {
+  .stage-map-guide { right: 10px; bottom: 58px; width: min(300px, calc(100% - 20px)); }
+  .mapping-notebook { top: -12px; margin: -12px -12px 14px; padding: 13px; }
+}
+@media (max-width: 620px) {
+  .stage-map-guide { width: calc(100% - 20px); }
+  .stage-map-guide small { display: none; }
+}
+
+
+
+/* P003 R005 — two-panel learning layout, integrated guidance, compact vertex-only labels */
+.app-main {
+  grid-template-columns: minmax(250px, 302px) minmax(0, 1fr);
+  gap: 12px;
+}
+.app-main.controls-collapsed { grid-template-columns: minmax(0, 1fr); }
+.controls-panel[hidden] { display: none !important; }
+.viewer-stage {
+  --learning-dock-height: clamp(220px, 30vh, 326px);
+  min-width: 0;
+}
+#glCanvas, #labelCanvas, .stage-background {
+  top: 0;
+  bottom: var(--learning-dock-height);
+  height: auto;
+}
+.module-overlay {
+  top: 0;
+  bottom: var(--learning-dock-height);
+  height: auto;
+}
+.viewer-hint { bottom: calc(var(--learning-dock-height) + 13px); }
+.learning-dock {
+  position: absolute;
+  z-index: 12;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--learning-dock-height);
+  overflow: auto;
+  padding: 12px 15px 18px;
+  border-radius: 25px 25px 32px 32px;
+  border: 1px solid rgba(255,255,255,.88);
+  border-top-color: rgba(10,120,255,.18);
+  background: linear-gradient(180deg, rgba(248,252,255,.97), rgba(235,245,255,.96));
+  box-shadow: 0 -18px 46px rgba(35,67,108,.14), inset 0 1px white;
+  scrollbar-width: thin;
+  scroll-padding-top: 118px;
+  touch-action: pan-y;
+}
+.learning-dock :is(button,input,select,[tabindex]) { scroll-margin-top: 118px; }
+.learning-guide {
+  position: sticky;
+  top: -12px;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: minmax(0,1.25fr) minmax(0,1fr) minmax(0,1.15fr);
+  gap: 7px;
+  margin: -12px -15px 12px;
+  padding: 11px 15px;
+  background: linear-gradient(180deg, rgba(252,254,255,.99), rgba(240,248,255,.95));
+  border-bottom: 1px solid rgba(10,120,255,.15);
+  box-shadow: 0 9px 22px rgba(36,73,121,.10);
+}
+.learning-guide-card {
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.78);
+  border: 1px solid rgba(53,96,151,.11);
+}
+.learning-guide-card b {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--accent-text);
+  font-family: var(--font-ui);
+  font-size: .69rem;
+  letter-spacing: .035em;
+}
+.learning-guide-card strong,
+.learning-guide-card span {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--ink-strong);
+  line-height: 1.25;
+}
+.learning-guide-card strong { font-size: .92rem; }
+.learning-guide-card span { color: var(--muted); font-size: .80rem; }
+.learning-guide-card.is-next { background: linear-gradient(145deg, rgba(223,241,255,.92), rgba(236,233,255,.88)); }
+.learning-guide-card.is-evidence { background: linear-gradient(145deg, rgba(226,249,239,.90), rgba(238,248,255,.86)); }
+.stage-map-guide, .mapping-notebook { display: none !important; }
+.activity-panel { scroll-padding-top: 0; }
+
+/* Smaller geometry labels; only vertex letters are visually drawn. */
+.net-face-label, .net-edge-label, .proof-face-label:not(.proof-outside-label) { display: none !important; }
+.net-vertex-label {
+  fill: #3f2f86;
+  font-size: .095px;
+  font-weight: 900;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  paint-order: stroke;
+  stroke: rgba(255,255,255,.96);
+  stroke-width: .03;
+  pointer-events: none;
+}
+.net-corner { r: .065; }
+.proof-label { font-size: 14px; stroke-width: 3.6; }
+.vertex-key { font-size: .78rem; }
+
+.controls-collapsed .viewer-stage { border-radius: 36px; }
+@media (max-width: 1270px) {
+  .app-main { grid-template-columns: minmax(235px,280px) minmax(0,1fr); }
+}
+@media (max-width: 900px) {
+  .app-main { grid-template-columns: 1fr; }
+  .viewer-stage { order: 1; min-height: 78vh; --learning-dock-height: clamp(226px, 35vh, 320px); }
+  .controls-panel { order: 2; }
+  .learning-guide { grid-template-columns: 1fr; }
+  .learning-guide-card:nth-child(2) { display: none; }
+}
+@media (max-width: 560px) {
+  .viewer-stage { min-height: 84vh; --learning-dock-height: clamp(240px, 39vh, 330px); }
+  .learning-dock { padding-inline: 11px; }
+  .learning-guide { margin-inline: -11px; padding-inline: 11px; }
+}
+
+
+/* P003 R005 final learning-focus pass */
+.app-main { grid-template-columns: minmax(232px,278px) minmax(0,1fr); gap:10px; }
+.viewer-stage { --learning-dock-height: clamp(178px,24vh,222px); }
+.viewer-hint { display:none !important; }
+.learning-dock { padding:10px 13px 13px; }
+.learning-guide { margin:-10px -13px 9px; padding:9px 13px; gap:6px; }
+.learning-guide-card { padding:6px 9px; }
+.learning-guide-card strong { font-size:.86rem; }
+.learning-guide-card span { font-size:.82rem; }
+#glCanvas,#labelCanvas{transform:translateY(-28px);}
+@media (max-width:1270px){ .app-main{grid-template-columns:minmax(222px,258px) minmax(0,1fr);} }
+@media (max-width:900px){
+  .app-main{grid-template-columns:1fr;}
+  .viewer-stage{--learning-dock-height:clamp(210px,31vh,265px);min-height:78vh;}
+}
+
+/* P003 R005 final two-panel and vertex-lineage pass */
+.app-main { grid-template-columns: minmax(218px, 254px) minmax(0, 1fr); gap: 9px; }
+.app-main.controls-collapsed { grid-template-columns: minmax(0, 1fr); }
+.viewer-stage { --learning-dock-height: clamp(172px, 22vh, 208px); min-width: 0; }
+#glCanvas, #labelCanvas, .stage-background {
+  inset: 0 0 auto 0 !important;
+  height: calc(100% - var(--learning-dock-height)) !important;
+  transform: none !important;
+}
+.module-overlay {
+  inset: 0 0 auto 0 !important;
+  height: calc(100% - var(--learning-dock-height)) !important;
+}
+.learning-dock { padding: 9px 12px 12px; }
+.learning-guide { margin: -9px -12px 8px; padding: 8px 12px; gap: 6px; }
+.learning-guide-card { padding: 5px 8px; }
+.learning-guide-card strong { font-size: .83rem; }
+.learning-guide-card span { font-size: .71rem; }
+.net-vertex-label { font-size: .082px; stroke-width: .025; }
+.net-corner { r: .055; }
+.vertex-key { font-size: .82rem; }
+@media (max-width: 1270px) {
+  .app-main { grid-template-columns: minmax(208px, 238px) minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+  .app-main { grid-template-columns: 1fr; }
+  .viewer-stage { --learning-dock-height: clamp(202px, 29vh, 254px); min-height: 78vh; }
+}
+
+

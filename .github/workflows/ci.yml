@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-integrity:
+    name: build integrity (src -> committed artifacts)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Assembles src/*.part, enforces manifest expected_sha256, and verifies
+      # both committed artifacts are byte-identical to the assembly.
+      # Writes nothing to the working tree.
+      - name: Verify committed artifacts match src/
+        run: python3 src/build.py --check
+
+  visual-regression:
+    name: visual regression (base vs head, same runner)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      BASE_REF: ${{ github.event.pull_request.base.ref }}
+      OUT_DIR: ${{ github.workspace }}/vr-out
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pinned dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-ci.txt
+          python -m playwright install --with-deps chromium-headless-shell
+
+      - name: Build head artifact from src/
+        run: |
+          mkdir -p "$OUT_DIR"
+          python3 src/build.py
+          cp index.html "$OUT_DIR/head_index.html"
+
+      # The base artifact is read straight out of git history, so both builds
+      # are rendered by the same browser on the same runner. Cross-runner
+      # comparison is not usable at these thresholds.
+      - name: Materialise base artifact from git
+        run: |
+          git fetch --no-tags origin "+refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF"
+          git show "origin/$BASE_REF:index.html" > "$OUT_DIR/base_index.html"
+          ls -l "$OUT_DIR"
+
+      - name: Capture base states
+        run: |
+          python3 tools/visual_regression/capture_states.py \
+            "$OUT_DIR/base" "$OUT_DIR/base_index.html"
+
+      - name: Capture head states
+        run: |
+          python3 tools/visual_regression/capture_states.py \
+            "$OUT_DIR/head" "$OUT_DIR/head_index.html"
+
+      # Pixel gate: a pair fails if it has more than 200 differing pixels or a
+      # max channel delta above 16.
+      # Probe gate (automatic when both runs wrote probes.json): a state fails
+      # if its live guide, stage context or nav count changed, or if the head
+      # run recorded a console error. Pass --ignore-probes to skip it.
+      - name: Compare captures
+        run: |
+          python3 tools/visual_regression/compare.py \
+            "$OUT_DIR/base" "$OUT_DIR/head" \
+            --json "$OUT_DIR/diff_summary.json" \
+            --max-diff-pixels 200 \
+            --max-channel-delta 16
+
+      - name: Upload captures and diff summary
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-${{ github.event.pull_request.number }}
+          path: |
+            ${{ env.OUT_DIR }}/base
+            ${{ env.OUT_DIR }}/head
+            ${{ env.OUT_DIR }}/diff_summary.json
+          if-no-files-found: warn
+          retention-days: 14

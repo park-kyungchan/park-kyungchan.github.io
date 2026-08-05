@@ -1,0 +1,255 @@
+  function announce(message) { refs.status.textContent = message; }
+
+  function eulerMappingState() {
+    const model = EULER_PROOFS?.[state.eulerProofId];
+    if (!model) return null;
+    if (state.eulerMode === 'direct') {
+      ensureDirectProof();
+      const snapshot = directSnapshot(), info = directLegalState(model, snapshot), counts = proofCounts(model, snapshot);
+      return {
+        focus: `${model.name} 평면 연결 그림의 꼭짓점·모서리`,
+        change: info.phase === 'cycle' ? '고리 모서리 하나를 없애 두 영역을 합칩니다.' : info.phase === 'leaf' ? '끝 꼭짓점과 끝 모서리를 한 쌍으로 뗍니다.' : '한 꼭짓점과 바깥 영역만 남았습니다.',
+        evidence: `V=${counts.V}, E=${counts.E}, F=${counts.F} · V−E+F=${eulerInvariant(counts)}`,
+        next: info.phase === 'complete' ? '되감거나 다른 다면체에서 같은 논리를 재현하세요.' : '가운데에서 합법적인 다음 요소를 직접 선택하세요.',
+      };
+    }
+    const frame = typeof eulerFrameAtProgress === 'function' ? eulerFrameAtProgress(model, state.eulerAutoProgress) : null;
+    if (!frame) return { focus: `${model.name}의 V·E·F`, change: '자동 증명 단계를 재생합니다.', evidence: '각 단계의 변화량을 비교합니다.', next: '자동 증명을 재생하거나 다음을 누르세요.' };
+    const counts = frame.displayCounts;
+    return {
+      focus: `${frame.unitIndex + 1}/${frame.total} · ${frame.title}`,
+      change: `${frame.phaseLabel} · ${frame.detail}`,
+      evidence: `V=${counts.V}, E=${counts.E}, F=${counts.F} · V−E+F=${eulerInvariant(counts)}`,
+      next: frame.phase === 'hold' ? '다음 의미 단위로 이동하거나 되감아 확인하세요.' : '변화가 끝날 때까지 가운데 요소의 이동과 수의 변화를 함께 보세요.',
+    };
+  }
+  function currentExplorerSolid() {
+    if (!DATA.solids[state.solidId]) state.solidId = DATA.ui.default_solid;
+    return DATA.solids[state.solidId];
+  }
+  function currentMappingState() {
+    if (state.tab === 'net') {
+      if (state.cutMode) return {
+        focus: '정육면체의 모서리 12개',
+        change: '자를 모서리로 고른 모서리는 빨간색으로 표시됩니다.',
+        evidence: '자를 모서리 7개와 남은 접힘선 5개가 여섯 면을 한 장으로 이어야 합니다.',
+        next: '모서리를 고른 뒤 “선택한 자르기 펼쳐 보기”를 누르세요.',
+      };
+      const info = renderer.currentFoldInfo;
+      if (!info) return { focus: '펼친 전개도의 서로 다른 꼭짓점 문자', change: '한 면씩 천천히 접습니다.', evidence: '서로 떨어진 두 점은 실제 접촉 뒤에만 한 점 이름으로 합쳐집니다.', next: '자동 조립 또는 다음 면을 누르세요.' };
+      const merge = info.mergeVertices?.length ? info.mergeVertices.join('·') : '이번 면의 꼭짓점 문자';
+      return {
+        focus: `${info.step}/${info.total} · ${info.faceName}`,
+        change: `${info.phaseLabel} · 두 면이 함께 가진 모서리를 기준으로 접습니다.`,
+        evidence: `${merge}${info.mergeVertices?.length ? '가 한 점으로 모이는지' : '의 이동을'} 확인합니다.`,
+        next: info.phase === 'hold' ? '시점을 돌려 실제로 합쳐진 문자를 확인한 뒤 “다음 면”을 누르세요.' : '자동재생 중에도 회전·확대·축소하며 꼭짓점 문자를 따라가세요.',
+      };
+    }
+    if (state.tab === 'generator') {
+      const st = angleStatus(state.generatorP, state.generatorQ);
+      return {
+        focus: `가운데의 꼭짓점 점과 정${state.generatorP}각형 면`,
+        change: `면 ${state.generatorQ}개가 한 꼭짓점 주위로 모입니다.`,
+        evidence: `내각 합 ${round(st.sum,1)}° · ${st.relation === 'less' ? '빈 각' : st.relation === 'equal' ? '평면 정지' : '겹침·겹쳐 들어감'}`,
+        next: 'p 또는 q를 바꾸고 처음→움직이는 중→결과를 비교하세요.',
+      };
+    }
+    if (state.tab === 'section') {
+      const preset=currentSectionPreset();const result=state.sectionResult;const sides=result?.points?.length>=3?result.points.length:0;
+      return {focus:`${preset.title} · 자르는 평면`,change:'평면이 만난 모서리의 교점을 같은 면 안에서 잇습니다.',evidence:sides?`${sides}개의 교선이 닫혀 ${sides}각형 단면을 만듭니다.`:'아직 평면이 입체 안으로 들어오지 않았습니다.',next:sides?'다른 절단 사례로 옮겨 단면의 변 수를 비교하세요.':'평면 이동을 재생해 첫 교점이 생기는 순간을 보세요.'};
+    }
+    if (state.tab === 'euler') return eulerMappingState();
+    if (state.tab === 'soccer') {
+      const endpoint = state.soccerProgress >= .999;
+      return {
+        focus: `모든 꼭짓점 점 · 자르기 ${Math.round(state.soccerProgress * 100)}%`,
+        change: '정이십면체의 각 꼭짓점을 같은 비율로 잘라냅니다.',
+        evidence: endpoint ? '새 정오각형 12개, 정육각형 20개 · V=60, E=90, F=32' : '원래 꼭짓점 하나가 새 정오각형 하나로 바뀌는 과정을 추적합니다.',
+        next: endpoint ? '면 종류를 강조하고 V−E+F를 확인하세요.' : '자르기 슬라이더를 천천히 움직이며 꼭짓점 점의 분화를 보세요.',
+      };
+    }
+    const solid = currentExplorerSolid();
+    const selected = state.lastSelection;
+    return {
+      focus: selected ? `${selectionPublicName(solid, selected)}와 주변 꼭짓점` : `${solid.korean_name}의 꼭짓점 ${solid.topology.V}개`,
+      change: selected ? '선택한 요소와 연결된 면·모서리·꼭짓점만 강조합니다.' : '입체를 돌려 가려진 꼭짓점까지 모두 확인합니다.',
+      evidence: `V=${solid.topology.V}, E=${solid.topology.E}, F=${solid.topology.F} · V−E+F=2`,
+      next: selected ? '다른 시점에서 같은 요소가 유지되는지 확인하세요.' : '입체를 회전한 뒤 면·모서리·꼭짓점 하나를 선택하세요.',
+    };
+  }
+  function mappingNotebookHTML(data) {
+    return `<section id="universalMappingNotebook" class="learning-guide" aria-label="가운데 화면과 바로 이어지는 탐구 길잡이">
+      <div class="learning-guide-card"><b>지금 볼 것</b><strong id="mappingValue1">${data.focus}</strong><span id="mappingValue2">${data.change}</span></div>
+      <div class="learning-guide-card is-evidence"><b>확인할 근거</b><strong id="mappingValue3">${data.evidence}</strong></div>
+      <div class="learning-guide-card is-next"><b>다음 한 행동</b><strong id="mappingValue4">${data.next}</strong></div>
+    </section>`;
+  }
+  function refreshUniversalMapping({ force = false } = {}) {
+    if (!refs.right) return;
+    const data = currentMappingState();
+    let guide = $('#universalMappingNotebook', refs.right);
+    if (!guide || force) {
+      guide?.remove();
+      refs.right.insertAdjacentHTML('afterbegin', mappingNotebookHTML(data));
+      guide = $('#universalMappingNotebook', refs.right);
+    } else {
+      [data.focus,data.change,data.evidence,data.next].forEach((value,index)=>{const el=$(`#mappingValue${index+1}`,guide);if(el)el.textContent=value;});
+    }
+    // The stage live guide reads the same mapping state, so a selection must
+    // refresh both surfaces at once.
+    if (typeof r009UpdateLiveGuide === 'function') r009UpdateLiveGuide();
+  }
+
+
+  function setControlsCollapsed(collapsed,{announceChange=true}={}) {
+    state.controlsCollapsed=!!collapsed;
+    refs.left.hidden=state.controlsCollapsed;
+    refs.main.classList.toggle('controls-collapsed',state.controlsCollapsed);
+    if(refs.controlsToggle){
+      refs.controlsToggle.setAttribute('aria-expanded',String(!state.controlsCollapsed));
+      const label=refs.controlsToggle.querySelector('span:last-child');
+      if(label)label.textContent=state.controlsCollapsed?'조작 패널 열기':'조작 패널 숨기기';
+    }
+    renderer.requestRender();
+    if(announceChange)announce(state.controlsCollapsed?'왼쪽 조작 패널을 숨겨 가운데 화면을 넓혔습니다.':'왼쪽 조작 패널을 다시 열었습니다.');
+  }
+
+  function showModuleOverlay(show, html = '') {
+    if (!refs.overlay) return;
+    refs.overlay.hidden = !show;
+    if (show) refs.overlay.innerHTML = html;
+    if (refs.viewerToolbar) refs.viewerToolbar.hidden = show;
+    if (refs.hint) refs.hint.hidden = show;
+    refs.canvas.setAttribute('aria-hidden', String(show));
+    refs.labelCanvas.setAttribute('aria-hidden', 'true');
+  }
+
+  function moduleSupports3D() { return ['explorer', 'net', 'section', 'soccer'].includes(state.tab); }
+
+  function netVariantsFor(solidId = state.netSolidId) {
+    const variants = DATA.net_variants?.[solidId];
+    return variants?.length ? variants : [DATA.nets[solidId]];
+  }
+  function currentNet() {
+    const variants = netVariantsFor(state.netSolidId);
+    state.netVariantIndex = clamp(state.netVariantIndex, 0, Math.max(0, variants.length - 1));
+    return variants[state.netVariantIndex];
+  }
+
+  const POLYHEDRON_DEFINITION = '다면체: 여러 개의 평면 다각형으로만 둘러싸인 입체도형입니다.';
+  const FAMILY_DEFINITIONS = {
+    prism: '각기둥: 두 밑면이 서로 평행하고 합동인 다각형이며, 옆면이 모두 직사각형인 다면체입니다.',
+    pyramid: '각뿔: 밑면이 다각형이고 옆면이 모두 삼각형인 다면체입니다.',
+    frustum_pyramid: '각뿔대: 각뿔을 밑면에 평행한 평면으로 잘라서 생기는 두 입체 중 밑면을 포함하는 쪽입니다.',
+  };
+  const REGULAR_POLYGON_NAMES = { 3: '정삼각형', 4: '정사각형', 5: '정오각형', 6: '정육각형', 7: '정칠각형', 8: '정팔각형', 10: '정십각형' };
+  const LATERAL_SHAPE_FALLBACK = { prism: '직사각형', pyramid: '이등변삼각형', frustum_pyramid: '사다리꼴' };
+
+  function isFamilySolid(solid) {
+    return !!(solid && Array.isArray(solid.base_face_ids) && Array.isArray(solid.lateral_face_ids));
+  }
+  function familyFaceShapes(solid) {
+    // face_description is authored as "<밑면 모양> N개 + <옆면 모양> M개"; read the two
+    // shape names from it and fall back to the base polygon and the family kind.
+    const segments = String(solid.face_description || '').split('+').map(text => text.trim());
+    const shapeOf = text => (String(text).match(/^(\S+?)\s*\d+개$/) || [])[1] || '';
+    const baseSides = solid.faces?.[solid.base_face_ids?.[0]]?.length || 0;
+    return {
+      base: shapeOf(segments[0]) || REGULAR_POLYGON_NAMES[baseSides] || `${baseSides}각형`,
+      lateral: shapeOf(segments[1]) || LATERAL_SHAPE_FALLBACK[solid.family] || '옆면 다각형',
+    };
+  }
+  function familyStructureLine(solid) {
+    const shapes = familyFaceShapes(solid);
+    return `밑면 ${solid.base_face_ids.length}개 — ${shapes.base} / 옆면 ${solid.lateral_face_ids.length}개 — ${shapes.lateral}`;
+  }
+  function faceShapeLabel(solid, faceIndex) {
+    if (isFamilySolid(solid)) {
+      const shapes = familyFaceShapes(solid);
+      if (solid.base_face_ids.includes(faceIndex)) return shapes.base;
+      if (solid.lateral_face_ids.includes(faceIndex)) return shapes.lateral;
+    }
+    return `정${solid.faces[faceIndex].length}각형`;
+  }
+  function baseLateralTints(solid) {
+    const tints = new Map();
+    if (!isFamilySolid(solid)) return tints;
+    solid.base_face_ids.forEach(faceIndex => tints.set(faceIndex, palette.baseFace));
+    solid.lateral_face_ids.forEach(faceIndex => tints.set(faceIndex, palette.lateralFace));
+    return tints;
+  }
+
+  function solidOptions(selected, includeExtensions = true) {
+    const make = (ids, label) => `<optgroup label="${label}">${ids.map(id => `<option value="${id}" ${id === selected ? 'selected' : ''}>${DATA.solids[id].korean_name}</option>`).join('')}</optgroup>`;
+    const family = DATA.ui.family_order?.length ? make(DATA.ui.family_order, '각기둥·각뿔·각뿔대') : '';
+    return family + make(DATA.ui.platonic_order, '정다면체 5개') + (includeExtensions ? make(DATA.ui.extension_order, '정다각형 면의 확장 다면체') : '');
+  }
+
+  function setInteractionUI(mode) {
+    renderer.setInteractionMode(mode);
+    refs.navigate.classList.toggle('is-active', mode === 'navigate');
+    refs.navigate.setAttribute('aria-pressed', String(mode === 'navigate'));
+    refs.select.classList.toggle('is-active', mode === 'select');
+    refs.select.setAttribute('aria-pressed', String(mode === 'select'));
+    const compatibility = '';
+    refs.hint.textContent = (mode === 'navigate'
+      ? '한 손가락 드래그: 회전 · 두 손가락/휠/＋−: 확대·축소 · 자동재생 중에도 가능'
+      : `${state.selectionType === 'face' ? '면' : state.selectionType === 'edge' ? '모서리' : '꼭짓점'}을 탭하여 선택 · 두 손가락: 확대/축소`) + compatibility;
+  }
+
+  function resetExplorerActivityState() {
+    state.counting = false;
+    state.randomTarget = null;
+    state.baseLateralVisible = false;
+    state.patternActive = false;
+    state.patternCells = {};
+    state.patternChoices = { V: '', E: '', F: '' };
+    state.patternFeedback = null;
+    state.patternResume = false;
+    renderer.faceTints = null;
+  }
+
+  function resetCounting() {
+    renderer.countedFaces.clear(); renderer.countedEdges.clear(); renderer.countedVertices.clear();
+    renderer.uploadGeometry();
+  }
+
+  function metricsHTML(solid) {
+    const t = solid.topology;
+    return `<div class="metric-grid">
+      <div class="metric-card"><span class="symbol">V · 꼭짓점</span><span class="value">${t.V}</span></div>
+      <div class="metric-card"><span class="symbol">E · 모서리</span><span class="value">${t.E}</span></div>
+      <div class="metric-card"><span class="symbol">F · 면</span><span class="value">${t.F}</span></div>
+      <div class="metric-card"><span class="symbol">V−E+F</span><span class="value">${t.euler}</span></div>
+    </div>
+    <div class="euler-meter" aria-label="오일러 관계 계산">
+      <span>${t.V}</span><span>−</span><span>${t.E}</span><span>+</span><span>${t.F}</span><span>=</span><span class="result">${t.euler}</span>
+    </div>`;
+  }
+
+  function selectionDescription(solid, selection) {
+    if (!selection) return '<div class="callout"><strong>아직 선택하지 않았습니다.</strong>선택 모드에서 면·모서리·꼭짓점을 탭해 보세요.</div>';
+    const localMap = makeLocalVertexMap(solid, seedVerticesForSelection(solid, selection));
+    const localNote = solid.topology.V > 26
+      ? '<p class="small-note">꼭짓점이 많은 입체이므로 지금 선택한 부분에만 A, B, C, …를 붙였습니다.</p>'
+      : '';
+    if (selection.type === 'face') {
+      const face = solid.faces[selection.index];
+      const faceEdges = [];
+      for (let i = 0; i < face.length; i++) {
+        const a = face[i], b = face[(i + 1) % face.length];
+        const edgeIndex = solid.topology.edges.findIndex(edge => edge.includes(a) && edge.includes(b));
+        if (edgeIndex >= 0) faceEdges.push(publicEdgeName(solid, edgeIndex, localMap));
+      }
+      return `<dl class="definition-list"><dt>선택</dt><dd>${publicFaceName(solid, selection.index, localMap)}</dd><dt>면의 모양</dt><dd>${faceShapeLabel(solid, selection.index)}</dd><dt>둘레 꼭짓점</dt><dd>${face.map(v => publicVertexName(solid, v, localMap)).join(' → ')}</dd><dt>둘레 모서리</dt><dd>${faceEdges.join(', ')}</dd></dl>${localNote}`;
+    }
+    if (selection.type === 'edge') {
+      const edge = solid.topology.edges[selection.index];
+      const incident = solid.topology.edge_incident_faces[selection.index];
+      return `<dl class="definition-list"><dt>선택</dt><dd>${publicEdgeName(solid, selection.index, localMap)}</dd><dt>양 끝</dt><dd>${edge.map(v => publicVertexName(solid, v, localMap)).join(' ↔ ')}</dd><dt>공유하는 두 면</dt><dd>${incident.map(fi => publicFaceName(solid, fi, localMap)).join(', ')}</dd></dl>${localNote}`;
+    }
+    const incidentFaces = solid.topology.vertex_incident_faces[selection.index];
+    const config = solid.topology.vertex_configurations[selection.index];
+    return `<dl class="definition-list"><dt>선택</dt><dd>${publicVertexName(solid, selection.index, localMap)}</dd><dt>모이는 면 수</dt><dd>${incidentFaces.length}개</dd><dt>꼭짓점 배열</dt><dd>${config.join('·')}</dd><dt>모이는 면</dt><dd>${incidentFaces.map(fi => publicFaceName(solid, fi, localMap)).join(', ')}</dd></dl>${localNote}`;
+  }
+

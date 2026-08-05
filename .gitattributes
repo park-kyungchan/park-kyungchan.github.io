@@ -1,1 +1,6 @@
 * text=auto eol=lf
+
+# The forward build is a pure byte partition: git must never normalise these.
+/src/*.part -text
+/index.html -text
+/P003_R009_Integrated_Spatial_Revolution_Lab_Standalone.html -text

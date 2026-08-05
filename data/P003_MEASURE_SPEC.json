@@ -1,0 +1,824 @@
+{
+  "schema_version": "P003-MEASURE-001-SURFACE-VOLUME",
+  "generated_by": "tools/content_gen/generate_measure_spec.py",
+  "principle": "Exact/display separation. `value` is the full-precision float computed from `dims` by the generator and is the only authority for arithmetic; `expr` is the Korean-textbook display string that keeps pi symbolic (13.5π), and `formula` names the rule being applied. Display code formats `expr`, never re-derives it; nothing may measure the rendered mesh, which is a display approximation of these exact solids.",
+  "sources": {
+    "revolution_profiles": "window.P003_R009_EXACT.revolution_profiles (src/20_data_script_open_r009_exact.js.part)",
+    "family_solids": "window.P003_DATA.solids FAMILY_* family_params (data/P003_FAMILY_SOLIDS.json)"
+  },
+  "scopes": {
+    "core": "assessable at the 중1 입체도형 level",
+    "enrichment": "shown for insight, not for assessment"
+  },
+  "surface_area": {
+    "cases": [
+      {
+        "id": "SA-PRISM-3",
+        "solid": "FAMILY_PRISM_3",
+        "family": "prism",
+        "scope": "core",
+        "dims": {
+          "n": 3,
+          "base_edge": 1.2,
+          "height": 2.4
+        },
+        "base_count": 2,
+        "base_area": {
+          "formula": "n a² / (4 tan(π/n))",
+          "expr": "0.36√3",
+          "value": 0.6235382907247959
+        },
+        "base_area_total": {
+          "formula": "2 × 밑넓이",
+          "expr": "0.72√3",
+          "value": 1.2470765814495919
+        },
+        "lateral_area": {
+          "formula": "(밑면 둘레) × h = n a h",
+          "expr": "8.64",
+          "value": 8.64
+        },
+        "total_area": {
+          "formula": "2 × 밑넓이 + 옆넓이",
+          "expr": "0.72√3 + 8.64",
+          "value": 9.887076581449593
+        },
+        "piece_breakdown": [
+          {
+            "face_kind": "regular_polygon_base",
+            "korean_label": "정삼각형 밑면",
+            "count": 2,
+            "area_each": {
+              "formula": "n a² / (4 tan(π/n))",
+              "expr": "0.36√3",
+              "value": 0.6235382907247959
+            }
+          },
+          {
+            "face_kind": "rectangle_lateral",
+            "korean_label": "직사각형 옆면",
+            "count": 3,
+            "area_each": {
+              "formula": "a × h",
+              "expr": "2.88",
+              "value": 2.88
+            }
+          }
+        ]
+      },
+      {
+        "id": "SA-PRISM-4",
+        "solid": "FAMILY_PRISM_4",
+        "family": "prism",
+        "scope": "core",
+        "dims": {
+          "n": 4,
+          "base_edge": 1.2,
+          "height": 2.4
+        },
+        "base_count": 2,
+        "base_area": {
+          "formula": "n a² / (4 tan(π/n))",
+          "expr": "1.44",
+          "value": 1.4400000000000002
+        },
+        "base_area_total": {
+          "formula": "2 × 밑넓이",
+          "expr": "2.88",
+          "value": 2.8800000000000003
+        },
+        "lateral_area": {
+          "formula": "(밑면 둘레) × h = n a h",
+          "expr": "11.52",
+          "value": 11.52
+        },
+        "total_area": {
+          "formula": "2 × 밑넓이 + 옆넓이",
+          "expr": "14.4",
+          "value": 14.4
+        },
+        "piece_breakdown": [
+          {
+            "face_kind": "regular_polygon_base",
+            "korean_label": "정사각형 밑면",
+            "count": 2,
+            "area_each": {
+              "formula": "n a² / (4 tan(π/n))",
+              "expr": "1.44",
+              "value": 1.4400000000000002
+            }
+          },
+          {
+            "face_kind": "rectangle_lateral",
+            "korean_label": "직사각형 옆면",
+            "count": 4,
+            "area_each": {
+              "formula": "a × h",
+              "expr": "2.88",
+              "value": 2.88
+            }
+          }
+        ]
+      },
+      {
+        "id": "SA-CYLINDER",
+        "solid": "R009_CYLINDER",
+        "family": "cylinder",
+        "scope": "core",
+        "dims": {
+          "source": "R009_EXACT.revolution_profiles.cylinder.exact",
+          "radius": 1.5,
+          "height": 3.0
+        },
+        "base_count": 2,
+        "base_area": {
+          "formula": "π r²",
+          "expr": "2.25π",
+          "value": 7.0685834705770345
+        },
+        "base_area_total": {
+          "formula": "2 π r²",
+          "expr": "4.5π",
+          "value": 14.137166941154069
+        },
+        "lateral_area": {
+          "formula": "2 π r h",
+          "expr": "9π",
+          "value": 28.274333882308138
+        },
+        "lateral_development": {
+          "kind": "rectangle",
+          "korean_label": "옆면을 펼치면 직사각형",
+          "width": {
+            "formula": "2 π r (밑면 둘레)",
+            "expr": "3π",
+            "value": 9.42477796076938
+          },
+          "height": {
+            "formula": "h",
+            "expr": "3",
+            "value": 3.0
+          }
+        },
+        "total_area": {
+          "formula": "2 π r² + 2 π r h",
+          "expr": "13.5π",
+          "value": 42.411500823462205
+        },
+        "piece_breakdown": [
+          {
+            "face_kind": "circle_base",
+            "korean_label": "원 밑면",
+            "count": 2,
+            "area_each": {
+              "formula": "π r²",
+              "expr": "2.25π",
+              "value": 7.0685834705770345
+            }
+          },
+          {
+            "face_kind": "rectangle_lateral_development",
+            "korean_label": "직사각형으로 펼쳐지는 옆면",
+            "count": 1,
+            "area_each": {
+              "formula": "2 π r h",
+              "expr": "9π",
+              "value": 28.274333882308138
+            }
+          }
+        ]
+      },
+      {
+        "id": "SA-PYRAMID-4",
+        "solid": "FAMILY_PYRAMID_4",
+        "family": "pyramid",
+        "scope": "core",
+        "dims": {
+          "n": 4,
+          "base_edge": 1.2,
+          "height": 2.4
+        },
+        "base_count": 1,
+        "base_apothem": {
+          "formula": "a / (2 tan(π/n)) = 밑면 중심에서 한 변까지의 거리",
+          "expr": "0.6",
+          "value": 0.6000000000000001
+        },
+        "slant_height": {
+          "formula": "√(h² + m²), m = 밑면 중심에서 한 변까지의 거리",
+          "expr": "0.6√17",
+          "value": 2.4738633753705965
+        },
+        "base_area": {
+          "formula": "n a² / (4 tan(π/n))",
+          "expr": "1.44",
+          "value": 1.4400000000000002
+        },
+        "base_area_total": {
+          "formula": "n a² / (4 tan(π/n))",
+          "expr": "1.44",
+          "value": 1.4400000000000002
+        },
+        "lateral_area": {
+          "formula": "n × (1/2) a l",
+          "expr": "1.44√17",
+          "value": 5.937272100889431
+        },
+        "total_area": {
+          "formula": "밑넓이 + 옆넓이",
+          "expr": "1.44 + 1.44√17",
+          "value": 7.3772721008894315
+        },
+        "piece_breakdown": [
+          {
+            "face_kind": "regular_polygon_base",
+            "korean_label": "정사각형 밑면",
+            "count": 1,
+            "area_each": {
+              "formula": "n a² / (4 tan(π/n))",
+              "expr": "1.44",
+              "value": 1.4400000000000002
+            }
+          },
+          {
+            "face_kind": "isosceles_triangle_lateral",
+            "korean_label": "이등변삼각형 옆면",
+            "count": 4,
+            "area_each": {
+              "formula": "(1/2) a l",
+              "expr": "0.36√17",
+              "value": 1.4843180252223578
+            }
+          }
+        ]
+      },
+      {
+        "id": "SA-CONE",
+        "solid": "R009_CONE",
+        "family": "cone",
+        "scope": "core",
+        "dims": {
+          "source": "R009_EXACT.revolution_profiles.cone.exact",
+          "base_radius": 1.2,
+          "height": 3.0
+        },
+        "base_count": 1,
+        "slant_height": {
+          "formula": "√(r² + h²)",
+          "expr": "0.6√29",
+          "value": 3.2310988842807022
+        },
+        "base_area": {
+          "formula": "π r²",
+          "expr": "1.44π",
+          "value": 4.523893421169302
+        },
+        "base_area_total": {
+          "formula": "π r²",
+          "expr": "1.44π",
+          "value": 4.523893421169302
+        },
+        "lateral_area": {
+          "formula": "π r l",
+          "expr": "0.72√29π",
+          "value": 12.180955821454118
+        },
+        "lateral_development": {
+          "kind": "circular_sector",
+          "korean_label": "옆면을 펼치면 부채꼴",
+          "sector_radius": {
+            "formula": "√(r² + h²)",
+            "expr": "0.6√29",
+            "value": 3.2310988842807022
+          },
+          "sector_arc_length": {
+            "formula": "2 π r (밑면 둘레)",
+            "expr": "2.4π",
+            "value": 7.5398223686155035
+          },
+          "sector_angle_rad": {
+            "formula": "2 π r / l",
+            "expr": "2π×1.2÷0.6√29",
+            "value": 2.333516440891594
+          },
+          "sector_angle_deg": {
+            "formula": "360° × r / l",
+            "expr": "360°×1.2÷0.6√29",
+            "value": 133.70064348747735
+          }
+        },
+        "total_area": {
+          "formula": "π r² + π r l",
+          "expr": "1.44π + 0.72√29π",
+          "value": 16.70484924262342
+        },
+        "piece_breakdown": [
+          {
+            "face_kind": "circle_base",
+            "korean_label": "원 밑면",
+            "count": 1,
+            "area_each": {
+              "formula": "π r²",
+              "expr": "1.44π",
+              "value": 4.523893421169302
+            }
+          },
+          {
+            "face_kind": "sector_lateral_development",
+            "korean_label": "부채꼴로 펼쳐지는 옆면",
+            "count": 1,
+            "area_each": {
+              "formula": "π r l",
+              "expr": "0.72√29π",
+              "value": 12.180955821454118
+            }
+          }
+        ]
+      },
+      {
+        "id": "SA-SPHERE",
+        "solid": "R009_SPHERE",
+        "family": "sphere",
+        "scope": "core",
+        "dims": {
+          "source": "R009_EXACT.revolution_profiles.sphere.exact",
+          "radius": 2.0
+        },
+        "base_count": 0,
+        "base_area": null,
+        "base_area_total": null,
+        "lateral_area": {
+          "formula": "4 π r²",
+          "expr": "16π",
+          "value": 50.26548245743669
+        },
+        "total_area": {
+          "formula": "4 π r²",
+          "expr": "16π",
+          "value": 50.26548245743669
+        },
+        "note": "A sphere has no base and no development; 겉넓이 is the whole surface.",
+        "piece_breakdown": [
+          {
+            "face_kind": "sphere_surface",
+            "korean_label": "구의 겉면",
+            "count": 1,
+            "area_each": {
+              "formula": "4 π r²",
+              "expr": "16π",
+              "value": 50.26548245743669
+            }
+          }
+        ]
+      },
+      {
+        "id": "SA-FRUSTUM-PYR-4",
+        "solid": "FAMILY_FRUSTUM_4",
+        "family": "frustum_pyramid",
+        "scope": "enrichment",
+        "dims": {
+          "n": 4,
+          "base_edge": 1.2,
+          "top_edge": 0.6,
+          "height": 2.4
+        },
+        "base_count": 2,
+        "slant_height": {
+          "formula": "√(h² + (m − m')²), m, m' = 두 밑면 중심에서 한 변까지의 거리",
+          "expr": "0.3√65",
+          "value": 2.4186773244895647
+        },
+        "base_area": {
+          "formula": "n a² / (4 tan(π/n))",
+          "expr": "1.44",
+          "value": 1.4400000000000002
+        },
+        "top_area": {
+          "formula": "n b² / (4 tan(π/n))",
+          "expr": "0.36",
+          "value": 0.36000000000000004
+        },
+        "base_area_total": {
+          "formula": "아랫면 넓이 + 윗면 넓이",
+          "expr": "1.8",
+          "value": 1.8000000000000003
+        },
+        "lateral_area": {
+          "formula": "n × (1/2)(a + b) l",
+          "expr": "1.08√65",
+          "value": 8.707238368162432
+        },
+        "total_area": {
+          "formula": "두 밑넓이 + 옆넓이",
+          "expr": "1.8 + 1.08√65",
+          "value": 10.507238368162433
+        },
+        "piece_breakdown": [
+          {
+            "face_kind": "regular_polygon_base",
+            "korean_label": "정사각형 아랫면",
+            "count": 1,
+            "area_each": {
+              "formula": "n a² / (4 tan(π/n))",
+              "expr": "1.44",
+              "value": 1.4400000000000002
+            }
+          },
+          {
+            "face_kind": "regular_polygon_top",
+            "korean_label": "정사각형 윗면",
+            "count": 1,
+            "area_each": {
+              "formula": "n b² / (4 tan(π/n))",
+              "expr": "0.36",
+              "value": 0.36000000000000004
+            }
+          },
+          {
+            "face_kind": "trapezoid_lateral",
+            "korean_label": "사다리꼴 옆면",
+            "count": 4,
+            "area_each": {
+              "formula": "(1/2)(a + b) l",
+              "expr": "0.27√65",
+              "value": 2.176809592040608
+            }
+          }
+        ]
+      },
+      {
+        "id": "SA-FRUSTUM-CONE",
+        "solid": "R009_FRUSTUM",
+        "family": "frustum_cone",
+        "scope": "enrichment",
+        "dims": {
+          "source": "R009_EXACT.revolution_profiles.frustum.exact",
+          "bottom_radius": 1.5,
+          "top_radius": 0.72,
+          "height": 3.0
+        },
+        "base_count": 2,
+        "slant_height": {
+          "formula": "√((R − r)² + h²)",
+          "expr": "√9.6084",
+          "value": 3.0997419247414775
+        },
+        "base_area": {
+          "formula": "π R²",
+          "expr": "2.25π",
+          "value": 7.0685834705770345
+        },
+        "top_area": {
+          "formula": "π r²",
+          "expr": "0.5184π",
+          "value": 1.6286016316209488
+        },
+        "base_area_total": {
+          "formula": "π R² + π r²",
+          "expr": "2.7684π",
+          "value": 8.697185102197983
+        },
+        "lateral_area": {
+          "formula": "π (R + r) l",
+          "expr": "2.22×√9.6084×π",
+          "value": 21.618640738518486
+        },
+        "total_area": {
+          "formula": "π R² + π r² + π (R + r) l",
+          "expr": "2.7684π + 2.22×√9.6084×π",
+          "value": 30.31582584071647
+        },
+        "piece_breakdown": [
+          {
+            "face_kind": "circle_base",
+            "korean_label": "원 아랫면",
+            "count": 1,
+            "area_each": {
+              "formula": "π R²",
+              "expr": "2.25π",
+              "value": 7.0685834705770345
+            }
+          },
+          {
+            "face_kind": "circle_top",
+            "korean_label": "원 윗면",
+            "count": 1,
+            "area_each": {
+              "formula": "π r²",
+              "expr": "0.5184π",
+              "value": 1.6286016316209488
+            }
+          },
+          {
+            "face_kind": "sector_ring_lateral_development",
+            "korean_label": "부채꼴 띠로 펼쳐지는 옆면",
+            "count": 1,
+            "area_each": {
+              "formula": "π (R + r) l",
+              "expr": "2.22×√9.6084×π",
+              "value": 21.618640738518486
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "volume": {
+    "cases": [
+      {
+        "id": "V-PRISM-3",
+        "solid": "FAMILY_PRISM_3",
+        "family": "prism",
+        "scope": "core",
+        "dims": {
+          "n": 3,
+          "base_edge": 1.2,
+          "height": 2.4
+        },
+        "base_area": {
+          "formula": "n a² / (4 tan(π/n))",
+          "expr": "0.36√3",
+          "value": 0.6235382907247959
+        },
+        "height": {
+          "formula": "h",
+          "expr": "2.4",
+          "value": 2.4
+        },
+        "volume": {
+          "formula": "밑넓이 × h",
+          "expr": "0.864√3",
+          "value": 1.4964918977395103
+        }
+      },
+      {
+        "id": "V-PRISM-4",
+        "solid": "FAMILY_PRISM_4",
+        "family": "prism",
+        "scope": "core",
+        "dims": {
+          "n": 4,
+          "base_edge": 1.2,
+          "height": 2.4
+        },
+        "base_area": {
+          "formula": "n a² / (4 tan(π/n))",
+          "expr": "1.44",
+          "value": 1.4400000000000002
+        },
+        "height": {
+          "formula": "h",
+          "expr": "2.4",
+          "value": 2.4
+        },
+        "volume": {
+          "formula": "밑넓이 × h",
+          "expr": "3.456",
+          "value": 3.4560000000000004
+        }
+      },
+      {
+        "id": "V-CYLINDER",
+        "solid": "R009_CYLINDER",
+        "family": "cylinder",
+        "scope": "core",
+        "dims": {
+          "source": "R009_EXACT.revolution_profiles.cylinder.exact",
+          "radius": 1.5,
+          "height": 3.0
+        },
+        "base_area": {
+          "formula": "π r²",
+          "expr": "2.25π",
+          "value": 7.0685834705770345
+        },
+        "height": {
+          "formula": "h",
+          "expr": "3",
+          "value": 3.0
+        },
+        "volume": {
+          "formula": "π r² h",
+          "expr": "6.75π",
+          "value": 21.205750411731103
+        }
+      },
+      {
+        "id": "V-PYRAMID-4",
+        "solid": "FAMILY_PYRAMID_4",
+        "family": "pyramid",
+        "scope": "core",
+        "dims": {
+          "n": 4,
+          "base_edge": 1.2,
+          "height": 2.4
+        },
+        "base_area": {
+          "formula": "n a² / (4 tan(π/n))",
+          "expr": "1.44",
+          "value": 1.4400000000000002
+        },
+        "height": {
+          "formula": "h",
+          "expr": "2.4",
+          "value": 2.4
+        },
+        "volume": {
+          "formula": "(1/3) × 밑넓이 × h",
+          "expr": "1.152",
+          "value": 1.1520000000000001
+        },
+        "one_third_of": "V-PRISM-4"
+      },
+      {
+        "id": "V-CONE",
+        "solid": "R009_CONE",
+        "family": "cone",
+        "scope": "core",
+        "dims": {
+          "source": "R009_EXACT.revolution_profiles.cone.exact",
+          "base_radius": 1.2,
+          "height": 3.0
+        },
+        "base_area": {
+          "formula": "π r²",
+          "expr": "1.44π",
+          "value": 4.523893421169302
+        },
+        "height": {
+          "formula": "h",
+          "expr": "3",
+          "value": 3.0
+        },
+        "volume": {
+          "formula": "(1/3) π r² h",
+          "expr": "1.44π",
+          "value": 4.523893421169302
+        },
+        "one_third_of": "REL-CONE-THIRD.matched_reference"
+      },
+      {
+        "id": "V-SPHERE",
+        "solid": "R009_SPHERE",
+        "family": "sphere",
+        "scope": "core",
+        "dims": {
+          "source": "R009_EXACT.revolution_profiles.sphere.exact",
+          "radius": 2.0
+        },
+        "base_area": null,
+        "height": null,
+        "volume": {
+          "formula": "(4/3) π r³",
+          "expr": "(32/3)π",
+          "value": 33.510321638291124
+        },
+        "two_thirds_of": "REL-SPHERE-TWO-THIRDS.matched_reference"
+      },
+      {
+        "id": "V-FRUSTUM-CONE",
+        "solid": "R009_FRUSTUM",
+        "family": "frustum_cone",
+        "scope": "enrichment",
+        "dims": {
+          "source": "R009_EXACT.revolution_profiles.frustum.exact",
+          "bottom_radius": 1.5,
+          "top_radius": 0.72,
+          "height": 3.0
+        },
+        "base_area": {
+          "formula": "π R²",
+          "expr": "2.25π",
+          "value": 7.0685834705770345
+        },
+        "height": {
+          "formula": "h",
+          "expr": "3",
+          "value": 3.0
+        },
+        "volume": {
+          "formula": "(1/3) π h (R² + R r + r²)",
+          "expr": "3.8484π",
+          "value": 12.09010516807496
+        },
+        "cut_cone": {
+          "korean_label": "큰 원뿔에서 잘라낸 작은 원뿔을 뺍니다",
+          "big_cone_height": {
+            "formula": "h R / (R − r)",
+            "expr": "75/13",
+            "value": 5.769230769230769
+          },
+          "big_cone_volume": {
+            "formula": "(1/3) π R² H",
+            "expr": "(225/52)π",
+            "value": 13.593429751109682
+          },
+          "small_cone_height": {
+            "formula": "h r / (R − r)",
+            "expr": "36/13",
+            "value": 2.769230769230769
+          },
+          "small_cone_volume": {
+            "formula": "(1/3) π r² (H − h)",
+            "expr": "1.503324583034722",
+            "value": 1.503324583034722
+          }
+        }
+      }
+    ],
+    "relations": [
+      {
+        "id": "REL-PYRAMID-THIRD",
+        "claim": "각뿔의 부피는 밑면과 높이가 같은 각기둥의 부피의 1/3입니다.",
+        "pair": [
+          "V-PRISM-4",
+          "V-PYRAMID-4"
+        ],
+        "ratio": {
+          "formula": "각뿔 부피 ÷ 각기둥 부피",
+          "expr": "1/3",
+          "value": 0.3333333333333333
+        },
+        "expected_ratio": {
+          "formula": "1/3",
+          "expr": "1/3",
+          "value": 0.3333333333333333
+        },
+        "note": "Both cases share identical dims, so the pair is exact as stored."
+      },
+      {
+        "id": "REL-CONE-THIRD",
+        "claim": "원뿔의 부피는 밑면과 높이가 같은 원기둥의 부피의 1/3입니다.",
+        "pair": [
+          "V-CONE"
+        ],
+        "matched_reference": {
+          "korean_label": "밑면과 높이가 같은 원기둥",
+          "radius": 1.2,
+          "height": 3.0,
+          "volume": {
+            "formula": "π r² h",
+            "expr": "4.32π",
+            "value": 13.571680263507908
+          }
+        },
+        "ratio": {
+          "formula": "원뿔 부피 ÷ 원기둥 부피",
+          "expr": "1/3",
+          "value": 0.3333333333333333
+        },
+        "expected_ratio": {
+          "formula": "1/3",
+          "expr": "1/3",
+          "value": 0.3333333333333333
+        },
+        "note": "V-CYLINDER is NOT the matching cylinder: the R009 cylinder profile has radius 1.5 while the cone profile has base radius 1.2. The matching cylinder is defined inline here so the 1/3 claim stays true."
+      },
+      {
+        "id": "REL-SPHERE-TWO-THIRDS",
+        "claim": "구의 부피는 그 구에 꼭 맞는 원기둥의 부피의 2/3입니다.",
+        "pair": [
+          "V-SPHERE"
+        ],
+        "matched_reference": {
+          "korean_label": "구에 꼭 맞는 원기둥",
+          "radius": 2.0,
+          "height": 4.0,
+          "volume": {
+            "formula": "π r² (2r)",
+            "expr": "16π",
+            "value": 50.26548245743669
+          }
+        },
+        "ratio": {
+          "formula": "구 부피 ÷ 원기둥 부피",
+          "expr": "2/3",
+          "value": 0.6666666666666666
+        },
+        "expected_ratio": {
+          "formula": "2/3",
+          "expr": "2/3",
+          "value": 0.6666666666666666
+        },
+        "note": "Circumscribed cylinder: same radius, height equal to the diameter."
+      }
+    ]
+  },
+  "explorer_patterns": {
+    "prism": {
+      "V": "2n",
+      "E": "3n",
+      "F": "n+2"
+    },
+    "pyramid": {
+      "V": "n+1",
+      "E": "2n",
+      "F": "n+1"
+    },
+    "frustum_pyramid": {
+      "V": "2n",
+      "E": "3n",
+      "F": "n+2"
+    }
+  }
+}

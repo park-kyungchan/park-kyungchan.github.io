@@ -1,0 +1,226 @@
+
+/* ===== P003 P1-4 SURFACE PASS =====
+   Cascade-last on purpose: this file owns the density, Korean line-breaking,
+   readability and mobile-loop decisions, so the whole surface pass is readable
+   as one unit instead of being scattered across six earlier stylesheets.
+   Type-scale floors and colour tokens are edited at their source instead. */
+
+/* ---------- K3: Korean line breaking ----------
+   Korean must not break inside a word (keep-all); `anywhere` is the escape
+   hatch so an unbreakable run - a long id, a formula - still cannot push a
+   narrow panel or button into horizontal overflow. */
+html {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+body, button, select, input, textarea, table {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+/* Numbers, units and formulae are not Korean; let them stay atomic. */
+.formula-box, .proof-counter, .delta-card, .progress-value,
+.p13-pattern-table td, .p13-pattern-table th, .r009-inset .metric {
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+/* ---------- K1: numeric readouts stay on the sans stack ----------
+   Gaegu has no tabular figures and its digit advances range 7-9px at 16px, so
+   a readout that updates every frame visibly reflows. These are the only
+   elements pinned back to sans; everything else is handwriting. */
+.progress-value,
+.r009-inset .metric span,
+.r009-inset .metric strong,
+.p13-match-done span {
+  font-family: var(--p14-font-num) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- K2: line-height floors ----------
+   >=1.5 for anything read as a sentence, >=1.35 for compact labels. */
+body { line-height: 1.55; }
+.panel p, .panel li, .callout, .small-note, .evidence-content p, .evidence-content li,
+.live-guide p, .r009-status-line, .r009-spatial-heading span, .learning-guide-card p {
+  line-height: 1.55;
+}
+.panel h2, .panel h3, .live-guide h2, .r009-spatial-heading h2 { line-height: 1.3; }
+.control-label, .scope-chip, .status-pill, .tab-copy small,
+.live-guide-chips span, .r009-spatial-legend span, .r009-phase-strip i { line-height: 1.35; }
+
+/* ---------- K2: spacing, ~25% more room ---------- */
+.panel-section { padding: 15px 0 !important; }
+.panel-section:first-child { padding-top: 0 !important; }
+.panel-section:last-child { padding-bottom: 0 !important; }
+.controls-panel { padding: 21px 19px 27px !important; }
+.app-main { gap: 13px !important; }
+.r009-card-grid, .r009-prediction, .p13-choice-column, .r009-play-row,
+.r009-mini-steps, .p13-row-actions { gap: 9px !important; }
+.r009-card-grid, .r009-prediction { margin-top: 4px; }
+.r009-play-row, .r009-mini-steps, .r009-status-line, .r009-evidence-button { margin-top: 10px !important; }
+.r009-card-grid button { padding: 10px 12px !important; }
+.live-guide-chips { gap: 7px; margin-top: 11px; }
+.live-guide { padding: 15px 16px 16px; }
+.r009-spatial-heading { padding: 14px 16px; }
+.p13-face-legend { gap: 10px; margin-top: 11px; }
+.p13-match-row { padding: 11px 0; }
+
+/* ---------- K2: control target sizes ---------- */
+button, .tool-button, .glass-button, .chip-button { min-height: 40px; }
+.r009-mini-steps button, .r009-card-grid button, .r009-prediction button,
+.p13-choice-column button, .chapter-nav button { min-height: 44px !important; }
+input[type="range"] { min-height: 44px; }
+
+/* ---------- K2: overlay budget on the desktop stage ----------
+   Each floating overlay is capped below 35% of the stage width so the model
+   itself keeps the majority of the canvas. */
+:root { --r9-hud-width: min(352px, 33%); }
+.live-guide { width: min(336px, 32%); }
+.r009-spatial-heading { width: var(--r9-hud-width); max-width: 352px; }
+.r009-spatial-legend { max-width: calc(65% - 18px); }
+.p13-stage-panel { width: min(352px, 33%) !important; }
+
+/* ---------- K2: chapter tab bar, no truncated labels at >=1280px ----------
+   Eleven chapters plus two group labels cannot fit on one line of single-line
+   titles at any realistic desktop width, so the title is allowed to wrap on
+   keep-all boundaries and the bar gets the height to carry two lines. */
+@media (min-width: 1280px) {
+  :root { --r8-tabs-height: 78px; }
+  .lab-tabs { padding: 6px !important; gap: 5px !important; align-items: stretch !important; }
+  .tab-button {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    padding: 6px 8px !important;
+    gap: 7px !important;
+    align-items: center !important;
+  }
+  .tab-copy { min-width: 0; }
+  .tab-copy strong {
+    white-space: normal !important;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    line-height: 1.18 !important;
+  }
+  .tab-copy small {
+    white-space: normal !important;
+    word-break: keep-all;
+    line-height: 1.2 !important;
+  }
+  .tab-group-label { flex: 0 0 auto; white-space: nowrap; }
+}
+/* Below 1280 the bar scrolls; make that discoverable with an edge fade. */
+@media (max-width: 1279px) {
+  .lab-tabs {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 22px), transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 18px, #000 calc(100% - 22px), transparent 100%);
+  }
+  .tab-copy strong { white-space: nowrap; }
+}
+
+/* ---------- K2: the phone loop ----------
+   The predict-observe loop has to work on one screen: the stage sticks under
+   the top of the viewport at ~52vh while the control panel scrolls beneath it,
+   and the two stage overlays collapse into a single tappable bar so the canvas
+   stays readable. */
+@media (max-width: 767px) {
+  /* The R008 shell puts `overflow:auto` on BOTH html and body below 820px.
+     That makes body its own scrollport, and because body is only as tall as
+     its content it never scrolls -- which silently disables position:sticky
+     for everything inside it. The viewport has to be the scroll container. */
+  html, body { overflow: visible !important; }
+  .app-main {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    gap: 10px !important;
+    padding: 7px !important;
+  }
+  .viewer-stage {
+    order: 1;
+    position: sticky !important;
+    top: 6px;
+    z-index: 12 !important;
+    flex: 0 0 auto !important;
+    height: 52vh !important;
+    min-height: 52vh !important;
+    max-height: 52vh !important;
+  }
+  .controls-panel { order: 2; padding: 17px 15px 24px !important; }
+
+  /* One compact bar: kicker + title on a single line, body on tap. */
+  .live-guide {
+    top: 8px !important;
+    left: 8px !important;
+    right: 8px !important;
+    width: auto !important;
+    min-height: 0 !important;
+    padding: 8px 12px !important;
+    border-radius: 15px !important;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+  .live-guide-kicker {
+    display: flex !important;
+    gap: 8px;
+    font-size: .78rem;
+  }
+  .live-guide-kicker::after {
+    content: "▾";
+    margin-left: auto;
+    opacity: .6;
+  }
+  .live-guide h2 {
+    margin: 2px 0 0 !important;
+    font-size: .94rem !important;
+    line-height: 1.25 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .live-guide #liveGuideBody, .live-guide .live-guide-chips { display: none !important; }
+  .live-guide:focus-within, .live-guide:hover { padding-bottom: 12px !important; }
+  .live-guide:focus-within h2, .live-guide:hover h2 { white-space: normal; overflow: visible; }
+  .live-guide:focus-within #liveGuideBody, .live-guide:hover #liveGuideBody {
+    display: block !important;
+    margin-top: 6px !important;
+    font-size: .82rem !important;
+  }
+  .live-guide:focus-within .live-guide-chips, .live-guide:hover .live-guide-chips {
+    display: flex !important;
+    margin-top: 8px;
+  }
+  .live-guide:focus-within .live-guide-kicker::after,
+  .live-guide:hover .live-guide-kicker::after { content: "▴"; }
+
+  /* The R009 heading folds into the same bar cluster: only the phase strip
+     survives, as a thin row directly under the guide. */
+  .r009-spatial-heading {
+    top: 60px !important;
+    left: 8px !important;
+    right: 8px !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 0 !important;
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .r009-spatial-heading p, .r009-spatial-heading h2, .r009-spatial-heading span { display: none !important; }
+  .r009-phase-strip { margin-top: 0 !important; gap: 6px; }
+  .r009-phase-strip i { min-height: 26px; background: rgba(255,255,255,.86); }
+  /* Expanding the guide pushes the strip clear instead of overlapping it. */
+  .live-guide:focus-within ~ .r009-spatial-hud .r009-spatial-heading,
+  .live-guide:hover ~ .r009-spatial-hud .r009-spatial-heading { top: 168px !important; }
+
+  .r009-spatial-legend { left: 8px !important; right: 8px !important; bottom: 10px !important; max-width: none !important; gap: 6px; }
+  .r009-inset { display: none !important; }
+  .p13-stage-panel { bottom: 46px !important; height: 34% !important; }
+  .viewer-hint { display: none !important; }
+  .viewer-toolbar { display: none !important; }
+}
+
+/* Touch pointers get the full 44px target everywhere. */
+@media (hover: none) and (pointer: coarse) {
+  button, .tool-button, .glass-button, .chip-button, select { min-height: 44px !important; }
+}

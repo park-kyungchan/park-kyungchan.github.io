@@ -1,20 +1,9 @@
 {
-  "schema_version": "P003-R009-STATE-GRAPH-1.0",
-  "chapter_count": 9,
+  "schema_version": "P003-R009-STATE-GRAPH-1.1",
+  "chapter_count": 11,
   "chapters": [
     {
       "module": "explorer",
-      "roles": [
-        "ENTRY",
-        "MANIPULATE",
-        "VERIFY",
-        "EXPLAIN"
-      ],
-      "camera_orbit_during_autoplay": false,
-      "floating_transport": false
-    },
-    {
-      "module": "generator",
       "roles": [
         "ENTRY",
         "MANIPULATE",
@@ -37,28 +26,6 @@
     },
     {
       "module": "section",
-      "roles": [
-        "ENTRY",
-        "MANIPULATE",
-        "VERIFY",
-        "EXPLAIN"
-      ],
-      "camera_orbit_during_autoplay": false,
-      "floating_transport": false
-    },
-    {
-      "module": "euler",
-      "roles": [
-        "ENTRY",
-        "MANIPULATE",
-        "VERIFY",
-        "EXPLAIN"
-      ],
-      "camera_orbit_during_autoplay": false,
-      "floating_transport": false
-    },
-    {
-      "module": "soccer",
       "roles": [
         "ENTRY",
         "MANIPULATE",
@@ -99,6 +66,30 @@
       "floating_transport": false
     },
     {
+      "module": "surfacearea",
+      "roles": [
+        "ENTRY",
+        "PREDICT",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
+      "floating_transport": false
+    },
+    {
+      "module": "volume",
+      "roles": [
+        "ENTRY",
+        "PREDICT",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
+      "floating_transport": false
+    },
+    {
       "module": "geodesic",
       "roles": [
         "ENTRY",
@@ -111,6 +102,39 @@
         "EXPLAIN"
       ],
       "camera_orbit_during_autoplay": true,
+      "floating_transport": false
+    },
+    {
+      "module": "generator",
+      "roles": [
+        "ENTRY",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
+      "floating_transport": false
+    },
+    {
+      "module": "euler",
+      "roles": [
+        "ENTRY",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
+      "floating_transport": false
+    },
+    {
+      "module": "soccer",
+      "roles": [
+        "ENTRY",
+        "MANIPULATE",
+        "VERIFY",
+        "EXPLAIN"
+      ],
+      "camera_orbit_during_autoplay": false,
       "floating_transport": false
     }
   ],

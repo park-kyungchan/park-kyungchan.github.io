@@ -1,0 +1,311 @@
+  const PRISM_PATTERN_ROWS = ['FAMILY_PRISM_3', 'FAMILY_PRISM_4', 'FAMILY_PRISM_5'];
+  const PRISM_PATTERN_COLUMNS = [
+    { key: 'V', label: '꼭짓점 V', target: 'vertex', options: ['2n', 'n+2', '3n'] },
+    { key: 'E', label: '모서리 E', target: 'edge', options: ['3n', '2n', 'n+3'] },
+    { key: 'F', label: '면 F', target: 'face', options: ['n+2', '2n', 'n'] },
+  ];
+  function prismPatternTruth() {
+    return window.P003_MEASURE?.explorer_patterns?.prism || { V: '2n', E: '3n', F: 'n+2' };
+  }
+  function patternCellValue(solidId, key) {
+    const value = state.patternCells?.[`${solidId}|${key}`];
+    return Number.isFinite(value) ? value : null;
+  }
+
+  function renderExplorer() {
+    const solid = currentExplorerSolid();
+    renderer.setSolid(state.solidId);
+    renderer.setSelectionType(state.selectionType);
+    renderer.setPublicLabelMap(makeLocalVertexMap(solid));
+    renderer.setLabelMode(state.explorerLabelsVisible && solid.topology.V <= 26 ? 'vertices' : 'none');
+    renderer.setViewStyle('solid');
+    state.lastSelection = null;
+    state.counting = false;
+    state.randomTarget = null;
+    state.baseLateralVisible = false;
+    const isFamily = isFamilySolid(solid);
+    setInteractionUI('navigate');
+    showModuleOverlay(false);
+
+    refs.left.innerHTML = `
+      <section class="panel-section"><h2>1. 입체의 구조 읽기</h2>
+        <div class="narrative-step"><span class="step-no">1</span><div><strong>입체를 돌립니다.</strong><span>가려진 꼭짓점과 모서리까지 보이도록 시점을 바꿉니다.</span></div></div>
+        <div class="narrative-step"><span class="step-no">2</span><div><strong>한 요소를 선택합니다.</strong><span>그 요소와 이어진 면·모서리·꼭짓점을 함께 확인합니다.</span></div></div>
+        <div class="narrative-step"><span class="step-no">3</span><div><strong>V, E, F를 비교합니다.</strong><span>도형이 달라도 어떤 관계가 유지되는지 다음 장에서 이어 봅니다.</span></div></div>
+      </section>
+      <section class="panel-section">
+        <label class="control-label" for="solidSelect">관찰할 다면체</label>
+        <select id="solidSelect">${solidOptions(state.solidId, true)}</select>
+        <div class="callout"><strong>${solid.korean_name}</strong>${solid.face_description}<br>한 꼭짓점에 모이는 면: ${solid.vertex_configuration_label}</div>
+      </section>
+      ${isFamily ? `<section class="panel-section" id="explorerFamilySection"><h3>밑면과 옆면</h3>
+        <p class="small-note">${POLYHEDRON_DEFINITION}</p>
+        <div class="callout"><strong>${familyStructureLine(solid)}</strong>${FAMILY_DEFINITIONS[solid.family] || ''}</div>
+      </section>` : ''}
+      <section class="panel-section"><h3>선택할 요소</h3>
+        <div class="button-grid">
+          <button class="choice-button ${state.selectionType === 'face' ? 'is-active' : ''}" data-select-type="face" type="button">면</button>
+          <button class="choice-button ${state.selectionType === 'edge' ? 'is-active' : ''}" data-select-type="edge" type="button">모서리</button>
+          <button class="choice-button ${state.selectionType === 'vertex' ? 'is-active' : ''}" data-select-type="vertex" type="button">꼭짓점</button>
+        </div>
+      </section>
+      <section class="panel-section"><h3>보기 설정</h3>
+        <div class="button-grid">
+          <button class="chip-button is-active" data-style="solid" type="button">면과 골격</button>
+          <button class="chip-button" data-style="transparent" type="button">반투명</button>
+          <button id="labelToggle" class="chip-button ${state.explorerLabelsVisible ? 'is-active' : ''}" type="button">꼭짓점 문자</button>
+          ${isFamily ? '<button id="baseLateralToggle" class="chip-button" type="button" aria-pressed="false">밑면·옆면 구분</button>' : ''}
+        </div>
+        <p class="small-note">꼭짓점이 많은 입체는 선택한 부분만 문자로 표시해 화면을 가리지 않습니다.</p>
+        ${isFamily ? '<div id="baseLateralLegend" class="p13-face-legend" hidden aria-label="밑면과 옆면 색 안내"><span><i class="is-base"></i>밑면</span><span><i class="is-lateral"></i>옆면</span></div>' : ''}
+      </section>
+      <section class="panel-section" id="explorerCountingSection"><div id="countingBody"></div></section>
+      ${isFamily ? '<section class="panel-section" id="explorerPatternSection"><div id="patternBody"></div></section>' : ''}`;
+
+    refs.right.innerHTML = `
+      <section class="panel-section"><h2>${solid.korean_name} 관찰 기록</h2>${metricsHTML(solid)}</section>
+      <section class="panel-section"><h3>선택한 요소와 연결 관계</h3><div id="selectionInfo">${selectionDescription(solid, null)}</div></section>
+      <section class="panel-section"><div class="callout success"><strong>다음 질문</strong>정다면체가 왜 다섯 개뿐인지, 한 꼭짓점 주위의 각을 모아 확인해 보세요.</div></section>`;
+
+    $('#solidSelect').addEventListener('change', event => {
+      state.solidId = event.target.value;
+      state.explorerLabelsVisible = DATA.solids[state.solidId].topology.V <= 26 && state.explorerLabelsVisible;
+      renderCurrentTab();
+      announce(`${DATA.solids[state.solidId].korean_name}로 바꾸었습니다.`);
+    });
+    $$('[data-select-type]', refs.left).forEach(button => button.addEventListener('click', () => {
+      state.selectionType = button.dataset.selectType;
+      renderer.setSelectionType(state.selectionType);
+      $$('.choice-button[data-select-type]', refs.left).forEach(item => item.classList.toggle('is-active', item === button));
+      setInteractionUI('select');
+      announce(`${button.textContent} 선택 모드입니다.`);
+    }));
+    $$('[data-style]', refs.left).forEach(button => button.addEventListener('click', () => {
+      renderer.setViewStyle(button.dataset.style);
+      $$('[data-style]', refs.left).forEach(item => item.classList.toggle('is-active', item === button));
+    }));
+    $('#labelToggle').addEventListener('click', event => {
+      state.explorerLabelsVisible = !state.explorerLabelsVisible;
+      event.currentTarget.classList.toggle('is-active', state.explorerLabelsVisible);
+      renderer.setLabelMode(state.explorerLabelsVisible && solid.topology.V <= 26 ? 'vertices' : 'none');
+      announce(state.explorerLabelsVisible ? '꼭짓점 문자를 표시합니다.' : '꼭짓점 문자를 숨겼습니다.');
+    });
+    $('#baseLateralToggle', refs.left)?.addEventListener('click', event => {
+      state.baseLateralVisible = !state.baseLateralVisible;
+      const button = event.currentTarget;
+      button.classList.toggle('is-active', state.baseLateralVisible);
+      button.setAttribute('aria-pressed', String(state.baseLateralVisible));
+      renderer.setFaceTints(state.baseLateralVisible ? baseLateralTints(solid) : null);
+      const legend = $('#baseLateralLegend', refs.left);
+      if (legend) legend.hidden = !state.baseLateralVisible;
+      announce(state.baseLateralVisible ? '밑면과 옆면을 서로 다른 색으로 구분해 표시합니다.' : '밑면·옆면 구분 색을 껐습니다.');
+    });
+    const explorerObservePick = selection => {
+      state.lastSelection = selection;
+      const localMap = makeLocalVertexMap(solid, seedVerticesForSelection(solid, selection));
+      renderer.setPublicLabelMap(localMap);
+      renderer.selectedFaces.clear(); renderer.selectedEdges.clear(); renderer.selectedVertices.clear();
+      if (selection.type === 'face') renderer.selectedFaces.add(selection.index);
+      if (selection.type === 'edge') renderer.selectedEdges.add(selection.index);
+      if (selection.type === 'vertex') renderer.selectedVertices.add(selection.index);
+      renderer.setLabelMode(solid.topology.V <= 26 && state.explorerLabelsVisible ? 'vertices' : (solid.topology.V > 26 ? 'vertices' : 'none'));
+      renderer.uploadGeometry();
+      $('#selectionInfo').innerHTML = selectionDescription(solid, selection);
+      refreshUniversalMapping();
+      const selectedName = selection.type === 'face' ? publicFaceName(solid, selection.index, localMap) : selection.type === 'edge' ? publicEdgeName(solid, selection.index, localMap) : publicVertexName(solid, selection.index, localMap);
+      announce(`${selectedName}을 선택했습니다.`);
+    };
+    renderer.onPick = explorerObservePick;
+
+    const countLabel = {
+      face: { name: '면', topic: '면은', object: '면을' },
+      edge: { name: '모서리', topic: '모서리는', object: '모서리를' },
+      vertex: { name: '꼭짓점', topic: '꼭짓점은', object: '꼭짓점을' },
+    };
+    const countBucket = target => target === 'face' ? renderer.countedFaces : target === 'edge' ? renderer.countedEdges : renderer.countedVertices;
+    const countTruth = target => target === 'face' ? solid.topology.F : target === 'edge' ? solid.topology.E : solid.topology.V;
+    function countingBodyHTML() {
+      if (!state.counting) return `<button id="countingStartButton" class="action-button" type="button">직접 세어 보기</button>
+        <p class="small-note">화면의 입체를 직접 누르며 면·모서리·꼭짓점의 개수를 스스로 세어 보는 활동입니다.</p>`;
+      const target = state.randomTarget;
+      const picker = `<p class="small-note">무엇을 셀지 먼저 고르세요.</p>
+        <div class="button-grid">${['face','edge','vertex'].map(key => `<button class="choice-button ${target === key ? 'is-active' : ''}" data-count-target="${key}" type="button">${countLabel[key].name}</button>`).join('')}</div>`;
+      if (!target) return `${picker}<div class="button-stack"><button id="countingEndButton" class="action-button" type="button">활동 마치기</button></div>`;
+      return `${picker}
+        <div class="metric-grid"><div class="metric-card"><span class="symbol">지금까지 센 ${countLabel[target].name}</span><span class="value" id="countingValue">${countBucket(target).size}</span></div></div>
+        <div id="countingFeedback"></div>
+        <div class="button-stack">
+          <button id="countingCheckButton" class="action-button primary" type="button">다 세었어요</button>
+          <button id="countingResetButton" class="action-button" type="button">다시 세기</button>
+          <button id="countingEndButton" class="action-button" type="button">활동 마치기</button>
+        </div>
+        <p class="small-note">가운데 화면에서 ${countLabel[target].object} 하나씩 누르면 세어집니다. 같은 곳을 다시 눌러도 두 번 세지 않습니다.</p>`;
+    }
+    function countingPick(selection) {
+      const target = state.randomTarget;
+      if (!target || selection.type !== target) return;
+      const bucket = countBucket(target), already = bucket.has(selection.index);
+      if (!already) bucket.add(selection.index);
+      renderer.uploadGeometry();
+      const value = $('#countingValue', refs.left);
+      if (value) value.textContent = String(bucket.size);
+      const feedback = $('#countingFeedback', refs.left);
+      if (feedback) feedback.innerHTML = '';
+      announce(already ? `이미 센 ${countLabel[target].name}입니다.` : `${countLabel[target].name} ${bucket.size}개째를 세었습니다.`);
+    }
+    function startCountingActivity() {
+      state.counting = true;
+      state.randomTarget = null;
+      resetCounting();
+      renderer.onPick = countingPick;
+      renderCountingBody();
+    }
+    function renderCountingBody() {
+      const host = $('#countingBody', refs.left);
+      if (!host) return;
+      host.innerHTML = countingBodyHTML();
+      $('#countingStartButton', host)?.addEventListener('click', () => {
+        startCountingActivity();
+        announce('세기 활동을 시작했습니다. 무엇을 셀지 고르세요.');
+      });
+      $$('[data-count-target]', host).forEach(button => button.addEventListener('click', () => {
+        const target = button.dataset.countTarget;
+        state.randomTarget = target;
+        state.selectionType = target;
+        resetCounting();
+        renderer.setSelectionType(target);
+        renderer.onPick = countingPick;
+        setInteractionUI('select');
+        $$('.choice-button[data-select-type]', refs.left).forEach(item => item.classList.toggle('is-active', item.dataset.selectType === target));
+        renderCountingBody();
+        announce(`${countLabel[target].object} 셉니다. 가운데 화면에서 하나씩 눌러 보세요.`);
+      }));
+      $('#countingCheckButton', host)?.addEventListener('click', () => {
+        const target = state.randomTarget;
+        const found = countBucket(target).size, truth = countTruth(target), correct = found === truth;
+        let message = correct ? `정확합니다. ${countLabel[target].topic} ${truth}개입니다.` : `다시 세어 보세요. 아직 ${found}개를 찾았습니다.`;
+        if (correct && recordPatternCell(target, truth)) message += ` 규칙 찾기 표의 ${solid.korean_name} · ${countLabel[target].name} 칸을 채웠습니다.`;
+        const feedback = $('#countingFeedback', host);
+        if (feedback) feedback.innerHTML = `<div class="callout ${correct ? 'success' : 'warning'}"><strong>${correct ? '맞았습니다' : '조금 더 찾아보세요'}</strong>${message}</div>`;
+        announce(message);
+      });
+      $('#countingResetButton', host)?.addEventListener('click', () => {
+        resetCounting();
+        renderCountingBody();
+        announce('세어 둔 개수를 지웠습니다. 처음부터 다시 세어 보세요.');
+      });
+      $('#countingEndButton', host)?.addEventListener('click', () => {
+        state.counting = false;
+        state.randomTarget = null;
+        resetCounting();
+        renderer.onPick = explorerObservePick;
+        renderer.setSelectionType(state.selectionType);
+        setInteractionUI('navigate');
+        renderCountingBody();
+        announce('세기 활동을 마치고 관찰 모드로 돌아왔습니다.');
+      });
+    }
+
+    function patternFilledRows(key) {
+      return PRISM_PATTERN_ROWS.filter(id => patternCellValue(id, key) !== null);
+    }
+    function patternHint(column) {
+      const rowId = patternFilledRows(column.key)[0];
+      if (!rowId) return '표를 먼저 채운 뒤, n에 값을 넣어 확인해 보세요.';
+      const row = DATA.solids[rowId], n = row.family_params.n, value = patternCellValue(rowId, column.key);
+      return `${row.korean_name}은 n=${n}이고 ${column.label}가 ${value}였습니다. n에 ${n}을 넣어 ${value}가 되는 식을 골라 보세요.`;
+    }
+    function patternAllCorrect() {
+      const truth = prismPatternTruth();
+      return PRISM_PATTERN_COLUMNS.every(column => state.patternChoices[column.key] === truth[column.key]);
+    }
+    function patternBodyHTML() {
+      if (!state.patternActive) return `<button id="patternStartButton" class="action-button" type="button">규칙 찾기 (n각기둥)</button>
+        <p class="small-note">삼각기둥·사각기둥·오각기둥을 차례로 세어 표를 채우고, n각기둥의 V·E·F를 식으로 정리하는 활동입니다.</p>`;
+      const truth = prismPatternTruth(), solved = patternAllCorrect();
+      const bodyRows = PRISM_PATTERN_ROWS.map(id => {
+        const row = DATA.solids[id];
+        const cells = PRISM_PATTERN_COLUMNS.map(column => {
+          const value = patternCellValue(id, column.key);
+          return value === null ? '<td class="is-empty">?</td>' : `<td>${value}</td>`;
+        }).join('');
+        return `<tr class="${id === state.solidId ? 'is-current' : ''}"><td>${row.korean_name} (n=${row.family_params.n})</td>${cells}</tr>`;
+      }).join('');
+      const generalRow = solved ? `<tr class="is-general"><td>n각기둥</td><td>${truth.V}</td><td>${truth.E}</td><td>${truth.F}</td></tr>` : '';
+      const switchButtons = PRISM_PATTERN_ROWS.map(id => `<button class="action-button" type="button" data-pattern-row="${id}" ${id === state.solidId ? 'disabled' : ''}>${DATA.solids[id].korean_name} — 이 입체로 바꾸기</button>`).join('');
+      const selectors = PRISM_PATTERN_COLUMNS.map(column => {
+        const unlocked = patternFilledRows(column.key).length >= 2;
+        const choice = state.patternChoices[column.key] || '';
+        return `<div><label class="control-label" for="patternSelect${column.key}">${column.label}</label>
+          <select id="patternSelect${column.key}" data-pattern-select="${column.key}" ${unlocked ? '' : 'disabled'}>
+            <option value="" ${choice ? '' : 'selected'}>${unlocked ? '식 고르기' : '두 줄 이상 필요'}</option>
+            ${column.options.map(option => `<option value="${option}" ${choice === option ? 'selected' : ''}>${option}</option>`).join('')}
+          </select></div>`;
+      }).join('');
+      const feedback = state.patternFeedback
+        ? `<div class="callout ${state.patternFeedback.ok ? 'success' : 'warning'}"><strong>${state.patternFeedback.ok ? '맞았습니다' : '다시 생각해 보세요'}</strong>${state.patternFeedback.message}</div>`
+        : '';
+      const closing = solved
+        ? `<div class="callout success"><strong>세 식이 모두 맞았습니다</strong>세 식을 확인해 보세요: ${truth.V} − ${truth.E} + (${truth.F}) = 2 — 오일러 관계가 항상 성립합니다.</div>`
+        : '';
+      return `<p class="small-note">한 칸은 “다 세었어요”가 맞았을 때만 채워집니다. 아래에서 입체를 바꾸고 직접 세어 보세요.</p>
+        <table class="p13-pattern-table"><thead><tr><th>각기둥</th><th>꼭짓점 V</th><th>모서리 E</th><th>면 F</th></tr></thead><tbody>${bodyRows}${generalRow}</tbody></table>
+        <div class="p13-row-actions">${switchButtons}</div>
+        <h4 class="p13-subhead">n각기둥으로 일반화하기</h4>
+        <div class="p13-general-grid">${selectors}</div>
+        ${feedback}${closing}
+        <p class="small-note">각뿔은 어떨까요? 직접 세어 비교해 보세요.</p>
+        <div class="button-stack"><button id="patternEndButton" class="action-button" type="button">규칙 찾기 마치기</button></div>`;
+    }
+    function renderPatternBody() {
+      const host = $('#patternBody', refs.left);
+      if (!host) return;
+      host.innerHTML = patternBodyHTML();
+      $('#patternStartButton', host)?.addEventListener('click', () => {
+        state.patternActive = true;
+        state.patternFeedback = null;
+        renderPatternBody();
+        announce('규칙 찾기를 시작했습니다. 표의 각기둥을 하나씩 세어 채워 보세요.');
+      });
+      $('#patternEndButton', host)?.addEventListener('click', () => {
+        state.patternActive = false;
+        renderPatternBody();
+        announce('규칙 찾기를 마쳤습니다.');
+      });
+      $$('[data-pattern-row]', host).forEach(button => button.addEventListener('click', () => {
+        const rowId = button.dataset.patternRow;
+        state.solidId = rowId;
+        state.explorerLabelsVisible = DATA.solids[rowId].topology.V <= 26 && state.explorerLabelsVisible;
+        state.patternResume = true;
+        renderCurrentTab();
+        announce(`${DATA.solids[rowId].korean_name}으로 바꾸고 세기 활동을 열었습니다. 무엇을 셀지 고르세요.`);
+      }));
+      $$('[data-pattern-select]', host).forEach(select => select.addEventListener('change', () => {
+        const column = PRISM_PATTERN_COLUMNS.find(item => item.key === select.dataset.patternSelect);
+        const choice = select.value;
+        state.patternChoices[column.key] = choice;
+        if (!choice) { state.patternFeedback = null; renderPatternBody(); return; }
+        const ok = choice === prismPatternTruth()[column.key];
+        const message = ok
+          ? `맞습니다. n각기둥의 ${column.label}는 ${choice}입니다.`
+          : `고른 식이 표의 수와 맞지 않습니다. ${patternHint(column)}`;
+        state.patternFeedback = { ok, message };
+        renderPatternBody();
+        announce(message);
+      }));
+    }
+    function recordPatternCell(target, value) {
+      const column = PRISM_PATTERN_COLUMNS.find(item => item.target === target);
+      if (!state.patternActive || !column || !PRISM_PATTERN_ROWS.includes(state.solidId)) return false;
+      state.patternCells[`${state.solidId}|${column.key}`] = value;
+      state.patternFeedback = null;
+      renderPatternBody();
+      return true;
+    }
+
+    renderPatternBody();
+    renderCountingBody();
+    if (state.patternResume) { state.patternResume = false; startCountingActivity(); }
+    refreshUniversalMapping({ force: true });
+  }
+

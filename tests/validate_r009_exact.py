@@ -48,7 +48,7 @@ for key,candidates_key,min_key in [('cylinder','periodic_copies','surface_minimu
 sph=paths['sphere']; expected_chord=2*sph['radius']*math.sin(sph['central_angle']/2); expected_arc=sph['radius']*sph['central_angle']
 check('R009-MATH-009-sphere-chord',close(sph['interior_chord'],expected_chord),sph['interior_chord'],expected_chord)
 check('R009-MATH-010-sphere-arc',close(sph['surface_short_arc'],expected_arc),sph['surface_short_arc'],expected_arc)
-check('R009-STATE-001-chapter-count',state['chapter_count']==9,state['chapter_count'],9)
+check('R009-STATE-001-chapter-count',state['chapter_count']==11,state['chapter_count'],11)
 check('R009-STATE-002-order',spec['chapter_order']==[c['module'] for c in state['chapters']],spec['chapter_order'],[c['module'] for c in state['chapters']])
 check('R009-STATE-003-removed',set(state['removed'])=={'locus','distance','transfer'},state['removed'],['locus','distance','transfer'])
 check('R009-STATE-004-merged-section',state['merged']['revsection']==['revsection','locus'],state['merged']['revsection'])
