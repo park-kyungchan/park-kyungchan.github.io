@@ -13,7 +13,7 @@ nav_match=re.search(r'<nav class="lab-tabs[^>]*>(.*?)</nav>',html,re.S)
 nav=nav_match.group(1) if nav_match else ''
 check('R009-STATIC-001-main-found',bool(main_match))
 check('R009-STATIC-002-direct-main-panels',len(re.findall(r'^\s{4}<(?:aside|section)\b',main,re.M))==2,len(re.findall(r'^\s{4}<(?:aside|section)\b',main,re.M)),2)
-check('R009-STATIC-003-nav-nine',len(re.findall(r'class="tab-button',nav))==9,len(re.findall(r'class="tab-button',nav)),9)
+check('R009-STATIC-003-nav-count',len(re.findall(r'class="tab-button',nav))==11,len(re.findall(r'class="tab-button',nav)),11)
 for tab in ['locus','distance','transfer']:
     check(f'R009-STATIC-NAV-NO-{tab}',f'data-tab="{tab}"' not in nav,f'data-tab="{tab}"' in nav,False)
 check('R009-STATIC-004-no-floating-dock-dom','id="centerLearningDock"' not in html,'id="centerLearningDock"' in html,False)
