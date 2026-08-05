@@ -18,9 +18,11 @@ Probe gate (runs when BOTH directories contain probes.json, unless
     any of PROBE_FIELDS differs between base and head
     the head state recorded a non-empty console_errors list
 
-A missing file on either side, or a size mismatch, is also a failure.
+A file present in BASE but missing from HEAD, or a size mismatch, is a failure.
+A file present only in HEAD is reported as `new state` and does not fail the run:
+a PR that adds a chapter legitimately adds states.
 Exit code 0 = every pair inside both gates, 1 = at least one failure,
-2 = the two directories do not describe the same state matrix.
+2 = HEAD dropped a state that BASE captured.
 """
 
 import argparse
@@ -152,10 +154,13 @@ def main():
     failures = []
 
     for name in sorted(set(base_files) | set(head_files)):
-        if name in only_base or name in only_head:
-            side = "base only" if name in only_base else "head only"
+        if name in only_head:
             rows.append({"file": name, "diff_pixels": None, "max_delta": None,
-                         "status": "MISSING", "note": side})
+                         "status": "NEW", "note": "new state (head only)"})
+            continue
+        if name in only_base:
+            rows.append({"file": name, "diff_pixels": None, "max_delta": None,
+                         "status": "MISSING", "note": "missing from head"})
             failures.append(name)
             continue
         differing, max_delta, note = compare_pair(
@@ -206,6 +211,7 @@ def main():
             "probe_fields": list(PROBE_FIELDS),
         },
         "pairs": len(rows),
+        "new_states": only_head,
         "failures": failures,
         "results": rows,
         "probe_failures": probe_failures,
@@ -219,9 +225,11 @@ def main():
     if not rows:
         print("\nFAIL: no PNGs to compare", file=sys.stderr)
         return 2
-    if only_base or only_head:
-        print("\nFAIL: the two runs captured different state matrices",
-              file=sys.stderr)
+    if only_head:
+        print("\nnew states (head only, not a failure): %s" % ", ".join(only_head))
+    if only_base:
+        print("\nFAIL: head dropped %d state(s) that base captured: %s"
+              % (len(only_base), ", ".join(only_base)), file=sys.stderr)
         return 2
 
     if probes_compared:

@@ -73,7 +73,7 @@ NO_ANIM_CSS = "*,*::before,*::after{animation:none!important;transition:none!imp
 
 CHAPTERS = [
     "explorer", "generator", "net", "section", "euler",
-    "soccer", "revolution", "revsection", "geodesic",
+    "soccer", "revolution", "revsection", "surfacearea", "volume", "geodesic",
 ]
 
 REVOLUTION_CYLINDER_PROGRESS = [0.0, 0.34, 0.62, 1.0]
@@ -135,11 +135,26 @@ class Harness:
 
     # ---------- interactions ----------
 
+    def has_tab(self, page, chapter):
+        return page.evaluate(
+            "sel => !!document.querySelector(sel)", f'[data-tab="{chapter}"]'
+        )
+
     def click_tab(self, page, chapter):
+        """Click a chapter tab. Returns False (and captures nothing) when the tab
+        is absent, so this harness still runs against older artifacts that do not
+        have every chapter yet."""
+        if not self.has_tab(page, chapter):
+            print(
+                "skip: no [data-tab=\"%s\"] in this artifact" % chapter,
+                file=sys.stderr, flush=True,
+            )
+            return False
         page.evaluate(
             "sel => document.querySelector(sel).click()", f'[data-tab="{chapter}"]'
         )
         page.wait_for_timeout(TAB_SETTLE_MS)
+        return True
 
     def set_range(self, page, selector, value):
         page.evaluate(
@@ -233,13 +248,17 @@ class Harness:
         """Every chapter at its untouched default. No control is ever driven."""
         page = self.new_page(browser, viewport)
         for chapter in CHAPTERS:
-            self.click_tab(page, chapter)
+            if not self.click_tab(page, chapter):
+                continue
             self.capture(page, viewport_name, chapter, "default")
         page.close()
 
     def group_revolution(self, browser):
         page = self.new_page(browser, DESKTOP)
-        self.click_tab(page, "revolution")
+        opened = self.click_tab(page, "revolution")
+        if not opened:
+            page.close()
+            return
 
         self.set_select(page, "#revolutionProfileSelect", "cylinder")
         for value in REVOLUTION_CYLINDER_PROGRESS:
@@ -257,7 +276,10 @@ class Harness:
         """Default case swept, then the reveal state (reveal is captured LAST so
         it cannot contaminate any other revsection capture)."""
         page = self.new_page(browser, DESKTOP)
-        self.click_tab(page, "revsection")
+        opened = self.click_tab(page, "revsection")
+        if not opened:
+            page.close()
+            return
         case_id = page.evaluate(
             "() => document.querySelector('#revSectionCaseSelect').value"
         )
@@ -283,7 +305,10 @@ class Harness:
 
     def group_geodesic(self, browser):
         page = self.new_page(browser, DESKTOP)
-        self.click_tab(page, "geodesic")
+        opened = self.click_tab(page, "geodesic")
+        if not opened:
+            page.close()
+            return
         for case_id in GEODESIC_CASES:
             self.set_select(page, "#pathCaseSelect", case_id)
             # Mode after case: changing the case may reset the distance mode.
