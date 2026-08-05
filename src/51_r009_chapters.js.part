@@ -4,7 +4,7 @@
   const R009_CHAPTER_NAMES = Object.freeze({
     explorer:'입체 읽기', generator:'왜 5개?', net:'전개도 조립', section:'다면체 단면',
     euler:'오일러 증명', soccer:'축구공 확장', revolution:'회전체 생성',
-    revsection:'회전체 단면·교선', geodesic:'거리·펼친 최단길'
+    revsection:'회전체 단면·교선', surfacearea:'겉넓이', volume:'부피', geodesic:'거리·펼친 최단길'
   });
   /* Chapter numerals come from P003_CURRICULUM only; never hardcode them in copy. */
   function r009ChapterNo(tab){
@@ -16,6 +16,8 @@
   const R009_CONTEXT_LABELS = Object.freeze({
     revolution:'평면도형의 회전과 회전체 생성',
     revsection:'절단 평면과 회전체가 만나는 실제 교선',
+    surfacearea:'전개도의 조각 넓이를 모은 겉넓이',
+    volume:'밑넓이·높이와 부피의 관계',
     geodesic:'허용 경로와 길이를 보존한 펼침'
   });
   const R009_PROGRESS_STOPS = Object.freeze([0,.16,.34,.62,.84,1]);
@@ -37,6 +39,21 @@
     pathCase: ['cube','cylinder','cone','sphere'].includes(state.pathCase) ? state.pathCase : 'cube',
     pathProgress: Number(state.pathProgress || 0),
     distanceFocus: ['interior','surface','edge'].includes(state.distanceFocus) ? state.distanceFocus : 'surface',
+    saCase: 'SA-PRISM-3',
+    saPrediction: null,
+    saRevealed: false,
+    saUnfold: 0,
+    saMatched: {},
+    saFeedback: null,
+    saMatchFeedback: null,
+    volumeMode: 'prism',
+    volumePillar: 'V-PRISM-4',
+    volumeRelation: 'REL-PYRAMID-THIRD',
+    volumeFill: 0,
+    volumePours: 0,
+    volumeConePrediction: null,
+    volumeSpherePrediction: null,
+    volumeFeedback: null,
   });
 
   function r009PhaseIndex(progress){
@@ -168,5 +185,5 @@
   };
 
   renderR007Timeline = function(){ /* R009 deliberately removes the duplicate floating transport. */ };
-  moduleSupports3D = function(){return ['explorer','net','section','soccer','revolution','revsection','geodesic'].includes(state.tab);};
+  moduleSupports3D = function(){return ['explorer','net','section','soccer','revolution','revsection','surfacearea','volume','geodesic'].includes(state.tab);};
 

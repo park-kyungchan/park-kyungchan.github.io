@@ -71,7 +71,7 @@
   });
   refs.startDialog.addEventListener('close', () => {
     refs.main.focus({ preventScroll: true });
-    announce('탐구 시작 안내를 닫았습니다. 입체 읽기부터 통합 회전체·최단거리까지 아홉 장을 차례로 탐구해 보세요.');
+    announce('탐구 시작 안내를 닫았습니다. 입체 읽기부터 겉넓이·부피·최단거리까지 기본 8장과 심화 3장을 차례로 탐구해 보세요.');
   });
   refs.startExplore?.addEventListener('click', () => announce('탐구를 시작합니다. 먼저 입체를 돌리고 하나를 예측해 보세요.'));
 

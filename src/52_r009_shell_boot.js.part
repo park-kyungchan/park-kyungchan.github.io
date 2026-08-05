@@ -1,15 +1,20 @@
   const r009BaseRenderCurrentTab = renderCurrentTab;
   renderCurrentTab = function(){
     if(!R009_CHAPTER_ORDER.includes(state.tab))state.tab=state.tab==='locus'?'revsection':['distance','transfer'].includes(state.tab)?'geodesic':'explorer';
+    p13HideStagePanel();
     if(['explorer','generator','net','section','euler','soccer'].includes(state.tab)){
       renderer.r009SmoothScene=false;const out=r009BaseRenderCurrentTab();r9HideHud();requestAnimationFrame(()=>r009AfterRender());return out;
     }
     stopFoldPlayback();stopGeneratorPlayback();stopEulerPlayback();stopSectionPlayback();stopSoccerPlayback();
-    if(!['revolution','revsection','geodesic'].includes(state.tab))stopR007Playback();
+    if(!['revolution','revsection','surfacearea','volume','geodesic'].includes(state.tab))stopR007Playback();
     refs.main.hidden=false;if(refs.foldStageBadge)refs.foldStageBadge.hidden=true;if(refs.stageContext)refs.stageContext.textContent=R009_CONTEXT_LABELS[state.tab]||'입체 탐구';
     renderer.selectedFaces.clear();renderer.selectedEdges.clear();renderer.selectedVertices.clear();renderer.countedFaces.clear();renderer.countedEdges.clear();renderer.countedVertices.clear();renderer.cutEdges=new Set();renderer.setRelationEdgeHighlights([]);
     resetExplorerActivityState();state.cutMode=false;state.netMode='autoplay';
-    if(state.tab==='revolution')renderRevolution();else if(state.tab==='revsection')renderRevSections();else renderShortestPaths();
+    if(state.tab==='revolution')renderRevolution();
+    else if(state.tab==='revsection')renderRevSections();
+    else if(state.tab==='surfacearea')renderSurfaceArea();
+    else if(state.tab==='volume')renderVolume();
+    else renderShortestPaths();
     r009AfterRender();
   };
 
@@ -35,7 +40,8 @@
   function r009ChapterTitle(){return R009_CHAPTER_NAMES[state.tab]||'입체 탐구';}
   function r009CurrentProgress(){
     if(state.tab==='net')return state.foldProgress||0;if(state.tab==='generator')return state.generatorDemoProgress||0;if(state.tab==='section')return state.sectionProgress||0;if(state.tab==='euler')return state.eulerMode==='direct'?Math.min(1,(state.eulerDirectHistory?.length||0)/10):(state.eulerAutoProgress||0);if(state.tab==='soccer')return state.soccerProgress||0;
-    if(state.tab==='revolution')return state.revolutionProgress||0;if(state.tab==='revsection')return state.revSectionProgress||0;if(state.tab==='geodesic')return state.pathProgress||0;return .1;
+    if(state.tab==='revolution')return state.revolutionProgress||0;if(state.tab==='revsection')return state.revSectionProgress||0;if(state.tab==='geodesic')return state.pathProgress||0;
+    if(state.tab==='surfacearea')return p13SurfaceProgress();if(state.tab==='volume')return p13VolumeProgress();return .1;
   }
   function r009GuideForCurrent(){
     const p=r009CurrentProgress();
@@ -48,6 +54,8 @@
       const item=r9SectionCase(),copy=p<.14?['평면이 아직 입체 밖에 있습니다.','결과를 보기 전에 평면이 어느 표면에 먼저 닿을지 예상하세요.']:p<.30?['첫 접촉 지점을 찾습니다.','평면과 회전체를 동시에 만족하는 점이 처음 생깁니다.']:p<.72?['교점들이 교선으로 이어집니다.','옆면뿐 아니라 윗면·밑면 또는 꼭짓점이 실제 경계에 참여하는지 보세요.']:p<.90?['교선이 닫힌 경계를 만듭니다.','오른쪽 아래 inset은 절단 평면에서 본 같은 경계입니다.']:['analytic 분류와 표시 곡선을 비교합니다.','화면의 polyline은 표시 근사이고, 분류와 수치는 exact data에서 옵니다.'];
       return {kicker:`${Math.round(p*100)}% · ${r009PhaseLabel(p)}`,title:copy[0],body:copy[1],chips:[item.label,r9ClassificationLabel(item.classification),`${item.boundary_components.length}개 경계 구성`]};
     }
+    if(state.tab==='surfacearea'){const data=p13SurfaceGuide();if(data)return data;}
+    if(state.tab==='volume'){const data=p13VolumeGuide();if(data)return data;}
     if(state.tab==='geodesic'){
       const label={cube:'정육면체',cylinder:'원기둥',cone:'원뿔',sphere:'구(심화)'}[state.pathCase],mode={interior:'내부 직선',surface:'겉면',edge:'모서리만'}[state.distanceFocus],copy=p<.14?['먼저 허용 경로를 정합니다.','같은 P와 Q라도 내부·겉면·모서리만은 서로 다른 문제입니다.']:p<.30?['P와 Q의 위치를 확인합니다.','경로가 지나갈 수 있는 면 또는 곡면을 함께 보세요.']:p<.72?['길이를 보존하며 펼칩니다.','자동재생 중에도 입체를 돌리고 확대해 3D 경로와 평면 직선의 대응을 확인할 수 있습니다.']:p<.90?['평면의 직선 후보를 다시 입체에 대응합니다.','seam 또는 face chain이 다른 후보도 유효한지 검사합니다.']:['여러 후보와 거리값을 비교합니다.','한 전개도만 보고 전역 최단이라고 결론내리지 않습니다.'];
       return {kicker:`${Math.round(p*100)}% · ${r009PhaseLabel(p)}`,title:copy[0],body:copy[1],chips:[label,mode,'P ↔ Q']};
@@ -85,7 +93,7 @@
 
 activateTabButton(state.tab);
   renderCurrentTab();
-  announce('입체 읽기에서 시작해 다면체·회전체·단면·최단거리로 이어지는 9장 통합 탐구입니다.');
+  announce('입체 읽기에서 시작해 다면체·회전체·겉넓이·부피·최단거리로 이어지는 기본 8장과 심화 3장의 통합 탐구입니다.');
   requestAnimationFrame(() => {
     try { if (typeof refs.startDialog.showModal === 'function' && !refs.startDialog.open) refs.startDialog.showModal(); }
     catch (_) { /* dialog may be restricted in embedded previews */ }

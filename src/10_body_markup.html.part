@@ -42,7 +42,9 @@
     <button class="tab-button" data-tab="section" type="button"><span class="tab-symbol" aria-hidden="true">3</span><span class="tab-copy"><strong>다면체 단면</strong><small>면의 교선</small></span></button>
     <button class="tab-button" data-tab="revolution" type="button"><span class="tab-symbol" aria-hidden="true">4</span><span class="tab-copy"><strong>회전체 생성</strong><small>기본·이격·조합</small></span></button>
     <button class="tab-button" data-tab="revsection" type="button"><span class="tab-symbol" aria-hidden="true">5</span><span class="tab-copy"><strong>회전체 단면·교선</strong><small>단면+자취 통합</small></span></button>
-    <button class="tab-button" data-tab="geodesic" type="button"><span class="tab-symbol" aria-hidden="true">6</span><span class="tab-copy"><strong>거리·펼친 최단길</strong><small>활용 · 조건+후보 비교</small></span></button>
+    <button class="tab-button" data-tab="surfacearea" type="button"><span class="tab-symbol" aria-hidden="true">6</span><span class="tab-copy"><strong>겉넓이</strong><small>전개도로 계산</small></span></button>
+    <button class="tab-button" data-tab="volume" type="button"><span class="tab-symbol" aria-hidden="true">7</span><span class="tab-copy"><strong>부피</strong><small>쌓기·비교</small></span></button>
+    <button class="tab-button" data-tab="geodesic" type="button"><span class="tab-symbol" aria-hidden="true">8</span><span class="tab-copy"><strong>거리·펼친 최단길</strong><small>활용 · 조건+후보 비교</small></span></button>
     <span class="tab-group-label is-enrichment">심화 탐구</span>
     <button class="tab-button is-enrichment" data-tab="generator" type="button"><span class="tab-symbol" aria-hidden="true">★1</span><span class="tab-copy"><strong>왜 5개?</strong><small>꼭짓점 각의 합</small></span></button>
     <button class="tab-button is-enrichment" data-tab="euler" type="button"><span class="tab-symbol" aria-hidden="true">★2</span><span class="tab-copy"><strong>오일러 증명</strong><small>줄이고 되돌리기</small></span></button>
@@ -73,7 +75,7 @@
 
   <footer class="app-footer glass-surface">
     <div id="statusLive" role="status" aria-live="polite">탐구 준비됨</div>
-    <div class="chapter-nav" aria-label="탐구 순서 이동"><button id="chapterPrevButton" type="button">← 처음</button><span id="chapterProgress" class="chapter-progress">기본 1/6 · 입체 읽기</span><button id="chapterNextButton" type="button">전개도 조립 →</button></div>
+    <div class="chapter-nav" aria-label="탐구 순서 이동"><button id="chapterPrevButton" type="button">← 처음</button><span id="chapterProgress" class="chapter-progress">기본 1/8 · 입체 읽기</span><button id="chapterNextButton" type="button">전개도 조립 →</button></div>
     <div class="footer-scope">오프라인 · 외부 요청 0 · 로그인·저장 없음</div>
   </footer>
 
@@ -82,8 +84,8 @@
       <button class="dialog-close" value="close" aria-label="탐구 시작 안내 닫기">×</button>
       <div class="dialog-hero" aria-hidden="true"><span>◇</span><span>⌁</span><span>∠</span><span>2</span></div>
       <p class="eyebrow">탐구를 시작하기 전에</p>
-      <h2 id="startDialogTitle">입체를 읽고, 만들고, 자르고, 펼쳐서 설명하세요.</h2>
-      <p class="small-note">기본 6장을 순서대로 탐구하고, 심화 3장은 원할 때 열어 보세요.</p>
+      <h2 id="startDialogTitle">입체를 읽고, 만들고, 자르고, 펼쳐서 넓이와 부피까지 설명하세요.</h2>
+      <p class="small-note">기본 8장을 순서대로 탐구하고, 심화 3장은 원할 때 열어 보세요.</p>
       <ol class="start-steps">
         <li><div><strong>먼저 예측</strong><span>정답 표시 전에 어느 요소가 만날지 스스로 고릅니다.</span></div></li>
         <li><div><strong>그다음 움직임 관찰</strong><span>같은 3D 탐구 무대에서 전개도 접촉, 절단 교선, 회전체 생성, 펼친 최단경로를 봅니다.</span></div></li>

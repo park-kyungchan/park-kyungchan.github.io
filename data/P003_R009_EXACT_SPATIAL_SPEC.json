@@ -834,6 +834,8 @@
     "section",
     "revolution",
     "revsection",
+    "surfacearea",
+    "volume",
     "geodesic",
     "generator",
     "euler",

@@ -3,7 +3,7 @@
     "index.html",
     "P003_R009_Integrated_Spatial_Revolution_Lab_Standalone.html"
   ],
-  "expected_sha256": "b5c75878d890352b402cc20bc08236598932d97de59aa2338deee81d65baa278",
+  "expected_sha256": "c122ba43744d097f8a8b4d574947f2a5a95de1360c92cc3cdb890ab041ab20d9",
   "parts": [
     "00_document_head.html.part",
     "05_css_00_base_tokens_layout.css.part",
@@ -41,6 +41,8 @@
     "49_r009_spatial_core.js.part",
     "50_r009_scene_draw.js.part",
     "51_r009_chapters.js.part",
+    "51a_chapter_surfacearea.js.part",
+    "51b_chapter_volume.js.part",
     "52_r009_shell_boot.js.part",
     "53_runtime_close.js.part",
     "60_document_tail.html.part"

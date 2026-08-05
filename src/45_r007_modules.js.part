@@ -43,7 +43,7 @@
     state.r007Playing=false;
     if(r007AnimationHandle) cancelAnimationFrame(r007AnimationHandle);
     r007AnimationHandle=null; r007AnimationLast=0;
-    const buttons=['#revolutionPlay','#revSectionPlay','#locusPlay','#pathPlay'];
+    const buttons=['#revolutionPlay','#revSectionPlay','#locusPlay','#pathPlay','#saUnfoldPlay','#volumeFillPlay'];
     buttons.forEach(selector=>{const button=$(selector,refs.left);if(button){button.textContent='▶ 자동재생';button.setAttribute('aria-pressed','false');}});
     if(announceStop) announce('자동재생을 일시정지했습니다.');
   }
@@ -51,7 +51,7 @@
     stopR007Playback();
     if(state[key]>=.999) state[key]=0;
     state.r007Playing=true;
-    const button=$('#revolutionPlay,#revSectionPlay,#locusPlay,#pathPlay',refs.left);
+    const button=$('#revolutionPlay,#revSectionPlay,#locusPlay,#pathPlay,#saUnfoldPlay,#volumeFillPlay',refs.left);
     if(button){button.textContent='Ⅱ 일시정지';button.setAttribute('aria-pressed','true');}
     if(state.reducedMotion){
       const sequence=[0,.24,.52,.78,1];
