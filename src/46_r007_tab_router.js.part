@@ -22,7 +22,7 @@
       <label class="control-label" for="foldSpeed">한 면 시간 <strong id="foldSecondsValue">${state.foldSecondsPerFace.toFixed(1)}초</strong></label><input id="foldSpeed" aria-label="한 면 조립 시간" type="range" min="5" max="11" step="0.5" value="${state.foldSecondsPerFace}">
       <label class="control-label"><input id="showFoldGhost" type="checkbox" ${state.showFoldGhost?'checked':''}> 펼친 전개도 투명하게 남기기</label></section>
       <section class="panel-section"><h3>직접 해 보는 활동</h3>
-      <div class="button-stack"><button id="startCutModeButton" class="action-button" type="button" ${state.netSolidId==='PLATONIC_CUBE'?'':'disabled'}>직접 잘라 전개도 만들기</button></div>
+      <div class="button-stack"><button id="startCutModeButton" class="action-button" type="button" ${state.netSolidId==='PLATONIC_CUBE'?'':'disabled'}>직접 잘라 전개도 만들기</button><button id="startRelationQuizButton" class="action-button" type="button">두 모서리의 위치 관계</button></div>
       ${state.netSolidId==='PLATONIC_CUBE'?'':'<p class="small-note">직접 자르기는 정육면체에서만 할 수 있습니다. 위에서 정육면체를 고르세요.</p>'}</section>`;
     updateNetRightOnly();applyFoldProgress(state.foldProgress,{announceChange:false,syncSlider:true});
     $('#netSolidSelect').addEventListener('change',event=>{stopFoldPlayback();state.netSolidId=event.target.value;state.netVariantIndex=0;state.foldProgress=0;renderCurrentTab();announce(`${DATA.solids[state.netSolidId].korean_name}의 전개도 예시를 엽니다.`);});
@@ -37,6 +37,7 @@
     $('#foldSpeed').addEventListener('input',event=>{state.foldSecondsPerFace=Number(event.target.value);$('#foldSecondsValue',refs.left).textContent=`${state.foldSecondsPerFace.toFixed(1)}초`;});
     $('#showFoldGhost').addEventListener('change',event=>{state.showFoldGhost=event.target.checked;applyFoldProgress(state.foldProgress,{announceChange:false});});
     $('#startCutModeButton',refs.left)?.addEventListener('click',()=>{stopFoldPlayback();startCubeCutMode();announce('정육면체를 직접 잘라 전개도를 만드는 활동을 시작했습니다.');});
+    $('#startRelationQuizButton',refs.left)?.addEventListener('click',()=>startRelationQuiz());
   }
 
 

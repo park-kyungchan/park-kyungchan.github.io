@@ -4003,6 +4003,15 @@ window.P003_CURRICULUM = { schema_version: "P1-1",
     }
   }
 
+  /* Grade by the mathematical relation, not by one canonical edge index:
+     makeRelationChallenge can offer a second skew edge as a distractor, and a
+     student who names it has answered the question correctly. */
+  function relationChoiceIsCorrect() {
+    const challenge = state.relationChallenge;
+    if (!challenge || !Number.isInteger(state.relationChoice)) return false;
+    return edgeRelation(DATA.solids[state.netSolidId], challenge.baseEdgeIndex, state.relationChoice) === challenge.relation;
+  }
+
   function relationPanelHTML() {
     if (!state.relationChallenge) makeRelationChallenge(state.netSolidId);
     const solid = DATA.solids[state.netSolidId];
@@ -4012,12 +4021,13 @@ window.P003_CURRICULUM = { schema_version: "P1-1",
     const answerName = publicEdgeName(solid, challenge.answerIndex, makeLocalVertexMap(solid));
     const feedback = !state.relationRevealed
       ? '<div class="relation-result"><strong>아직 확인 전</strong><br><span class="small-note">전개도의 면 위치와 접는 선을 따라 먼저 예측하세요.</span></div>'
-      : `<div class="relation-result"><strong>${state.relationChoice === challenge.answerIndex ? '예측이 맞았습니다.' : '조립 결과를 다시 비교하세요.'}</strong><br>${Number.isInteger(state.relationChoice) ? `${publicEdgeName(solid, state.relationChoice, makeLocalVertexMap(solid))}은(는) ${relationKorean(choiceRelation)}입니다. ` : ''}${answerName}은(는) ${baseName}과 꼭짓점을 공유하지 않고, 평행하지 않으며, 같은 평면에 함께 놓이지 않아 <strong>꼬인 위치</strong>입니다.</div>`;
+      : `<div class="relation-result"><strong>${relationChoiceIsCorrect() ? '예측이 맞았습니다.' : '조립 결과를 다시 비교하세요.'}</strong><br>${Number.isInteger(state.relationChoice) ? `${publicEdgeName(solid, state.relationChoice, makeLocalVertexMap(solid))}은(는) ${relationKorean(choiceRelation)}입니다. ` : ''}${answerName}은(는) ${baseName}과 꼭짓점을 공유하지 않고, 평행하지 않으며, 같은 평면에 함께 놓이지 않아 <strong>꼬인 위치</strong>입니다.</div>`;
     return `<section class="panel-section"><h3>전개도만 보고 위치 관계 예측</h3>
+      <p class="small-note">공간에서 두 직선의 위치 관계 활동입니다.</p>
       <div class="relation-map">
         <div class="relation-prompt"><strong>${baseName}과 조립 후 꼬인 위치가 되는 모서리는?</strong><p class="small-note">꼬인 위치: 만나지 않고, 평행하지 않고, 한 평면 위에도 함께 놓이지 않는 두 모서리</p></div>
         <div class="relation-options">${challenge.options.map(edgeIndex => `<button class="choice-button ${state.relationChoice === edgeIndex ? 'is-active' : ''}" data-relation-edge="${edgeIndex}" type="button">${publicEdgeName(solid, edgeIndex, makeLocalVertexMap(solid))}</button>`).join('')}</div>
-        <div class="inline-actions"><button id="relationHintButton" class="action-button" type="button">전개도 추론 힌트</button><button id="relationVerifyButton" class="action-button primary" type="button">조립하여 확인</button><button id="relationNewButton" class="action-button" type="button">새 문제</button></div>
+        <div class="inline-actions"><button id="relationHintButton" class="action-button" type="button">전개도 추론 힌트</button><button id="relationVerifyButton" class="action-button primary" type="button">조립하여 확인</button><button id="relationNewButton" class="action-button" type="button">다음 문제</button></div>
         <div id="relationHint" class="small-note">먼저 ${baseName}의 양 끝 꼭짓점과 같은 면에 놓인 모서리를 지워 보세요.</div>
         ${feedback}
       </div>
@@ -4025,37 +4035,72 @@ window.P003_CURRICULUM = { schema_version: "P1-1",
   }
 
   function attachRelationEvents() {
-    $$('[data-relation-edge]', refs.right).forEach(button => button.addEventListener('click', () => {
+    $$('[data-relation-edge]', refs.left).forEach(button => button.addEventListener('click', () => {
       state.relationChoice = Number(button.dataset.relationEdge);
       state.relationRevealed = false;
-      updateNetRightOnly();
+      updateRelationPanel();
       announce(`${button.textContent.trim()}을 예측으로 선택했습니다.`);
     }));
-    $('#relationHintButton', refs.right)?.addEventListener('click', () => {
+    $('#relationHintButton', refs.left)?.addEventListener('click', () => {
       const solid = DATA.solids[state.netSolidId];
       const c = state.relationChallenge;
       const base = solid.topology.edges[c.baseEdgeIndex];
       const faces = solid.topology.edge_incident_faces[c.baseEdgeIndex].map(fi => publicFaceName(solid, fi, makeLocalVertexMap(solid)));
-      $('#relationHint', refs.right).innerHTML = `<strong>1단계:</strong> ${publicEdgeName(solid,c.baseEdgeIndex,makeLocalVertexMap(solid))}과 꼭짓점을 공유하는 모서리는 ‘만나는 위치’라서 제외합니다.<br><strong>2단계:</strong> 방향이 나란한 모서리는 ‘평행한 위치’라서 제외합니다.<br><strong>3단계:</strong> 남은 후보가 ${faces.join(' 또는 ')}와 접히며 서로 다른 면 방향을 갖는지 따라가 보세요.`;
+      $('#relationHint', refs.left).innerHTML = `<strong>1단계:</strong> ${publicEdgeName(solid,c.baseEdgeIndex,makeLocalVertexMap(solid))}과 꼭짓점을 공유하는 모서리는 ‘만나는 위치’라서 제외합니다.<br><strong>2단계:</strong> 방향이 나란한 모서리는 ‘평행한 위치’라서 제외합니다.<br><strong>3단계:</strong> 남은 후보가 ${faces.join(' 또는 ')}와 접히며 서로 다른 면 방향을 갖는지 따라가 보세요.`;
       announce('전개도 추론 힌트를 열었습니다. 정답 모서리는 아직 공개하지 않았습니다.');
     });
-    $('#relationVerifyButton', refs.right)?.addEventListener('click', () => {
+    $('#relationVerifyButton', refs.left)?.addEventListener('click', () => {
       if (!Number.isInteger(state.relationChoice)) { announce('먼저 모서리 하나를 예측으로 선택하세요.'); return; }
       state.relationRevealed = true;
       state.foldProgress = 1;
-      updateNetRightOnly();
+      updateRelationPanel();
       applyFoldProgress(1, { announceChange: false, syncSlider: true });
       renderer.setRelationEdgeHighlights([state.relationChallenge.baseEdgeIndex, state.relationChallenge.answerIndex]);
-      announce(state.relationChoice === state.relationChallenge.answerIndex ? '조립 결과, 꼬인 위치 예측이 맞았습니다.' : '조립 결과에서 파란 모서리와 분홍 모서리의 꼬인 위치를 확인하세요.');
+      announce(relationChoiceIsCorrect() ? '조립 결과, 꼬인 위치 예측이 맞았습니다.' : '조립 결과에서 파란 모서리와 분홍 모서리의 꼬인 위치를 확인하세요.');
     });
-    $('#relationNewButton', refs.right)?.addEventListener('click', () => {
+    $('#relationNewButton', refs.left)?.addEventListener('click', () => {
       makeRelationChallenge(state.netSolidId);
       state.foldProgress = 0;
-      updateNetRightOnly();
+      updateRelationPanel();
       applyFoldProgress(0, { announceChange: false, syncSlider: true });
       renderer.setRelationEdgeHighlights([]);
       announce('새 위치 관계 문제를 만들었습니다.');
     });
+  }
+
+  function updateRelationPanel() {
+    const host = $('#relationPanelHost', refs.left);
+    if (!host) return;
+    host.innerHTML = relationPanelHTML();
+    attachRelationEvents();
+  }
+
+  function startRelationQuiz() {
+    stopFoldPlayback();
+    state.netMode = 'relation';
+    makeRelationChallenge(state.netSolidId);
+    if (refs.foldStageBadge) refs.foldStageBadge.hidden = true;
+    renderer.setLabelMode('none');
+    renderer.setRelationEdgeHighlights([]);
+    setInteractionUI('navigate');
+    renderer.onPick = null;
+    refs.left.innerHTML = `
+      <section class="panel-section"><h2>두 모서리의 위치 관계</h2>
+        <div class="callout"><strong>목표</strong>전개도만 보고 조립 뒤 꼬인 위치가 되는 모서리를 예측한 다음, 실제로 조립해 확인하세요.</div>
+        <div class="button-stack"><button id="backFromRelationButton" class="action-button" type="button">전개도 조립으로 돌아가기</button></div>
+      </section>
+      <div id="relationPanelHost"></div>`;
+    updateRelationPanel();
+    r009EnsureEvidenceButton();
+    state.foldProgress = 0;
+    applyFoldProgress(0, { announceChange: false, syncSlider: false });
+    $('#backFromRelationButton', refs.left)?.addEventListener('click', () => {
+      state.netMode = 'autoplay';
+      renderer.setRelationEdgeHighlights([]);
+      renderCurrentTab();
+      announce('전개도 조립 화면으로 돌아왔습니다.');
+    });
+    announce('두 모서리의 위치 관계를 예측하는 활동을 시작했습니다.');
   }
 
   function updateNetRightOnly() {
@@ -5447,7 +5492,7 @@ window.P003_CURRICULUM = { schema_version: "P1-1",
       <label class="control-label" for="foldSpeed">한 면 시간 <strong id="foldSecondsValue">${state.foldSecondsPerFace.toFixed(1)}초</strong></label><input id="foldSpeed" aria-label="한 면 조립 시간" type="range" min="5" max="11" step="0.5" value="${state.foldSecondsPerFace}">
       <label class="control-label"><input id="showFoldGhost" type="checkbox" ${state.showFoldGhost?'checked':''}> 펼친 전개도 투명하게 남기기</label></section>
       <section class="panel-section"><h3>직접 해 보는 활동</h3>
-      <div class="button-stack"><button id="startCutModeButton" class="action-button" type="button" ${state.netSolidId==='PLATONIC_CUBE'?'':'disabled'}>직접 잘라 전개도 만들기</button></div>
+      <div class="button-stack"><button id="startCutModeButton" class="action-button" type="button" ${state.netSolidId==='PLATONIC_CUBE'?'':'disabled'}>직접 잘라 전개도 만들기</button><button id="startRelationQuizButton" class="action-button" type="button">두 모서리의 위치 관계</button></div>
       ${state.netSolidId==='PLATONIC_CUBE'?'':'<p class="small-note">직접 자르기는 정육면체에서만 할 수 있습니다. 위에서 정육면체를 고르세요.</p>'}</section>`;
     updateNetRightOnly();applyFoldProgress(state.foldProgress,{announceChange:false,syncSlider:true});
     $('#netSolidSelect').addEventListener('change',event=>{stopFoldPlayback();state.netSolidId=event.target.value;state.netVariantIndex=0;state.foldProgress=0;renderCurrentTab();announce(`${DATA.solids[state.netSolidId].korean_name}의 전개도 예시를 엽니다.`);});
@@ -5462,6 +5507,7 @@ window.P003_CURRICULUM = { schema_version: "P1-1",
     $('#foldSpeed').addEventListener('input',event=>{state.foldSecondsPerFace=Number(event.target.value);$('#foldSecondsValue',refs.left).textContent=`${state.foldSecondsPerFace.toFixed(1)}초`;});
     $('#showFoldGhost').addEventListener('change',event=>{state.showFoldGhost=event.target.checked;applyFoldProgress(state.foldProgress,{announceChange:false});});
     $('#startCutModeButton',refs.left)?.addEventListener('click',()=>{stopFoldPlayback();startCubeCutMode();announce('정육면체를 직접 잘라 전개도를 만드는 활동을 시작했습니다.');});
+    $('#startRelationQuizButton',refs.left)?.addEventListener('click',()=>startRelationQuiz());
   }
 
 
