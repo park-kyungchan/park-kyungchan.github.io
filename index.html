@@ -4282,7 +4282,7 @@ window.P003_CURRICULUM = { schema_version: "P1-1",
     if (!cutCount) message = `현재 ${state.cutEdges.size}개를 잘랐습니다. 정확히 7개가 필요합니다.`;
     else if (!tree) message = '남은 접힘선이 모든 면을 한 장으로 연결하는 가지 모양이 아닙니다. 면이 끊기거나 고리가 남았습니다.';
     else if (!overlapFree) message = '연결은 되었지만 펼친 면들이 평면에서 겹칩니다.';
-    else message = '자를 모서리 7개와 이어진 모서리 5개이 모든 면을 연결하고, 평면에서 겹치지 않습니다.';
+    else message = '자를 모서리 7개와 이어진 모서리 5개가 모든 면을 연결하고, 평면에서 겹치지 않습니다.';
     state.cutResult = { pass, message, checks: { cutCount, tree, overlapFree }, layout: pass ? layout : null };
     updateNetRightOnly(); attachCutLeftEvents();
     announce(pass ? '유효한 정육면체 전개도를 만들었습니다.' : '자른 모서리 선택을 수정해야 합니다.');
@@ -5212,6 +5212,10 @@ window.P003_CURRICULUM = { schema_version: "P1-1",
 
   /* P003 R007 modules: solids of revolution, analytic sections, distance domains, and unfolding paths. */
   const R007_NET_COUNTS = Object.fromEntries(Object.entries(DATA.net_variants || {}).map(([key,value])=>[key,value.length]));
+  /* Only the tetrahedron (2) and the cube (11) ship a complete enumeration of distinct nets;
+     the other three Platonic solids ship verified examples, not the full enumeration. */
+  const R007_COMPLETE_NET_IDS = new Set(['PLATONIC_TETRA','PLATONIC_CUBE']);
+  const netCountLabel = id => R007_COMPLETE_NET_IDS.has(id) ? `${R007_NET_COUNTS[id]}종` : `예시 ${R007_NET_COUNTS[id]}가지`;
   const R007_PHASES = ['예측','조작','관찰','근거','설명','전이'];
   const R007_QUESTIONS = {
     explorer:'도형을 돌려 보아도 V, E, F는 어떻게 유지될까요?',
@@ -5336,7 +5340,7 @@ window.P003_CURRICULUM = { schema_version: "P1-1",
       <div class="narrative-step"><span class="step-no">1</span><div><strong>입체와 전개도 종류를 고릅니다.</strong><span>같은 입체도 자르는 모서리에 따라 평면 배열이 달라집니다.</span></div></div>
       <div class="narrative-step"><span class="step-no">2</span><div><strong>공유 모서리를 축으로 한 면씩 접습니다.</strong><span>면은 늘어나거나 비틀리지 않습니다.</span></div></div>
       <div class="narrative-step"><span class="step-no">3</span><div><strong>모서리와 꼭짓점의 합쳐짐을 추적합니다.</strong><span>접촉하기 전에는 문자가 미리 합쳐지지 않습니다.</span></div></div></section>
-      <section class="panel-section"><label class="control-label" for="netSolidSelect">정다면체</label><select id="netSolidSelect">${platonic.map(id=>`<option value="${id}" ${id===state.netSolidId?'selected':''}>${DATA.solids[id].korean_name} · ${R007_NET_COUNTS[id]}종</option>`).join('')}</select>
+      <section class="panel-section"><label class="control-label" for="netSolidSelect">정다면체</label><select id="netSolidSelect">${platonic.map(id=>`<option value="${id}" ${id===state.netSolidId?'selected':''}>${DATA.solids[id].korean_name} · ${netCountLabel(id)}</option>`).join('')}</select>
       <label class="control-label" for="netTypeSelect">전개도 모양</label><select id="netTypeSelect" class="net-type-select">${variants.map((variant,index)=>`<option value="${index}" ${index===state.netVariantIndex?'selected':''}>${variant.variant_label||`전개도 ${index+1}`}</option>`).join('')}</select>
       <div class="net-shape-meta"><strong>${countClaim}</strong><span>조립 순서는 전개도 종류와 별개인 설명용 경로입니다.</span></div></section>
       <section class="panel-section"><h3>자동 조립</h3><div class="progress-row"><span>펼침</span><input id="foldSlider" aria-label="전개도 조립 진행" type="range" min="0" max="100" value="${Math.round(state.foldProgress*100)}"><span id="foldValue" class="progress-value">${Math.round(state.foldProgress*100)}%</span></div>

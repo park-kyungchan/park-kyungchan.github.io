@@ -1,5 +1,9 @@
   /* P003 R007 modules: solids of revolution, analytic sections, distance domains, and unfolding paths. */
   const R007_NET_COUNTS = Object.fromEntries(Object.entries(DATA.net_variants || {}).map(([key,value])=>[key,value.length]));
+  /* Only the tetrahedron (2) and the cube (11) ship a complete enumeration of distinct nets;
+     the other three Platonic solids ship verified examples, not the full enumeration. */
+  const R007_COMPLETE_NET_IDS = new Set(['PLATONIC_TETRA','PLATONIC_CUBE']);
+  const netCountLabel = id => R007_COMPLETE_NET_IDS.has(id) ? `${R007_NET_COUNTS[id]}종` : `예시 ${R007_NET_COUNTS[id]}가지`;
   const R007_PHASES = ['예측','조작','관찰','근거','설명','전이'];
   const R007_QUESTIONS = {
     explorer:'도형을 돌려 보아도 V, E, F는 어떻게 유지될까요?',
