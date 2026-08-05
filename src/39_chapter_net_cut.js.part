@@ -27,6 +27,7 @@
     updateCutResultPanel();
     attachCutLeftEvents();
     r009EnsureEvidenceButton();
+    r009UpdateLiveGuide();
     renderer.onPick = selection => {
       if (selection.type !== 'edge') return;
       if (state.cutEdges.has(selection.index)) state.cutEdges.delete(selection.index); else state.cutEdges.add(selection.index);

@@ -25,6 +25,12 @@
   }
   function currentMappingState() {
     if (state.tab === 'net') {
+      if (state.cutMode) return {
+        focus: '정육면체의 모서리 12개',
+        change: '자를 모서리로 고른 모서리는 빨간색으로 표시됩니다.',
+        evidence: '자를 모서리 7개와 남은 접힘선 5개가 여섯 면을 한 장으로 이어야 합니다.',
+        next: '모서리를 고른 뒤 “선택한 자르기 펼쳐 보기”를 누르세요.',
+      };
       const info = renderer.currentFoldInfo;
       if (!info) return { focus: '펼친 전개도의 서로 다른 꼭짓점 문자', change: '한 면씩 천천히 접습니다.', evidence: '서로 떨어진 두 점은 실제 접촉 뒤에만 한 점 이름으로 합쳐집니다.', next: '자동 조립 또는 다음 면을 누르세요.' };
       const merge = info.mergeVertices?.length ? info.mergeVertices.join('·') : '이번 면의 꼭짓점 문자';
