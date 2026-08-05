@@ -36,7 +36,8 @@
           <button id="labelToggle" class="chip-button ${state.explorerLabelsVisible ? 'is-active' : ''}" type="button">꼭짓점 문자</button>
         </div>
         <p class="small-note">꼭짓점이 많은 입체는 선택한 부분만 문자로 표시해 화면을 가리지 않습니다.</p>
-      </section>`;
+      </section>
+      <section class="panel-section" id="explorerCountingSection"><div id="countingBody"></div></section>`;
 
     refs.right.innerHTML = `
       <section class="panel-section"><h2>${solid.korean_name} 관찰 기록</h2>${metricsHTML(solid)}</section>
@@ -66,7 +67,7 @@
       renderer.setLabelMode(state.explorerLabelsVisible && solid.topology.V <= 26 ? 'vertices' : 'none');
       announce(state.explorerLabelsVisible ? '꼭짓점 문자를 표시합니다.' : '꼭짓점 문자를 숨겼습니다.');
     });
-    renderer.onPick = selection => {
+    const explorerObservePick = selection => {
       state.lastSelection = selection;
       const localMap = makeLocalVertexMap(solid, seedVerticesForSelection(solid, selection));
       renderer.setPublicLabelMap(localMap);
@@ -81,6 +82,93 @@
       const selectedName = selection.type === 'face' ? publicFaceName(solid, selection.index, localMap) : selection.type === 'edge' ? publicEdgeName(solid, selection.index, localMap) : publicVertexName(solid, selection.index, localMap);
       announce(`${selectedName}을 선택했습니다.`);
     };
+    renderer.onPick = explorerObservePick;
+
+    const countLabel = {
+      face: { name: '면', topic: '면은', object: '면을' },
+      edge: { name: '모서리', topic: '모서리는', object: '모서리를' },
+      vertex: { name: '꼭짓점', topic: '꼭짓점은', object: '꼭짓점을' },
+    };
+    const countBucket = target => target === 'face' ? renderer.countedFaces : target === 'edge' ? renderer.countedEdges : renderer.countedVertices;
+    const countTruth = target => target === 'face' ? solid.topology.F : target === 'edge' ? solid.topology.E : solid.topology.V;
+    function countingBodyHTML() {
+      if (!state.counting) return `<button id="countingStartButton" class="action-button" type="button">직접 세어 보기</button>
+        <p class="small-note">화면의 입체를 직접 누르며 면·모서리·꼭짓점의 개수를 스스로 세어 보는 활동입니다.</p>`;
+      const target = state.randomTarget;
+      const picker = `<p class="small-note">무엇을 셀지 먼저 고르세요.</p>
+        <div class="button-grid">${['face','edge','vertex'].map(key => `<button class="choice-button ${target === key ? 'is-active' : ''}" data-count-target="${key}" type="button">${countLabel[key].name}</button>`).join('')}</div>`;
+      if (!target) return `${picker}<div class="button-stack"><button id="countingEndButton" class="action-button" type="button">활동 마치기</button></div>`;
+      return `${picker}
+        <div class="metric-grid"><div class="metric-card"><span class="symbol">지금까지 센 ${countLabel[target].name}</span><span class="value" id="countingValue">${countBucket(target).size}</span></div></div>
+        <div id="countingFeedback"></div>
+        <div class="button-stack">
+          <button id="countingCheckButton" class="action-button primary" type="button">다 세었어요</button>
+          <button id="countingResetButton" class="action-button" type="button">다시 세기</button>
+          <button id="countingEndButton" class="action-button" type="button">활동 마치기</button>
+        </div>
+        <p class="small-note">가운데 화면에서 ${countLabel[target].object} 하나씩 누르면 세어집니다. 같은 곳을 다시 눌러도 두 번 세지 않습니다.</p>`;
+    }
+    function countingPick(selection) {
+      const target = state.randomTarget;
+      if (!target || selection.type !== target) return;
+      const bucket = countBucket(target), already = bucket.has(selection.index);
+      if (!already) bucket.add(selection.index);
+      renderer.uploadGeometry();
+      const value = $('#countingValue', refs.left);
+      if (value) value.textContent = String(bucket.size);
+      const feedback = $('#countingFeedback', refs.left);
+      if (feedback) feedback.innerHTML = '';
+      announce(already ? `이미 센 ${countLabel[target].name}입니다.` : `${countLabel[target].name} ${bucket.size}개째를 세었습니다.`);
+    }
+    function renderCountingBody() {
+      const host = $('#countingBody', refs.left);
+      if (!host) return;
+      host.innerHTML = countingBodyHTML();
+      $('#countingStartButton', host)?.addEventListener('click', () => {
+        state.counting = true;
+        state.randomTarget = null;
+        resetCounting();
+        renderer.onPick = countingPick;
+        renderCountingBody();
+        announce('세기 활동을 시작했습니다. 무엇을 셀지 고르세요.');
+      });
+      $$('[data-count-target]', host).forEach(button => button.addEventListener('click', () => {
+        const target = button.dataset.countTarget;
+        state.randomTarget = target;
+        state.selectionType = target;
+        resetCounting();
+        renderer.setSelectionType(target);
+        renderer.onPick = countingPick;
+        setInteractionUI('select');
+        $$('.choice-button[data-select-type]', refs.left).forEach(item => item.classList.toggle('is-active', item.dataset.selectType === target));
+        renderCountingBody();
+        announce(`${countLabel[target].object} 셉니다. 가운데 화면에서 하나씩 눌러 보세요.`);
+      }));
+      $('#countingCheckButton', host)?.addEventListener('click', () => {
+        const target = state.randomTarget;
+        const found = countBucket(target).size, truth = countTruth(target), correct = found === truth;
+        const message = correct ? `정확합니다. ${countLabel[target].topic} ${truth}개입니다.` : `다시 세어 보세요. 아직 ${found}개를 찾았습니다.`;
+        const feedback = $('#countingFeedback', host);
+        if (feedback) feedback.innerHTML = `<div class="callout ${correct ? 'success' : 'warning'}"><strong>${correct ? '맞았습니다' : '조금 더 찾아보세요'}</strong>${message}</div>`;
+        announce(message);
+      });
+      $('#countingResetButton', host)?.addEventListener('click', () => {
+        resetCounting();
+        renderCountingBody();
+        announce('세어 둔 개수를 지웠습니다. 처음부터 다시 세어 보세요.');
+      });
+      $('#countingEndButton', host)?.addEventListener('click', () => {
+        state.counting = false;
+        state.randomTarget = null;
+        resetCounting();
+        renderer.onPick = explorerObservePick;
+        renderer.setSelectionType(state.selectionType);
+        setInteractionUI('navigate');
+        renderCountingBody();
+        announce('세기 활동을 마치고 관찰 모드로 돌아왔습니다.');
+      });
+    }
+    renderCountingBody();
     refreshUniversalMapping({ force: true });
   }
 
