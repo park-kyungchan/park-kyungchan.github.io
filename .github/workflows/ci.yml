@@ -74,8 +74,11 @@ jobs:
           python3 tools/visual_regression/capture_states.py \
             "$OUT_DIR/head" "$OUT_DIR/head_index.html"
 
-      # Gate: a pair fails if it has more than 200 differing pixels or a max
-      # channel delta above 16.
+      # Pixel gate: a pair fails if it has more than 200 differing pixels or a
+      # max channel delta above 16.
+      # Probe gate (automatic when both runs wrote probes.json): a state fails
+      # if its live guide, stage context or nav count changed, or if the head
+      # run recorded a console error. Pass --ignore-probes to skip it.
       - name: Compare captures
         run: |
           python3 tools/visual_regression/compare.py \

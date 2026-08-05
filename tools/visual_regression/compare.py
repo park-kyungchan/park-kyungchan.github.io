@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pixel-compare two capture_states.py output directories.
+"""Compare two capture_states.py output directories: pixels and probes.
 
 Both directories must have been produced on the SAME machine by the same
 harness run pair (base build vs head build). Comparing across machines is
@@ -7,13 +7,19 @@ meaningless here: GPU/font/rasteriser differences dwarf the gate thresholds.
 
 Usage:
     python3 tools/visual_regression/compare.py BASE_DIR HEAD_DIR [--json OUT]
+                                               [--ignore-probes]
 
-Gate (a pair fails if EITHER holds):
+Pixel gate (a pair fails if EITHER holds):
     differing pixels > MAX_DIFF_PIXELS   (any channel delta >= 1)
     max channel delta > MAX_CHANNEL_DELTA
 
+Probe gate (runs when BOTH directories contain probes.json, unless
+--ignore-probes is passed). A state fails if either holds:
+    any of PROBE_FIELDS differs between base and head
+    the head state recorded a non-empty console_errors list
+
 A missing file on either side, or a size mismatch, is also a failure.
-Exit code 0 = every pair inside the gate, 1 = at least one failure,
+Exit code 0 = every pair inside both gates, 1 = at least one failure,
 2 = the two directories do not describe the same state matrix.
 """
 
@@ -27,9 +33,75 @@ from PIL import Image, ImageChops
 MAX_DIFF_PIXELS = 200
 MAX_CHANNEL_DELTA = 16
 
+PROBES_FILE = "probes.json"
+# Semantic state recorded alongside each screenshot. A pixel-identical capture
+# whose live guide or chapter navigation changed is still a regression.
+PROBE_FIELDS = ("live_guide_title", "live_guide_body", "stage_context", "nav_count")
+
 
 def pngs(directory):
     return sorted(f for f in os.listdir(directory) if f.endswith(".png"))
+
+
+def load_probes(directory):
+    """Return {screenshot filename: probe record}, or None if absent/unusable."""
+    path = os.path.join(directory, PROBES_FILE)
+    if not os.path.isfile(path):
+        return None
+    with open(path, encoding="utf-8") as fh:
+        records = json.load(fh)
+    return {record["file"]: record for record in records if record.get("file")}
+
+
+def compare_probes(base_probes, head_probes, names):
+    """Return (rows, failures).
+
+    rows is one dict per state; failures lists the state names that break the
+    probe gate (a changed field, a console error in head, or a missing record).
+    """
+    rows = []
+    failures = []
+    for name in names:
+        base = base_probes.get(name)
+        head = head_probes.get(name)
+        if base is None or head is None:
+            side = "missing in base" if base is None else "missing in head"
+            rows.append({"file": name, "changed_fields": [], "console_errors": [],
+                         "status": "MISSING", "note": "probe record %s" % side})
+            failures.append(name)
+            continue
+        changed = [
+            {"field": field, "base": base.get(field), "head": head.get(field)}
+            for field in PROBE_FIELDS
+            if base.get(field) != head.get(field)
+        ]
+        errors = head.get("console_errors") or []
+        status = "FAIL" if (changed or errors) else "ok"
+        rows.append({"file": name, "changed_fields": changed,
+                     "console_errors": errors, "status": status, "note": ""})
+        if status == "FAIL":
+            failures.append(name)
+    return rows, failures
+
+
+def print_probe_report(rows):
+    width = max([len(r["file"]) for r in rows] + [len("file")])
+    print("\n%-*s  %-8s %s" % (width, "file", "status", "detail"))
+    print("-" * (width + 45))
+    for row in rows:
+        detail = row["note"]
+        if row["changed_fields"]:
+            detail = "; ".join(
+                "%s: %r -> %r" % (item["field"], item["base"], item["head"])
+                for item in row["changed_fields"]
+            )
+        if row["console_errors"]:
+            joined = " | ".join(
+                str(err.get("text", err)) if isinstance(err, dict) else str(err)
+                for err in row["console_errors"]
+            )
+            detail = (detail + " ; " if detail else "") + "console: " + joined
+        print("%-*s  %-8s %s" % (width, row["file"], row["status"], detail))
 
 
 def compare_pair(base_path, head_path):
@@ -66,6 +138,8 @@ def main():
                         help="write the per-file summary as JSON")
     parser.add_argument("--max-diff-pixels", type=int, default=MAX_DIFF_PIXELS)
     parser.add_argument("--max-channel-delta", type=int, default=MAX_CHANNEL_DELTA)
+    parser.add_argument("--ignore-probes", action="store_true",
+                        help="compare pixels only; skip the probes.json gate")
     args = parser.parse_args()
 
     base_files = pngs(args.base_dir)
@@ -112,16 +186,30 @@ def main():
             row["status"], row["note"],
         ))
 
+    base_probes = None if args.ignore_probes else load_probes(args.base_dir)
+    head_probes = None if args.ignore_probes else load_probes(args.head_dir)
+    probe_rows, probe_failures = [], []
+    probes_compared = base_probes is not None and head_probes is not None
+    if probes_compared:
+        shared = sorted(set(base_files) & set(head_files))
+        probe_rows, probe_failures = compare_probes(base_probes, head_probes, shared)
+
     summary = {
         "base_dir": args.base_dir,
         "head_dir": args.head_dir,
         "gate": {
             "max_diff_pixels": args.max_diff_pixels,
             "max_channel_delta": args.max_channel_delta,
+            "probes": "compared" if probes_compared
+                      else ("skipped (--ignore-probes)" if args.ignore_probes
+                            else "skipped (probes.json missing)"),
+            "probe_fields": list(PROBE_FIELDS),
         },
         "pairs": len(rows),
         "failures": failures,
         "results": rows,
+        "probe_failures": probe_failures,
+        "probe_results": probe_rows,
     }
     if args.json_out:
         with open(args.json_out, "w", encoding="utf-8") as fh:
@@ -136,14 +224,31 @@ def main():
               file=sys.stderr)
         return 2
 
+    if probes_compared:
+        print_probe_report(probe_rows)
+        print("\nprobe gate: %s unchanged and head console_errors empty"
+              % ", ".join(PROBE_FIELDS))
+        if probe_failures:
+            print("FAIL: %d/%d states outside the probe gate: %s"
+                  % (len(probe_failures), len(probe_rows),
+                     ", ".join(probe_failures)), file=sys.stderr)
+        else:
+            print("PASS: %d/%d states inside the probe gate"
+                  % (len(probe_rows), len(probe_rows)))
+    elif args.ignore_probes:
+        print("\nprobe gate: skipped (--ignore-probes)")
+    else:
+        print("\nprobe gate: skipped (%s missing from one or both directories)"
+              % PROBES_FILE)
+
     print("\ngate: diff_pixels <= %d and max_delta <= %d"
           % (args.max_diff_pixels, args.max_channel_delta))
     if failures:
         print("FAIL: %d/%d pairs outside the gate: %s"
               % (len(failures), len(rows), ", ".join(failures)), file=sys.stderr)
-        return 1
-    print("PASS: %d/%d pairs inside the gate" % (len(rows), len(rows)))
-    return 0
+    else:
+        print("PASS: %d/%d pairs inside the gate" % (len(rows), len(rows)))
+    return 1 if (failures or probe_failures) else 0
 
 
 if __name__ == "__main__":
