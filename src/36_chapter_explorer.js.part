@@ -1,5 +1,5 @@
   function renderExplorer() {
-    const solid = DATA.solids[state.solidId];
+    const solid = currentExplorerSolid();
     renderer.setSolid(state.solidId);
     renderer.setSelectionType(state.selectionType);
     renderer.setPublicLabelMap(makeLocalVertexMap(solid));

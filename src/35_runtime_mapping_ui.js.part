@@ -23,6 +23,10 @@
       next: frame.phase === 'hold' ? '다음 의미 단위로 이동하거나 되감아 확인하세요.' : '변화가 끝날 때까지 가운데 요소의 이동과 수의 변화를 함께 보세요.',
     };
   }
+  function currentExplorerSolid() {
+    if (!DATA.solids[state.solidId]) state.solidId = DATA.ui.default_solid;
+    return DATA.solids[state.solidId];
+  }
   function currentMappingState() {
     if (state.tab === 'net') {
       if (state.cutMode) return {
@@ -64,7 +68,7 @@
         next: endpoint ? '면 종류를 강조하고 V−E+F를 확인하세요.' : '자르기 슬라이더를 천천히 움직이며 꼭짓점 점의 분화를 보세요.',
       };
     }
-    const solid = DATA.solids[state.solidId];
+    const solid = currentExplorerSolid();
     const selected = state.lastSelection;
     return {
       focus: selected ? `${selectionPublicName(solid, selected)}와 주변 꼭짓점` : `${solid.korean_name}의 꼭짓점 ${solid.topology.V}개`,
@@ -131,7 +135,8 @@
 
   function solidOptions(selected, includeExtensions = true) {
     const make = (ids, label) => `<optgroup label="${label}">${ids.map(id => `<option value="${id}" ${id === selected ? 'selected' : ''}>${DATA.solids[id].korean_name}</option>`).join('')}</optgroup>`;
-    return make(DATA.ui.platonic_order, '정다면체 5개') + (includeExtensions ? make(DATA.ui.extension_order, '정다각형 면의 확장 다면체') : '');
+    const family = DATA.ui.family_order?.length ? make(DATA.ui.family_order, '각기둥·각뿔·각뿔대') : '';
+    return family + make(DATA.ui.platonic_order, '정다면체 5개') + (includeExtensions ? make(DATA.ui.extension_order, '정다각형 면의 확장 다면체') : '');
   }
 
   function setInteractionUI(mode) {
