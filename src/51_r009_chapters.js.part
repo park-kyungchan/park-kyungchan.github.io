@@ -71,8 +71,9 @@
     return Object.entries(R009_EXACT.revolution_groups).map(([group,ids])=>`<optgroup label="${groupNames[group]}">${ids.map(id=>{const item=R009_EXACT.revolution_profiles[id];return `<option value="${id}" ${id===state.revolutionProfile?'selected':''}>${escapeHTML(item.label)} — ${escapeHTML(item.profile_label)}${item.category==='enrichment'?' · 심화':''}</option>`}).join('')}</optgroup>`).join('');
   }
   function r009ExactList(exact){
-    const labels={radius:'반지름',height:'높이',base_radius:'밑면 반지름',bottom_radius:'아랫면 반지름',top_radius:'윗면 반지름',inner_radius:'안쪽 반지름',outer_radius:'바깥 반지름',major_radius:'큰 원 반지름',minor_radius:'작은 원 반지름',parts:'조합'};
-    return Object.entries(exact||{}).map(([key,value])=>`<li><strong>${escapeHTML(labels[key]||key)}</strong>: ${escapeHTML(Array.isArray(value)?value.join(' + '):typeof value==='number'?r9fmt(value):value)}</li>`).join('');
+    const labels={note:'설명',radius:'반지름',height:'높이',base_radius:'밑면 반지름',bottom_radius:'아랫면 반지름',top_radius:'윗면 반지름',inner_radius:'안쪽 반지름',outer_radius:'바깥 반지름',major_radius:'큰 원 반지름',minor_radius:'작은 원 반지름',parts:'조합'};
+    const notes={'finite caps clip the infinite-cylinder ellipse':'윗면·밑면이 유한하므로, 무한히 긴 원기둥에서 생기는 타원이 잘려 나갑니다.'};
+    return Object.entries(exact||{}).map(([key,value])=>`<li><strong>${escapeHTML(labels[key]||key)}</strong>: ${escapeHTML(Array.isArray(value)?value.join(' + '):typeof value==='number'?r9fmt(value):(notes[value]||value))}</li>`).join('');
   }
   function r009BoundaryLabel(value){
     const map={sphere_plane_circle:'구와 평면의 원 교선',single_tangent_point:'접점 하나',lateral_closed_curve:'옆면의 닫힌 교선',two_lateral_generators:'옆면의 두 모선',top_cap_chord:'윗면의 선분',bottom_cap_chord:'밑면의 선분',lateral_two_arcs:'옆면의 두 곡선',two_generators:'두 모선',base_diameter:'밑면의 지름',top_diameter:'윗면의 지름',bottom_diameter:'밑면의 지름',outer_circle:'바깥 원',inner_circle:'안쪽 원',two_disconnected_circles:'서로 떨어진 두 원'};
@@ -93,7 +94,7 @@
     const item=R009_EXACT.revolution_profiles[state.revolutionProfile],axis=item.axis_relation==='offset_from_axis'?'평면도형이 회전축에서 떨어져 있어 가운데 빈 공간이 생깁니다.':'평면도형이 회전축에 닿아 회전축까지 채워진 회전체가 됩니다.';
     refs.right.innerHTML=`<section class="panel-section"><p class="eyebrow">${r009ChapterNo('revolution')} · 정확 데이터</p><h2>${escapeHTML(item.label)}</h2><div class="callout"><strong>${escapeHTML(item.profile_label)}을 1회전</strong>${escapeHTML(axis)}</div><ul>${r009ExactList(item.exact)}</ul></section>
     <section class="panel-section"><h3>어떤 요소가 무엇을 만드는가</h3><ul><li>회전축에 평행한 선분 → 원기둥 모양의 옆면</li><li>회전축으로 향하는 선분 → 원 모양의 밑면·윗면</li><li>곡선 → 그 곡선이 쓸고 간 곡면</li><li>축에서 떨어진 도형 → 속이 빈 회전체 또는 고리 모양</li></ul></section>
-    <section class="panel-section"><h3>정확성과 표시 모델</h3><p>평면도형·회전축·수치는 deterministic data가 권위입니다. 3D 곡면은 ${R009_EXACT.model_disclosure.sweep_segments}개 회전 구간으로 표시한 근사 mesh이며, 반지름 2에서 기록한 최대 원호 처짐 오차는 약 ${r9fmt(R009_EXACT.model_disclosure.max_circle_sagitta_error_radius_2_segments_84,6)}입니다.</p></section>`;
+    <section class="panel-section"><h3>정확성과 표시 모델</h3><p>평면도형과 회전축, 수치는 정확 데이터를 따릅니다. 3D 곡면은 회전을 ${R009_EXACT.model_disclosure.sweep_segments}개 구간으로 나누어 그린 근사 표면이며, 반지름 2에서 기록한 최대 원호 처짐 오차는 약 ${r9fmt(R009_EXACT.model_disclosure.max_circle_sagitta_error_radius_2_segments_84,6)}입니다.</p></section>`;
   }
   renderRevolution = function(){
     stopR007Playback();showModuleOverlay(false);renderer.resetView('solid');renderer.setInteractionMode('navigate');setInteractionUI('navigate');
@@ -124,8 +125,8 @@
   function r009SectionEvidence(){
     const item=r9SectionCase(),revealed=state.revSectionRevealed||state.revSectionProgress>=.9;
     refs.right.innerHTML=`<section class="panel-section"><p class="eyebrow">${r009ChapterNo('revsection')} · 정확 데이터</p><h2>${escapeHTML(item.label)}</h2>${revealed?`<div class="callout success"><strong>${escapeHTML(r9ClassificationLabel(item.classification))}</strong>${escapeHTML((item.boundary_components||[]).map(r009BoundaryLabel).join(' + '))}</div>`:`<div class="callout"><strong>예측을 먼저 남기세요.</strong>평면이 실제로 지난 옆면·윗면·밑면·꼭짓점을 확인한 뒤 결과를 비교합니다.</div>`}<ul>${r009ExactList(item.exact)}</ul></section>
-    <section class="panel-section"><h3>교선의 자취가 단면 경계가 되는 과정</h3><ol><li>절단 평면이 회전체 밖에서 접근합니다.</li><li>평면과 표면을 동시에 만족하는 첫 점이 생깁니다.</li><li>그 점들이 표면을 따라 이어져 교선이 됩니다.</li><li>유한한 입체에서는 cap과의 선분도 함께 실제 경계를 닫습니다.</li></ol></section>
-    <section class="panel-section"><h3>모델 한계</h3><p>분류·표시 수치·경계 구성은 analytic data가 권위입니다. 화면의 곡선은 deterministic mesh–plane intersection polyline이며 exact analytic curve 자체라고 주장하지 않습니다.</p></section>`;
+    <section class="panel-section"><h3>교선의 자취가 단면 경계가 되는 과정</h3><ol><li>절단 평면이 회전체 밖에서 접근합니다.</li><li>평면과 표면을 동시에 만족하는 첫 점이 생깁니다.</li><li>그 점들이 표면을 따라 이어져 교선이 됩니다.</li><li>유한한 입체에서는 윗면·밑면과 만나는 선분도 함께 실제 경계를 닫습니다.</li></ol></section>
+    <section class="panel-section"><h3>모델 한계</h3><p>분류와 표시 수치, 경계 구성은 정확 계산 결과를 따릅니다. 화면에 보이는 곡선은 입체를 잘게 나눈 면과 평면이 만나는 점을 순서대로 이은 근사 곡선이며, 정확한 곡선 자체는 아닙니다.</p></section>`;
   }
   function r009SectionOptions(){return R009_EXACT.section_cases.map(item=>`<option value="${item.case_id}" ${item.case_id===state.revSectionCase?'selected':''}>${escapeHTML(item.label)}${item.scope?' · 심화':''}</option>`).join('');}
   renderRevSections = function(){
@@ -146,7 +147,7 @@
     $('#revSectionPrev',refs.left).addEventListener('click',()=>{stopR007Playback();drawRevSectionVisual(r009StepProgress(state.revSectionProgress,-1),true);});
     $('#revSectionNext',refs.left).addEventListener('click',()=>{stopR007Playback();drawRevSectionVisual(r009StepProgress(state.revSectionProgress,1),true);});
     offset.addEventListener('input',event=>{stopR007Playback();state.r009SectionDirectD=Number(event.target.value);state.revSectionProgress=1;const result=r9DrawSectionSpatial(1,{directD:state.r009SectionDirectD});$('#r009SectionOffsetStatus',refs.left).textContent=`d=${r9fmt(result.d,2)} · 교선 조각 ${result.loops.reduce((n,loop)=>n+Math.max(0,loop.points.length-1),0)}개`;r009UpdateLiveGuide();});
-    $('#revSectionReveal',refs.left).addEventListener('click',()=>{state.revSectionRevealed=true;state.revSectionProgress=Math.max(.92,state.revSectionProgress);if(state.r009SectionDirectD==null)r9DrawSectionSpatial(state.revSectionProgress);r009SectionEvidence();r009UpdateLiveGuide(true);announce(state.revSectionPrediction===item.classification?'예측이 analytic 분류와 일치합니다. 실제 경계 구성도 확인하세요.':'예측과 실제 결과를 비교했습니다. 어떤 표면이 경계에 참여했는지 확인하세요.');});
+    $('#revSectionReveal',refs.left).addEventListener('click',()=>{state.revSectionRevealed=true;state.revSectionProgress=Math.max(.92,state.revSectionProgress);if(state.r009SectionDirectD==null)r9DrawSectionSpatial(state.revSectionProgress);r009SectionEvidence();r009UpdateLiveGuide(true);announce(state.revSectionPrediction===item.classification?'예측이 정확 계산 분류와 일치합니다. 실제 경계 구성도 확인하세요.':'예측과 실제 결과를 비교했습니다. 어떤 표면이 경계에 참여했는지 확인하세요.');});
   };
 
   drawPathVisual = function(progress,announceChange=false){
@@ -156,12 +157,12 @@
   function r009PathEvidence(){
     const key=state.pathCase,mode=state.distanceFocus,ex=R009_EXACT.shortest_paths[key],modeLabel={interior:'입체 내부 직선',surface:'겉면 최단거리',edge:'모서리만 따라가는 최단거리'}[mode];let body='';
     if(key==='cube'){const validCandidates=ex.surface_candidates.filter(c=>c.valid!==false);body=`<div class="formula-box">내부: √3 ≈ ${r9fmt(ex.interior_distance)}<br>겉면: √5 ≈ ${r9fmt(ex.surface_distance)}<br>모서리만: ${r9fmt(ex.edge_only_distance)}</div><p>한 펼침만 보지 않고 펼침 후보 ${ex.surface_candidates.length}가지를 검사했고, 겉면 위 경로로 실현되는 유효 후보는 ${validCandidates.length}개입니다.</p><p>비교 결과 두 면을 지나는 펼침(√5 ≈ ${r9fmt(ex.surface_distance)})이 가장 짧습니다.</p>`;}
-    else if(key==='cylinder')body=`<div class="formula-box">내부 chord ≈ ${r9fmt(ex.interior_chord)}<br>옆면 최단 ≈ ${r9fmt(ex.surface_minimum)}<br>선택된 periodic copy: k=${ex.minimum_k}</div><p>${ex.periodic_copies.map(v=>`k=${v.k}: ${r9fmt(v.length)}`).join(' · ')}</p>`;
-    else if(key==='cone')body=`<div class="formula-box">모선 ${r9fmt(ex.slant_height)}<br>부채꼴 중심각 ${r9fmt(ex.sector_angle)} rad<br>옆면 최단 ≈ ${r9fmt(ex.surface_minimum)}</div><p>${ex.seam_copies.map(v=>`k=${v.k}: ${r9fmt(v.length)}${v.valid===false?' (경로로 실현 불가)':''}`).join(' · ')}</p>`;
-    else body=`<div class="formula-box">내부 chord ≈ ${r9fmt(ex.interior_chord)}<br>표면의 짧은 큰원호 ≈ ${r9fmt(ex.surface_short_arc)}</div><p>구의 표면 최단경로는 심화 관찰이며 중학교 평가 범위로 주장하지 않습니다.</p>`;
-    refs.right.innerHTML=`<section class="panel-section"><p class="eyebrow">${r009ChapterNo('geodesic')} · 같은 두 점, 다른 metric domain</p><h2>${escapeHTML(ex.label)} · ${escapeHTML(modeLabel)}</h2>${body}</section>
-    <section class="panel-section"><h3>겉면 최단경로를 판단하는 순서</h3><ol><li>지나갈 수 있는 영역을 먼저 정합니다.</li><li>길이를 보존하는 펼침 또는 periodic/seam copy를 만듭니다.</li><li>평면의 직선이 선택한 face chain 안을 올바르게 지나는지 확인합니다.</li><li>여러 유효 후보의 길이를 비교합니다.</li><li>직선을 다시 입체 표면에 대응시킵니다.</li></ol></section>
-    <section class="panel-section"><h3>표시 모델</h3><p>${escapeHTML(R009_EXACT.model_disclosure.unfold_interpolation)}. 표시식과 길이는 같은 exact data에서 생성됩니다.</p></section>`;
+    else if(key==='cylinder')body=`<div class="formula-box">속을 가로지르는 직선 ≈ ${r9fmt(ex.interior_chord)}<br>옆면 최단 ≈ ${r9fmt(ex.surface_minimum)}<br>선택된 이어 붙인 후보: k=${ex.minimum_k}</div><p>${ex.periodic_copies.map(v=>`k=${v.k}: ${r9fmt(v.length)}`).join(' · ')}</p>`;
+    else if(key==='cone')body=`<div class="formula-box">모선 ${r9fmt(ex.slant_height)}<br>부채꼴 중심각 약 ${r9fmt(ex.sector_angle*180/Math.PI,1)}° (${r9fmt(ex.sector_angle)} rad)<br>옆면 최단 ≈ ${r9fmt(ex.surface_minimum)}</div><p>${ex.seam_copies.map(v=>`k=${v.k}: ${r9fmt(v.length)}${v.valid===false?' (경로로 실현 불가)':''}`).join(' · ')}</p>`;
+    else body=`<div class="formula-box">속을 가로지르는 직선 ≈ ${r9fmt(ex.interior_chord)}<br>표면의 짧은 큰원호 ≈ ${r9fmt(ex.surface_short_arc)}</div><p>구의 표면 최단경로는 심화 관찰이며 중학교 평가 범위로 주장하지 않습니다.</p>`;
+    refs.right.innerHTML=`<section class="panel-section"><p class="eyebrow">${r009ChapterNo('geodesic')} · 같은 두 점, 다른 허용 경로</p><h2>${escapeHTML(ex.label)} · ${escapeHTML(modeLabel)}</h2>${body}</section>
+    <section class="panel-section"><h3>겉면 최단경로를 판단하는 순서</h3><ol><li>지나갈 수 있는 영역을 먼저 정합니다.</li><li>길이를 보존하는 펼침을 만들거나, 이어 붙인 후보·이음선 후보를 만듭니다.</li><li>평면의 직선이 선택한 지나갈 면의 순서 안을 올바르게 지나는지 확인합니다.</li><li>여러 유효 후보의 길이를 비교합니다.</li><li>직선을 다시 입체 표면에 대응시킵니다.</li></ol></section>
+    <section class="panel-section"><h3>표시 모델</h3><p>펼친 처음과 끝 모습은 정확한 전개도이고, 그 사이에서 움직이는 중간 모습은 이해를 돕기 위한 보간입니다. 다만 정육면체는 면을 그대로 접는 회전이라 중간 모습도 정확합니다. 표시식과 길이는 모두 같은 정확 데이터에서 생성됩니다.</p></section>`;
   }
   renderShortestPaths = function(){
     stopR007Playback();showModuleOverlay(false);renderer.resetView('solid');renderer.distance=6.4;renderer.requestRender();renderer.setInteractionMode('navigate');setInteractionUI('navigate');

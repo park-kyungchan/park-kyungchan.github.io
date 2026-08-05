@@ -88,7 +88,7 @@
     const solidP=[R*Math.cos(thetaP),ex.P.y,R*Math.sin(thetaP)],solidQ=[R*Math.cos(ex.Q.theta),ex.Q.y,R*Math.sin(ex.Q.theta)],P=r9mix3(solidP,[R*thetaP,ex.P.y,0],u),Q=r9mix3(solidQ,[R*thetaQ,ex.Q.y,0],u),markers=[{point:P,vertexIndex:0,label:'P',active:true,showLabel:true,primaryInGroup:true},{point:Q,vertexIndex:1,label:'Q',active:true,showLabel:true,primaryInGroup:true}],ghosts=[];
     if(u>.72){const C=2*Math.PI*R;[-1,1].forEach(copy=>ghosts.push({points:[[-Math.PI*R+copy*C,-H/2,0],[Math.PI*R+copy*C,-H/2,0],[Math.PI*R+copy*C,H/2,0],[-Math.PI*R+copy*C,H/2,0]],alpha:.24}));}
     if(mode==='interior'&&p>.34){overlay.length=0;overlay.push({a:solidP,b:solidQ,active:true});}
-    r9ApplyCustomScene({faces,markers,overlay,ghosts,viewStyle:'transparent'});r9ShowMetricInset([{label:'내부 직선',value:r9fmt(ex.interior_chord)},{label:'옆면 최단',value:r9fmt(ex.surface_minimum)},{label:'최소 복사본',value:`k=${ex.minimum_k}`}]);
+    r9ApplyCustomScene({faces,markers,overlay,ghosts,viewStyle:'transparent'});r9ShowMetricInset([{label:'내부 직선',value:r9fmt(ex.interior_chord)},{label:'옆면 최단',value:r9fmt(ex.surface_minimum)},{label:'최소 후보',value:`k=${ex.minimum_k}`}]);
   }
   function r9ConePathScene(progress,mode){
     const p=clamp(progress,0,1),u=mode==='surface'?r9ease(clamp((p-.20)/.56,0,1)):0,ex=R009_EXACT.shortest_paths.cone,R=ex.base_radius,H=ex.height,L=ex.slant_height,seg=54,levels=6,faces=[];let fi=0;
@@ -98,12 +98,12 @@
     for(let i=0;i<=steps;i++){const t=i/steps,x=r9mix(FP[0],FQ[0],t),y2=r9mix(FP[1],FQ[1],t),s=Math.hypot(x,y2),phi=Math.atan2(y2,x),theta=Math.PI+phi*L/R,solid=point(s,theta).solid,flat=[x,y2,0];path.push(r9mix3(solid,flat,u));}
     const overlay=[];if(p>.38){const count=Math.ceil((path.length-1)*clamp((p-.38)/.42,0,1));for(let i=0;i<count;i++)overlay.push({a:path[i],b:path[i+1],active:true});}
     const P0=point(ex.P.slant,ex.P.theta),Q0=point(ex.Q.slant,ex.Q.theta),P=r9mix3(P0.solid,[FP[0],FP[1],0],u),Q=r9mix3(Q0.solid,[FQ[0],FQ[1],0],u),markers=[{point:P,vertexIndex:0,label:'P',active:true,showLabel:true,primaryInGroup:true},{point:Q,vertexIndex:1,label:'Q',active:true,showLabel:true,primaryInGroup:true}];if(mode==='interior'&&p>.34){overlay.length=0;overlay.push({a:P0.solid,b:Q0.solid,active:true});}
-    r9ApplyCustomScene({faces,markers,overlay,viewStyle:'transparent'});r9ShowMetricInset([{label:'모선',value:r9fmt(L)},{label:'부채꼴 각',value:`${r9fmt(ex.sector_angle)} rad`},{label:'옆면 최단',value:r9fmt(ex.surface_minimum)}]);
+    r9ApplyCustomScene({faces,markers,overlay,viewStyle:'transparent'});r9ShowMetricInset([{label:'모선',value:r9fmt(L)},{label:'부채꼴 각',value:`${r9fmt(ex.sector_angle*180/Math.PI,1)}°`},{label:'옆면 최단',value:r9fmt(ex.surface_minimum)}]);
   }
   function r9SpherePathScene(progress,mode){
     const p=clamp(progress,0,1),ex=R009_EXACT.shortest_paths.sphere,R=ex.radius,mesh=r9LatheFaces('sphere',1,{segments:84}),a=ex.central_angle,P=[R,0,0],Q=[R*Math.cos(a),0,R*Math.sin(a)],overlay=[];
     if(mode==='interior'&&p>.28)overlay.push({a:P,b:Q,active:true});else if(p>.28){const n=64,count=Math.ceil(n*clamp((p-.28)/.5,0,1));let prev=P;for(let i=1;i<=count;i++){const t=a*i/n,next=[R*Math.cos(t),0,R*Math.sin(t)];overlay.push({a:prev,b:next,active:true});prev=next;}}
-    r9ApplyCustomScene({faces:mesh.faces,markers:[{point:P,vertexIndex:0,label:'P',active:true,showLabel:true,primaryInGroup:true},{point:Q,vertexIndex:1,label:'Q',active:true,showLabel:true,primaryInGroup:true}],overlay,viewStyle:'transparent'});r9ShowMetricInset([{label:'내부 chord',value:r9fmt(ex.interior_chord)},{label:'표면 짧은 호',value:r9fmt(ex.surface_short_arc)},{label:'범위',value:'심화'}]);
+    r9ApplyCustomScene({faces:mesh.faces,markers:[{point:P,vertexIndex:0,label:'P',active:true,showLabel:true,primaryInGroup:true},{point:Q,vertexIndex:1,label:'Q',active:true,showLabel:true,primaryInGroup:true}],overlay,viewStyle:'transparent'});r9ShowMetricInset([{label:'속을 가로지르는 직선',value:r9fmt(ex.interior_chord)},{label:'표면 짧은 호',value:r9fmt(ex.surface_short_arc)},{label:'범위',value:'심화'}]);
   }
   function r9DrawPathSpatial(progress){
     const p=clamp(progress,0,1),key=state.pathCase||'cube',mode=state.distanceFocus||'surface';if(key==='cube')r9CubePathScene(p,mode);else if(key==='cylinder')r9CylinderPathScene(p,mode);else if(key==='cone')r9ConePathScene(p,mode);else r9SpherePathScene(p,mode);
