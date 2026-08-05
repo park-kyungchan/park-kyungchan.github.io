@@ -1,0 +1,238 @@
+  function startCubeCutMode() {
+    state.cutMode = true;
+    state.netSolidId = 'PLATONIC_CUBE';
+    state.netVariantIndex = 0;
+    if (refs.foldStageBadge) refs.foldStageBadge.hidden = true;
+    if (refs.stageContext) refs.stageContext.textContent = '자르고 펼치기';
+    state.cutEdges = new Set();
+    state.cutResult = null;
+    renderer.setSolid('PLATONIC_CUBE');
+    renderer.setSelectionType('edge');
+    renderer.setLabelMode('none');
+    renderer.setInteractionMode('select');
+    setInteractionUI('select');
+    renderer.cutEdges = state.cutEdges;
+    refs.left.innerHTML = `
+      <section class="panel-section"><h2>정육면체 자르기</h2>
+        <div class="callout warning"><strong>목표</strong>12개 모서리 중 7개를 잘라, 남은 5개 접힘선으로 6개 면을 한 장에 연결하세요.</div>
+        <div class="button-stack">
+          <button id="validateCutButton" class="action-button primary" type="button">선택한 자르기 펼쳐 보기</button>
+          <button id="exampleCutButton" class="action-button" type="button">유효한 예시 불러오기</button>
+          <button id="resetCutButton" class="action-button danger" type="button">모든 선택 지우기</button>
+          <button id="backToNetButton" class="action-button" type="button">대표 전개도로 돌아가기</button>
+        </div>
+      </section>
+      <section class="panel-section"><h3>현재 선택</h3><div id="cutSummary"></div></section>`;
+    updateNetRightOnly();
+    attachCutLeftEvents();
+    renderer.onPick = selection => {
+      if (selection.type !== 'edge') return;
+      if (state.cutEdges.has(selection.index)) state.cutEdges.delete(selection.index); else state.cutEdges.add(selection.index);
+      renderer.cutEdges = state.cutEdges;
+      renderer.uploadGeometry();
+      state.cutResult = null;
+      updateCutSummary(); updateNetRightOnly();
+      const edgeName = publicEdgeName(DATA.solids.PLATONIC_CUBE, selection.index, makeLocalVertexMap(DATA.solids.PLATONIC_CUBE));
+      announce(`${edgeName}을 ${state.cutEdges.has(selection.index) ? '자를 모서리로 선택' : '자르지 않도록 변경'}했습니다.`);
+    };
+  }
+
+  function cutPanelHTML() {
+    const result = state.cutResult;
+    return `<section class="panel-section"><h3>자르기 결과</h3>
+      ${result ? `<div class="callout ${result.pass ? 'success' : 'danger'}"><strong>${result.pass ? '유효한 전개도입니다.' : '아직 유효하지 않습니다.'}</strong>${result.message}</div>` : '<div class="callout"><strong>대기 중</strong>입체도형 화면에서 자를 모서리를 탭한 뒤 “펼쳐 보기”를 누르세요.</div>'}
+      ${result?.layout ? `<div class="net-svg-wrap">${renderGeneratedNetSVG(result.layout)}</div>` : ''}
+      <div class="check-list">
+        <div class="check-item ${result?.checks?.cutCount ? 'pass' : 'hold'}"><span class="mark">${result?.checks?.cutCount ? '✓' : '○'}</span><span>자를 모서리 7개, 이어진 모서리 5개</span></div>
+        <div class="check-item ${result?.checks?.tree ? 'pass' : 'hold'}"><span class="mark">${result?.checks?.tree ? '✓' : '○'}</span><span>모든 면이 한 장의 가지 모양으로 연결</span></div>
+        <div class="check-item ${result?.checks?.overlapFree ? 'pass' : 'hold'}"><span class="mark">${result?.checks?.overlapFree ? '✓' : '○'}</span><span>평면에서 면 내부 겹침 없음</span></div>
+      </div>
+    </section>`;
+  }
+
+  function attachCutLeftEvents() {
+    $('#validateCutButton')?.addEventListener('click', validateCubeCut);
+    $('#exampleCutButton')?.addEventListener('click', loadExampleCut);
+    $('#resetCutButton')?.addEventListener('click', () => {
+      state.cutEdges.clear(); renderer.cutEdges = state.cutEdges; renderer.uploadGeometry(); state.cutResult = null;
+      updateCutSummary(); updateNetRightOnly(); announce('자를 모서리 선택을 모두 지웠습니다.');
+    });
+    $('#backToNetButton')?.addEventListener('click', () => { state.cutMode = false; state.netMode = 'edge'; renderCurrentTab(); });
+    updateCutSummary();
+  }
+  function attachCutPanelEvents() { /* reserved for generated net interactions */ }
+  function updateCutSummary() {
+    const el = $('#cutSummary');
+    if (!el) return;
+    const solid = DATA.solids.PLATONIC_CUBE;
+    const names = [...state.cutEdges].sort((a, b) => a - b).map(index => publicEdgeName(solid, index, makeLocalVertexMap(solid)));
+    el.innerHTML = `<div class="metric-grid"><div class="metric-card"><span class="symbol">자를 모서리</span><span class="value">${names.length}</span></div><div class="metric-card"><span class="symbol">남은 접힘선</span><span class="value">${12 - names.length}</span></div></div><p class="small-note">${names.length ? names.join(', ') : '선택 없음'}</p>`;
+  }
+
+  function loadExampleCut() {
+    const net = DATA.nets.PLATONIC_CUBE;
+    const hingeIds = new Set(net.hinges.map(h => h.solid_edge_id));
+    state.cutEdges.clear();
+    DATA.solids.PLATONIC_CUBE.topology.edges.forEach((_, i) => { if (!hingeIds.has(edgeIdFromIndex(i))) state.cutEdges.add(i); });
+    renderer.cutEdges = state.cutEdges; renderer.uploadGeometry();
+    updateCutSummary(); validateCubeCut();
+    announce('검증된 대표 자르기 예시를 불러왔습니다.');
+  }
+
+  function validateCubeCut() {
+    const solid = DATA.solids.PLATONIC_CUBE;
+    const cutCount = state.cutEdges.size === 7;
+    const hingeIndices = solid.topology.edges.map((_, i) => i).filter(i => !state.cutEdges.has(i));
+    const adjacency = Array.from({ length: solid.faces.length }, () => []);
+    hingeIndices.forEach(ei => {
+      const fs = solid.topology.edge_incident_faces[ei];
+      if (fs.length === 2) { adjacency[fs[0]].push({ face: fs[1], edgeIndex: ei }); adjacency[fs[1]].push({ face: fs[0], edgeIndex: ei }); }
+    });
+    const seen = new Set([0]), q = [0];
+    while (q.length) adjacency[q.shift()].forEach(({ face }) => { if (!seen.has(face)) { seen.add(face); q.push(face); } });
+    const tree = hingeIndices.length === solid.faces.length - 1 && seen.size === solid.faces.length;
+    let layout = null, overlapFree = false;
+    if (tree) {
+      layout = unfoldSolidJS(solid, new Set(hingeIndices));
+      overlapFree = layout && !hasConvexOverlap(layout.faces.map(f => f.points));
+    }
+    const pass = cutCount && tree && overlapFree;
+    let message = '';
+    if (!cutCount) message = `현재 ${state.cutEdges.size}개를 잘랐습니다. 정확히 7개가 필요합니다.`;
+    else if (!tree) message = '남은 접힘선이 모든 면을 한 장으로 연결하는 가지 모양이 아닙니다. 면이 끊기거나 고리가 남았습니다.';
+    else if (!overlapFree) message = '연결은 되었지만 펼친 면들이 평면에서 겹칩니다.';
+    else message = '자를 모서리 7개와 이어진 모서리 5개이 모든 면을 연결하고, 평면에서 겹치지 않습니다.';
+    state.cutResult = { pass, message, checks: { cutCount, tree, overlapFree }, layout: pass ? layout : null };
+    updateNetRightOnly(); attachCutLeftEvents();
+    announce(pass ? '유효한 정육면체 전개도를 만들었습니다.' : '자른 모서리 선택을 수정해야 합니다.');
+  }
+
+  function faceLocal2D(vertices, face) {
+    const origin = vertices[face[0]];
+    const xAxis = vec3Unit(vec3Sub(vertices[face[1]], origin));
+    const normal = polygonNormal(face.map(i => vertices[i]));
+    const yAxis = vec3Unit(vec3Cross(normal, xAxis));
+    const out = {};
+    face.forEach(vi => {
+      const d = vec3Sub(vertices[vi], origin);
+      out[vi] = [vec3Dot(d, xAxis), vec3Dot(d, yAxis)];
+    });
+    return out;
+  }
+  function side2(a, b, p) { return (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0]); }
+  function fitChild2D(vertices, face, shared, target, parentCentroid) {
+    const [a, b] = shared;
+    const local = faceLocal2D(vertices, face);
+    const la = local[a], lb = local[b], ta = target[a], tb = target[b];
+    const lv = [lb[0] - la[0], lb[1] - la[1]], tv = [tb[0] - ta[0], tb[1] - ta[1]];
+    const ll = Math.hypot(...lv), tl = Math.hypot(...tv);
+    const exl = [lv[0] / ll, lv[1] / ll], eyl = [-exl[1], exl[0]];
+    const ext = [tv[0] / tl, tv[1] / tl], eyt = [-ext[1], ext[0]];
+    const candidates = [1, -1].map(sign => {
+      const mapped = {};
+      face.forEach(vi => {
+        const rel = [local[vi][0] - la[0], local[vi][1] - la[1]];
+        const x = rel[0] * exl[0] + rel[1] * exl[1];
+        const y = rel[0] * eyl[0] + rel[1] * eyl[1];
+        mapped[vi] = [ta[0] + x * ext[0] + sign * y * eyt[0], ta[1] + x * ext[1] + sign * y * eyt[1]];
+      });
+      const pts = Object.values(mapped);
+      const c = pts.reduce((acc, p) => [acc[0] + p[0] / pts.length, acc[1] + p[1] / pts.length], [0, 0]);
+      return { mapped, centroid: c };
+    });
+    const parentSide = side2(ta, tb, parentCentroid);
+    return (candidates.find(c => parentSide * side2(ta, tb, c.centroid) < -1e-7) || candidates[0]).mapped;
+  }
+  function unfoldSolidJS(solid, hingeIndices) {
+    const vertices = solid.vertices, faces = solid.faces;
+    const adjacency = Array.from({ length: faces.length }, () => []);
+    hingeIndices.forEach(ei => {
+      const fs = solid.topology.edge_incident_faces[ei];
+      const edge = solid.topology.edges[ei];
+      if (fs.length === 2) { adjacency[fs[0]].push({ face: fs[1], edge }); adjacency[fs[1]].push({ face: fs[0], edge }); }
+    });
+    const placed = { 0: faceLocal2D(vertices, faces[0]) };
+    const parent = new Set([0]);
+    const q = [0];
+    while (q.length) {
+      const p = q.shift();
+      for (const item of adjacency[p]) {
+        if (parent.has(item.face)) continue;
+        parent.add(item.face);
+        const parentPts = faces[p].map(v => placed[p][v]);
+        const pc = parentPts.reduce((acc, pt) => [acc[0] + pt[0] / parentPts.length, acc[1] + pt[1] / parentPts.length], [0, 0]);
+        placed[item.face] = fitChild2D(vertices, faces[item.face], item.edge, placed[p], pc);
+        q.push(item.face);
+      }
+    }
+    if (Object.keys(placed).length !== faces.length) return null;
+    const all = Object.values(placed).flatMap(obj => Object.values(obj));
+    const minX = Math.min(...all.map(p => p[0])), maxX = Math.max(...all.map(p => p[0]));
+    const minY = Math.min(...all.map(p => p[1])), maxY = Math.max(...all.map(p => p[1]));
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2, scale = 4.8 / Math.max(maxX - minX, maxY - minY);
+    return { faces: faces.map((face, fi) => ({ face_id: faceIdFromIndex(fi), points: face.map(v => [(placed[fi][v][0] - cx) * scale, (placed[fi][v][1] - cy) * scale]) })) };
+  }
+  function projectionsOverlap(a, b, axis, eps = 1e-7) {
+    const pa = a.map(p => p[0] * axis[0] + p[1] * axis[1]);
+    const pb = b.map(p => p[0] * axis[0] + p[1] * axis[1]);
+    return Math.min(...pa) < Math.max(...pb) - eps && Math.min(...pb) < Math.max(...pa) - eps;
+  }
+  function convexPolygonsInteriorOverlap(a, b) {
+    const polygons = [a, b];
+    for (const poly of polygons) {
+      for (let i = 0; i < poly.length; i++) {
+        const p = poly[i], q = poly[(i + 1) % poly.length];
+        const axis = vec3Unit([-(q[1] - p[1]), q[0] - p[0], 0]).slice(0, 2);
+        if (!projectionsOverlap(a, b, axis)) return false;
+      }
+    }
+    return true;
+  }
+  function hasConvexOverlap(polygons) {
+    for (let i = 0; i < polygons.length; i++) for (let j = i + 1; j < polygons.length; j++) if (convexPolygonsInteriorOverlap(polygons[i], polygons[j])) return true;
+    return false;
+  }
+
+  function angleStatus(p, q) {
+    const interior = 180 * (p - 2) / p;
+    const sum = interior * q;
+    const key = `${p},${q}`;
+    const solidId = DATA.platonic_generator_valid_pairs[key] || null;
+    return { interior, sum, solidId, relation: Math.abs(sum - 360) < 1e-8 ? 'equal' : sum < 360 ? 'less' : 'greater' };
+  }
+  function polar(cx, cy, r, angleDeg) { const a = radians(angleDeg - 90); return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
+  function arcPath(cx, cy, r1, r2, start, end) {
+    const outerStart = polar(cx, cy, r2, start), outerEnd = polar(cx, cy, r2, end);
+    const innerEnd = polar(cx, cy, r1, end), innerStart = polar(cx, cy, r1, start);
+    const large = end - start > 180 ? 1 : 0;
+    return `M ${outerStart[0]} ${outerStart[1]} A ${r2} ${r2} 0 ${large} 1 ${outerEnd[0]} ${outerEnd[1]} L ${innerEnd[0]} ${innerEnd[1]} A ${r1} ${r1} 0 ${large} 0 ${innerStart[0]} ${innerStart[1]} Z`;
+  }
+  function angleGaugeSVG(p, q) {
+    const st = angleStatus(p, q), colors = ['#2365a5', '#16836d', '#b66a00', '#7455c7', '#bd3659', '#41566e'];
+    let current = 0, sectors = '';
+    for (let i = 0; i < q; i++) {
+      const start = current, end = current + st.interior;
+      const clippedStart = Math.min(start, 360), clippedEnd = Math.min(end, 360);
+      if (clippedEnd > clippedStart) sectors += `<path d="${arcPath(180, 180, 62, 132, clippedStart, clippedEnd)}" fill="${colors[i % colors.length]}" opacity="0.82" stroke="white" stroke-width="2"></path>`;
+      current = end;
+    }
+    const gap = st.relation === 'less' ? 360 - st.sum : 0;
+    const excess = st.relation === 'greater' ? st.sum - 360 : 0;
+    const gapPath = gap > 0 ? `<path d="${arcPath(180,180,62,132,st.sum,360)}" fill="url(#gapHatch)" stroke="#0a7b55" stroke-width="3" stroke-dasharray="7 5"></path>` : '';
+    const excessPath = excess > 0 ? `<path d="${arcPath(180,180,140,162,0,Math.min(excess,360))}" fill="url(#collisionHatch)" stroke="#b82449" stroke-width="2"></path>` : '';
+    return `<svg class="angle-svg" viewBox="0 0 360 360" role="img" aria-label="정${p}각형 ${q}개의 내각 합 ${round(st.sum,1)}도">
+      <defs>
+        <pattern id="gapHatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="9" stroke="#21a474" stroke-width="3"/></pattern>
+        <pattern id="collisionHatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#ffdce5"/><line x1="0" y1="0" x2="0" y2="8" stroke="#bf3154" stroke-width="3"/></pattern>
+      </defs>
+      <circle cx="180" cy="180" r="132" fill="#fff" stroke="#cbd5e1" stroke-width="2"></circle>
+      ${sectors}${gapPath}${excessPath}
+      <circle cx="180" cy="180" r="13" fill="#152235"></circle>
+      <text x="180" y="174" text-anchor="middle" font-size="24" font-weight="900" fill="#152235">${round(st.sum, 1)}°</text>
+      <text x="180" y="203" text-anchor="middle" font-size="14" font-weight="800" fill="#607086">${q} × ${round(st.interior, 1)}°</text>
+      ${st.relation === 'less' ? `<text x="180" y="330" text-anchor="middle" font-size="14" font-weight="900" fill="#087a55">빈 각 ${round(360-st.sum,1)}°</text>` : ''}
+      ${st.relation === 'equal' ? `<text x="180" y="330" text-anchor="middle" font-size="14" font-weight="900" fill="#8b5600">빈 각 0° · 평면</text>` : ''}
+      ${st.relation === 'greater' ? `<text x="180" y="330" text-anchor="middle" font-size="14" font-weight="900" fill="#a82749">초과 각 ${round(st.sum-360,1)}° · 겹침</text>` : ''}
+    </svg>`;
+  }
+

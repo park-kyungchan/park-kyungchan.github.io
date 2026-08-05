@@ -1,0 +1,95 @@
+  function renderNetLab() {
+    stopFoldPlayback(); showModuleOverlay(false); state.netMode='autoplay'; state.cutMode=false;
+    const platonic=DATA.ui.platonic_order;
+    if(!platonic.includes(state.netSolidId))state.netSolidId='PLATONIC_CUBE';
+    const variants=netVariantsFor(state.netSolidId);state.netVariantIndex=clamp(state.netVariantIndex,0,Math.max(0,variants.length-1));
+    const net=currentNet(),solid=DATA.solids[state.netSolidId];
+    renderer.resetView('net');renderer.setSelectionType('face');renderer.setPublicLabelMap(makeLocalVertexMap(solid));renderer.setLabelMode('none');renderer.setViewStyle('solid');renderer.setRelationEdgeHighlights([]);setInteractionUI('navigate');renderer.onPick=null;
+    const plan=buildRigidFoldPlan(state.netSolidId,net),stage=foldStageForProgress(state.foldProgress,plan);
+    const countClaim=state.netSolidId==='PLATONIC_CUBE'?'회전하거나 뒤집어서 같아지는 모양을 하나로 센 전체 11개':'평면에서 서로 다른 모양으로 검증한 다양한 예시';
+    refs.left.innerHTML=`<section class="panel-section"><h2>3. 다섯 정다면체 전개도</h2>
+      <div class="narrative-step"><span class="step-no">1</span><div><strong>입체와 전개도 종류를 고릅니다.</strong><span>같은 입체도 자르는 모서리에 따라 평면 배열이 달라집니다.</span></div></div>
+      <div class="narrative-step"><span class="step-no">2</span><div><strong>공유 모서리를 축으로 한 면씩 접습니다.</strong><span>면은 늘어나거나 비틀리지 않습니다.</span></div></div>
+      <div class="narrative-step"><span class="step-no">3</span><div><strong>모서리와 꼭짓점의 합쳐짐을 추적합니다.</strong><span>접촉하기 전에는 문자가 미리 합쳐지지 않습니다.</span></div></div></section>
+      <section class="panel-section"><label class="control-label" for="netSolidSelect">정다면체</label><select id="netSolidSelect">${platonic.map(id=>`<option value="${id}" ${id===state.netSolidId?'selected':''}>${DATA.solids[id].korean_name} · ${R007_NET_COUNTS[id]}종</option>`).join('')}</select>
+      <label class="control-label" for="netTypeSelect">전개도 모양</label><select id="netTypeSelect" class="net-type-select">${variants.map((variant,index)=>`<option value="${index}" ${index===state.netVariantIndex?'selected':''}>${variant.variant_label||`전개도 ${index+1}`}</option>`).join('')}</select>
+      <div class="net-shape-meta"><strong>${countClaim}</strong><span>조립 순서는 전개도 종류와 별개인 설명용 경로입니다.</span></div></section>
+      <section class="panel-section"><h3>자동 조립</h3><div class="progress-row"><span>펼침</span><input id="foldSlider" aria-label="전개도 조립 진행" type="range" min="0" max="100" value="${Math.round(state.foldProgress*100)}"><span id="foldValue" class="progress-value">${Math.round(state.foldProgress*100)}%</span></div>
+      <div class="fold-timeline" aria-label="조립 의미 단계"><span data-phase="preview" class="${stage.phase==='preview'?'is-active':''}">미리 보기</span><span data-phase="anticipation" class="${stage.phase==='anticipation'?'is-active':''}">접을 선</span><span data-phase="transform" class="${stage.phase==='transform'?'is-active':''}">한 면 이동</span><span data-phase="settle" class="${stage.phase==='settle'?'is-active':''}">접촉</span><span data-phase="hold" class="${stage.phase==='hold'?'is-active':''}">관찰 정지</span></div>
+      <div class="fold-readout"><div><strong id="foldReadoutTitle">${stage.title}</strong><small id="foldReadoutDetail">${stage.detail}</small></div><span id="foldFaceMeter">${stage.index}/${stage.total}</span></div>
+      <div class="inline-actions"><button id="foldPlayToggle" class="action-button primary" type="button" aria-pressed="false">▶ 자동 조립</button><button id="foldPrev" class="action-button" type="button">← 이전</button><button id="foldNext" class="action-button" type="button">다음 →</button></div>
+      <div class="inline-actions"><button id="foldFlat" class="action-button" type="button">펼친 모양</button><button id="foldHalf" class="action-button" type="button">현재 면 접는 중</button><button id="foldSolid" class="action-button success" type="button">완성 입체</button></div>
+      <label class="control-label" for="foldSpeed">한 면 시간 <strong id="foldSecondsValue">${state.foldSecondsPerFace.toFixed(1)}초</strong></label><input id="foldSpeed" aria-label="한 면 조립 시간" type="range" min="5" max="11" step="0.5" value="${state.foldSecondsPerFace}">
+      <label class="control-label"><input id="showFoldGhost" type="checkbox" ${state.showFoldGhost?'checked':''}> 펼친 전개도 투명하게 남기기</label></section>`;
+    updateNetRightOnly();applyFoldProgress(state.foldProgress,{announceChange:false,syncSlider:true});
+    $('#netSolidSelect').addEventListener('change',event=>{stopFoldPlayback();state.netSolidId=event.target.value;state.netVariantIndex=0;state.foldProgress=0;renderCurrentTab();announce(`${DATA.solids[state.netSolidId].korean_name}의 전개도 예시를 엽니다.`);});
+    $('#netTypeSelect').addEventListener('change',event=>{stopFoldPlayback();state.netVariantIndex=Number(event.target.value);state.foldProgress=0;renderCurrentTab();announce(`${currentNet().variant_label||`전개도 ${state.netVariantIndex+1}`}를 선택했습니다.`);});
+    $('#foldSlider').addEventListener('input',event=>{stopFoldPlayback();applyFoldProgress(Number(event.target.value)/100);renderR007Timeline();});
+    $('#foldPlayToggle').addEventListener('click',()=>{if(state.foldPlaying){stopFoldPlayback();announce('자동 조립을 일시정지했습니다.');return;}if(state.foldProgress>=.999)applyFoldProgress(0,{announceChange:false,syncSlider:true});startFoldPlayback();});
+    const stepFold=direction=>{stopFoldPlayback();const currentPlan=buildRigidFoldPlan(state.netSolidId,currentNet());const frame=foldFrameForProgress(currentPlan,state.foldProgress);const targetUnit=clamp(frame.unitIndex+direction,0,currentPlan.sequence.length-1);applyFoldProgress(foldProgressForUnit(currentPlan,targetUnit,'hold'),{syncSlider:true});renderR007Timeline();};
+    $('#foldPrev').addEventListener('click',()=>stepFold(-1));$('#foldNext').addEventListener('click',()=>stepFold(1));
+    $('#foldFlat').addEventListener('click',()=>{stopFoldPlayback();applyFoldProgress(0,{syncSlider:true});renderR007Timeline();});
+    $('#foldHalf').addEventListener('click',()=>{stopFoldPlayback();const currentPlan=buildRigidFoldPlan(state.netSolidId,currentNet());const frame=foldFrameForProgress(currentPlan,state.foldProgress);applyFoldProgress(foldProgressForUnit(currentPlan,frame.unitIndex,'transform'),{syncSlider:true});renderR007Timeline();});
+    $('#foldSolid').addEventListener('click',()=>{stopFoldPlayback();applyFoldProgress(1,{syncSlider:true});renderR007Timeline();});
+    $('#foldSpeed').addEventListener('input',event=>{state.foldSecondsPerFace=Number(event.target.value);$('#foldSecondsValue',refs.left).textContent=`${state.foldSecondsPerFace.toFixed(1)}초`;});
+    $('#showFoldGhost').addEventListener('change',event=>{state.showFoldGhost=event.target.checked;applyFoldProgress(state.foldProgress,{announceChange:false});});
+  }
+
+
+
+  function activateTabButton(tab) {
+    $$('.tab-button').forEach(button => {
+      const active = button.dataset.tab === tab;
+      button.classList.toggle('is-active', active);
+      if (active) button.setAttribute('aria-current', 'page');
+      else button.removeAttribute('aria-current');
+    });
+    if (typeof updateChapterNav === 'function') updateChapterNav();
+  }
+
+  function renderCurrentTab() {
+    if (state.tab !== 'net') stopFoldPlayback();
+    if (state.tab !== 'generator') stopGeneratorPlayback();
+    if (state.tab !== 'euler') stopEulerPlayback();
+    if (state.tab !== 'section') stopSectionPlayback();
+    if (state.tab !== 'soccer') stopSoccerPlayback();
+    if (!['revolution','revsection','locus','geodesic'].includes(state.tab)) stopR007Playback();
+    if (refs.foldStageBadge && state.tab !== 'net') refs.foldStageBadge.hidden = true;
+    const contextLabels = {
+      explorer: '입체 읽기',
+      net: state.cutMode ? '자르고 펼치기' : '공통 모서리 모양을 유지한 조립',
+      generator: '꼭짓점 각도 실험',
+      euler: '오일러 관계 실제 증명',
+      section: '평면과 입체가 만나 생기는 단면',
+      soccer: '정이십면체 꼭짓점 부분 자르기',
+      revolution: '평면도형이 회전해 만드는 회전체',
+      revsection: '회전체와 절단 평면의 실제 교선',
+      locus: '평면과 곡면이 만난 점의 자취',
+      distance: '허용 경로에 따른 세 가지 거리',
+      geodesic: '펼친 평면에서 비교하는 표면 최단경로',
+      transfer: '새 사례에 단면과 경로 근거 적용',
+    };
+    if (refs.stageContext) refs.stageContext.textContent = contextLabels[state.tab] || '입체 탐구';
+    refs.main.hidden = false;
+    renderer.selectedFaces.clear(); renderer.selectedEdges.clear(); renderer.selectedVertices.clear();
+    renderer.countedFaces.clear(); renderer.countedEdges.clear(); renderer.countedVertices.clear();
+    renderer.cutEdges = new Set();
+    renderer.setRelationEdgeHighlights([]);
+    if (state.tab === 'explorer') renderExplorer();
+    else if (state.tab === 'net') renderNetLab();
+    else if (state.tab === 'generator') renderGenerator();
+    else if (state.tab === 'euler') renderEuler();
+    else if (state.tab === 'section') renderSectionLab();
+    else if (state.tab === 'soccer') { showModuleOverlay(false); renderSoccer(); }
+    else if (state.tab === 'revolution') renderRevolution();
+    else if (state.tab === 'revsection') renderRevSections();
+    else if (state.tab === 'locus') renderLocus();
+    else if (state.tab === 'distance') renderDistanceModes();
+    else if (state.tab === 'geodesic') renderShortestPaths();
+    else if (state.tab === 'transfer') renderTransfer();
+    else { state.tab = 'explorer'; renderExplorer(); }
+    if (['explorer','generator','net','section','euler','soccer'].includes(state.tab)) refreshUniversalMapping({ force: true });
+    else $('#universalMappingNotebook',refs.right)?.remove();
+    renderR007Timeline();
+  }
+

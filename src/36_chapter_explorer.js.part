@@ -1,0 +1,86 @@
+  function renderExplorer() {
+    const solid = DATA.solids[state.solidId];
+    renderer.setSolid(state.solidId);
+    renderer.setSelectionType(state.selectionType);
+    renderer.setPublicLabelMap(makeLocalVertexMap(solid));
+    renderer.setLabelMode(state.explorerLabelsVisible && solid.topology.V <= 26 ? 'vertices' : 'none');
+    renderer.setViewStyle('solid');
+    state.lastSelection = null;
+    state.counting = false;
+    state.randomTarget = null;
+    setInteractionUI('navigate');
+    showModuleOverlay(false);
+
+    refs.left.innerHTML = `
+      <section class="panel-section"><h2>1. 입체의 구조 읽기</h2>
+        <div class="narrative-step"><span class="step-no">1</span><div><strong>입체를 돌립니다.</strong><span>가려진 꼭짓점과 모서리까지 보이도록 시점을 바꿉니다.</span></div></div>
+        <div class="narrative-step"><span class="step-no">2</span><div><strong>한 요소를 선택합니다.</strong><span>그 요소와 이어진 면·모서리·꼭짓점을 함께 확인합니다.</span></div></div>
+        <div class="narrative-step"><span class="step-no">3</span><div><strong>V, E, F를 비교합니다.</strong><span>도형이 달라도 어떤 관계가 유지되는지 다음 장에서 이어 봅니다.</span></div></div>
+      </section>
+      <section class="panel-section">
+        <label class="control-label" for="solidSelect">관찰할 다면체</label>
+        <select id="solidSelect">${solidOptions(state.solidId, true)}</select>
+        <div class="callout"><strong>${solid.korean_name}</strong>${solid.face_description}<br>한 꼭짓점에 모이는 면: ${solid.vertex_configuration_label}</div>
+      </section>
+      <section class="panel-section"><h3>선택할 요소</h3>
+        <div class="button-grid">
+          <button class="choice-button ${state.selectionType === 'face' ? 'is-active' : ''}" data-select-type="face" type="button">면</button>
+          <button class="choice-button ${state.selectionType === 'edge' ? 'is-active' : ''}" data-select-type="edge" type="button">모서리</button>
+          <button class="choice-button ${state.selectionType === 'vertex' ? 'is-active' : ''}" data-select-type="vertex" type="button">꼭짓점</button>
+        </div>
+      </section>
+      <section class="panel-section"><h3>보기 설정</h3>
+        <div class="button-grid">
+          <button class="chip-button is-active" data-style="solid" type="button">면과 골격</button>
+          <button class="chip-button" data-style="transparent" type="button">반투명</button>
+          <button id="labelToggle" class="chip-button ${state.explorerLabelsVisible ? 'is-active' : ''}" type="button">꼭짓점 문자</button>
+        </div>
+        <p class="small-note">꼭짓점이 많은 입체는 선택한 부분만 문자로 표시해 화면을 가리지 않습니다.</p>
+      </section>`;
+
+    refs.right.innerHTML = `
+      <section class="panel-section"><h2>${solid.korean_name} 관찰 기록</h2>${metricsHTML(solid)}</section>
+      <section class="panel-section"><h3>선택한 요소와 연결 관계</h3><div id="selectionInfo">${selectionDescription(solid, null)}</div></section>
+      <section class="panel-section"><div class="callout success"><strong>다음 질문</strong>정다면체가 왜 다섯 개뿐인지, 한 꼭짓점 주위의 각을 모아 확인해 보세요.</div></section>`;
+
+    $('#solidSelect').addEventListener('change', event => {
+      state.solidId = event.target.value;
+      state.explorerLabelsVisible = DATA.solids[state.solidId].topology.V <= 26 && state.explorerLabelsVisible;
+      renderCurrentTab();
+      announce(`${DATA.solids[state.solidId].korean_name}로 바꾸었습니다.`);
+    });
+    $$('[data-select-type]', refs.left).forEach(button => button.addEventListener('click', () => {
+      state.selectionType = button.dataset.selectType;
+      renderer.setSelectionType(state.selectionType);
+      $$('.choice-button[data-select-type]', refs.left).forEach(item => item.classList.toggle('is-active', item === button));
+      setInteractionUI('select');
+      announce(`${button.textContent} 선택 모드입니다.`);
+    }));
+    $$('[data-style]', refs.left).forEach(button => button.addEventListener('click', () => {
+      renderer.setViewStyle(button.dataset.style);
+      $$('[data-style]', refs.left).forEach(item => item.classList.toggle('is-active', item === button));
+    }));
+    $('#labelToggle').addEventListener('click', event => {
+      state.explorerLabelsVisible = !state.explorerLabelsVisible;
+      event.currentTarget.classList.toggle('is-active', state.explorerLabelsVisible);
+      renderer.setLabelMode(state.explorerLabelsVisible && solid.topology.V <= 26 ? 'vertices' : 'none');
+      announce(state.explorerLabelsVisible ? '꼭짓점 문자를 표시합니다.' : '꼭짓점 문자를 숨겼습니다.');
+    });
+    renderer.onPick = selection => {
+      state.lastSelection = selection;
+      const localMap = makeLocalVertexMap(solid, seedVerticesForSelection(solid, selection));
+      renderer.setPublicLabelMap(localMap);
+      renderer.selectedFaces.clear(); renderer.selectedEdges.clear(); renderer.selectedVertices.clear();
+      if (selection.type === 'face') renderer.selectedFaces.add(selection.index);
+      if (selection.type === 'edge') renderer.selectedEdges.add(selection.index);
+      if (selection.type === 'vertex') renderer.selectedVertices.add(selection.index);
+      renderer.setLabelMode(solid.topology.V <= 26 && state.explorerLabelsVisible ? 'vertices' : (solid.topology.V > 26 ? 'vertices' : 'none'));
+      renderer.uploadGeometry();
+      $('#selectionInfo').innerHTML = selectionDescription(solid, selection);
+      refreshUniversalMapping();
+      const selectedName = selection.type === 'face' ? publicFaceName(solid, selection.index, localMap) : selection.type === 'edge' ? publicEdgeName(solid, selection.index, localMap) : publicVertexName(solid, selection.index, localMap);
+      announce(`${selectedName}을 선택했습니다.`);
+    };
+    refreshUniversalMapping({ force: true });
+  }
+

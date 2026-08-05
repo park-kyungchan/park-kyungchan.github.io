@@ -1,0 +1,223 @@
+  const SECTION_PRESETS = DATA.cross_section_presets || [];
+  let sectionPlaybackHandle = null;
+  let sectionPlaybackLast = 0;
+  let sectionReducedTimers = [];
+
+  function stopSectionPlayback() {
+    state.sectionPlaying = false;
+    if (sectionPlaybackHandle) cancelAnimationFrame(sectionPlaybackHandle);
+    sectionPlaybackHandle = null;
+    sectionPlaybackLast = 0;
+    sectionReducedTimers.forEach(clearTimeout);
+    sectionReducedTimers = [];
+    const button = $('#sectionPlayToggle', refs.left);
+    if (button) { button.textContent = '▶ 평면 이동 재생'; button.setAttribute('aria-pressed','false'); }
+  }
+
+  function currentSectionPreset() {
+    state.sectionPresetIndex = clamp(state.sectionPresetIndex,0,Math.max(0,SECTION_PRESETS.length-1));
+    return SECTION_PRESETS[state.sectionPresetIndex];
+  }
+
+  function planeSupportRange(solid, normal) {
+    const n = vec3Unit(normal);
+    const values = solid.vertices.map(point => vec3Dot(n,point));
+    return { min:Math.min(...values), max:Math.max(...values), normal:n };
+  }
+
+  function sectionPlanePatch(solid, normalInput, d) {
+    const normal = vec3Unit(normalInput);
+    const helper = Math.abs(normal[2]) < .86 ? [0,0,1] : [0,1,0];
+    const basisU = vec3Unit(vec3Cross(normal,helper));
+    const basisV = vec3Cross(normal,basisU);
+    const radius = Math.max(...solid.vertices.map(point=>vec3Length(point))) * 1.25;
+    const center = normal.map(value=>value*d);
+    return [[-1,-1],[1,-1],[1,1],[-1,1]].map(([u,v])=>vec3Add(center,vec3Add(vec3Scale(basisU,u*radius),vec3Scale(basisV,v*radius))));
+  }
+
+  function sectionPolygonFor(solid, normalInput, d) {
+    const normal = vec3Unit(normalInput);
+    const records = [];
+    const addPoint = (point, edgeIndex, incidentFaces) => {
+      let existing = records.find(record => vec3Length(vec3Sub(record.point,point)) < 1e-7);
+      if (!existing) { existing = { point, edgeIndices:new Set(), incidentFaces:new Set() }; records.push(existing); }
+      existing.edgeIndices.add(edgeIndex);
+      incidentFaces.forEach(face => existing.incidentFaces.add(face));
+    };
+    solid.topology.edges.forEach(([aIndex,bIndex],edgeIndex) => {
+      const a = solid.vertices[aIndex], b = solid.vertices[bIndex];
+      const da = vec3Dot(normal,a)-d, db = vec3Dot(normal,b)-d;
+      const incidentFaces = solid.topology.edge_incident_faces[edgeIndex] || [];
+      if (Math.abs(da) < 1e-8) addPoint([...a],edgeIndex,incidentFaces);
+      if (Math.abs(db) < 1e-8) addPoint([...b],edgeIndex,incidentFaces);
+      if (da*db < -1e-12) {
+        const t = da/(da-db);
+        addPoint(a.map((value,axis)=>value+t*(b[axis]-value)),edgeIndex,incidentFaces);
+      }
+    });
+    if (records.length < 3) return { points:records.map(r=>r.point), records, segmentFaces:[], maxPlaneError:records.length?Math.max(...records.map(r=>Math.abs(vec3Dot(normal,r.point)-d))):0 };
+    const centroid = records.reduce((sum,record)=>vec3Add(sum,record.point),[0,0,0]).map(value=>value/records.length);
+    const helper = Math.abs(normal[2]) < .86 ? [0,0,1] : [0,1,0];
+    const basisU = vec3Unit(vec3Cross(normal,helper));
+    const basisV = vec3Cross(normal,basisU);
+    records.sort((a,b) => {
+      const ar=vec3Sub(a.point,centroid), br=vec3Sub(b.point,centroid);
+      return Math.atan2(vec3Dot(ar,basisV),vec3Dot(ar,basisU))-Math.atan2(vec3Dot(br,basisV),vec3Dot(br,basisU));
+    });
+    const segmentFaces = records.map((record,index) => {
+      const next = records[(index+1)%records.length];
+      const common = [...record.incidentFaces].filter(face => next.incidentFaces.has(face));
+      return common[0] ?? -1;
+    });
+    return {
+      points:records.map(record=>record.point), records, segmentFaces,
+      maxPlaneError:Math.max(...records.map(record=>Math.abs(vec3Dot(normal,record.point)-d))),
+    };
+  }
+
+  function sectionDForProgress(preset, progress) {
+    const solid = DATA.solids[preset.solid_id];
+    const support = planeSupportRange(solid,preset.normal);
+    const span = support.max-support.min;
+    const start = support.max + span*.07;
+    const eased = smoothstep01(clamp(progress,0,1));
+    return lerp(start,preset.target_d,eased);
+  }
+
+  function sectionStageText(progress, result) {
+    if (progress < .12 || result.points.length < 2) return '평면이 입체에 닿기 전입니다.';
+    if (result.points.length < 3) return '평면이 꼭짓점 또는 모서리에 처음 닿았습니다.';
+    if (progress < .78) return `${result.points.length}개의 교점이 생기고, 같은 면 안의 이웃한 교점이 교선으로 이어집니다.`;
+    return `${result.points.length}개의 교선이 닫혀 ${result.points.length}각형 단면을 이룹니다.`;
+  }
+
+  function syncSectionDock(result, d) {
+    const preset = currentSectionPreset();
+    const sideCount = result.points.length >= 3 ? result.points.length : 0;
+    const setText = (selector,value) => { const element=$(selector,refs.right); if(element)element.textContent=value; };
+    setText('#sectionSideCount',sideCount ? `${sideCount}각형` : '아직 없음');
+    setText('#sectionPointCount',String(result.points.length));
+    setText('#sectionFaceCount',String(new Set(result.segmentFaces.filter(index=>index>=0)).size));
+    setText('#sectionStageText',sectionStageText(state.sectionProgress,result));
+    setText('#sectionExplanation',sideCount && state.sectionProgress >= .78 ? preset.explanation : '아직 결과를 밝히지 않습니다. 평면이 만날 모서리와 단면의 변 수를 먼저 예상하세요.');
+    setText('#sectionPlaneValue',d.toFixed(2));
+    const list = $('#sectionSegmentList',refs.right);
+    if (list) {
+      const localMap = makeLocalVertexMap(DATA.solids[preset.solid_id]);
+      list.innerHTML = result.segmentFaces.map((faceIndex,index) => `<span>교선 ${index+1} · ${faceIndex>=0?publicFaceName(DATA.solids[preset.solid_id],faceIndex,localMap):'면 경계'}</span>`).join('') || '<span>평면이 입체와 만나면 교선이 나타납니다.</span>';
+    }
+    const slider=$('#sectionProgressSlider',refs.left), value=$('#sectionProgressValue',refs.left);
+    if(slider)slider.value=String(Math.round(state.sectionProgress*100));
+    if(value)value.textContent=`${Math.round(state.sectionProgress*100)}%`;
+    const direct=$('#sectionOffsetSlider',refs.left);
+    if(direct){const support=planeSupportRange(DATA.solids[preset.solid_id],preset.normal);direct.min=String(support.min+.001);direct.max=String(support.max-.001);direct.step=String((support.max-support.min)/120);direct.value=String(clamp(d,support.min+.001,support.max-.001));}
+  }
+
+  function applySectionD(d,{announceChange=false}={}) {
+    const preset=currentSectionPreset();
+    const solid=DATA.solids[preset.solid_id];
+    state.sectionD=d;
+    const result=sectionPolygonFor(solid,preset.normal,d);
+    state.sectionResult=result;
+    const planePatch = sectionPlanePatch(solid,preset.normal,d);
+    renderer.netGhostPolygons=[{points:planePatch,alpha:.26},...(result.points.length>=3?[{points:result.points,alpha:.96}]:[])];
+    renderer.overlaySegments=result.points.length>=2?result.points.map((point,index)=>({a:point,b:result.points[(index+1)%result.points.length],active:true})):[];
+    renderer.netGhostMarkers=[];
+    renderer.mergeSegments=[];
+    renderer.vertexMarkers=[];
+    renderer.effectUntil=performance.now()+280;
+    renderer.requestRender();
+    syncSectionDock(result,d);
+    refreshUniversalMapping();
+    if(announceChange){const side=result.points.length>=3?`${result.points.length}각형 단면`:'아직 닫히지 않은 교점';announce(`${preset.title}: ${side}을 확인합니다.`);}
+    return result;
+  }
+
+  function applySectionProgress(progress,{announceChange=false}={}) {
+    state.sectionProgress=clamp(progress,0,1);
+    return applySectionD(sectionDForProgress(currentSectionPreset(),state.sectionProgress),{announceChange});
+  }
+
+  function startSectionPlayback() {
+    stopSectionPlayback();
+    state.sectionPlaying=true;
+    const button=$('#sectionPlayToggle',refs.left);
+    if(button){button.textContent='Ⅱ 일시정지';button.setAttribute('aria-pressed','true');}
+    if(state.reducedMotion){
+      const states=[0,.28,.62,1];
+      states.forEach((value,index)=>sectionReducedTimers.push(setTimeout(()=>{if(!state.sectionPlaying||state.tab!=='section'||document.hidden)return;applySectionProgress(value,{announceChange:true});if(index===states.length-1)stopSectionPlayback();},index*1350)));
+      return;
+    }
+    const duration=7.5;
+    const tick=timestamp=>{
+      if(!state.sectionPlaying||state.tab!=='section'||document.hidden){stopSectionPlayback();return;}
+      if(!sectionPlaybackLast)sectionPlaybackLast=timestamp;
+      const dt=Math.min(.05,(timestamp-sectionPlaybackLast)/1000);sectionPlaybackLast=timestamp;
+      const next=Math.min(1,state.sectionProgress+dt/duration);
+      applySectionProgress(next);
+      if(next>=1){stopSectionPlayback();announce('평면이 지나간 면들의 교선이 닫혀 단면이 완성되었습니다.');return;}
+      sectionPlaybackHandle=requestAnimationFrame(tick);
+    };
+    sectionPlaybackHandle=requestAnimationFrame(tick);
+  }
+
+  function renderSectionLab() {
+    stopSectionPlayback();
+    showModuleOverlay(false);
+    const preset=currentSectionPreset();
+    const solid=DATA.solids[preset.solid_id];
+    renderer.setSolid(preset.solid_id);
+    renderer.setViewStyle('transparent');
+    renderer.setLabelMode('none');
+    renderer.setSelectionType('face');
+    renderer.setInteractionMode('navigate');
+    renderer.onPick=null;
+    setInteractionUI('navigate');
+    if(refs.stageContext)refs.stageContext.textContent='평면과 입체의 교선으로 만드는 단면';
+
+    refs.left.innerHTML=`
+      <section class="panel-section"><h2>4. 단면과 교선</h2>
+        <div class="narrative-step"><span class="step-no">1</span><div><strong>자르는 평면이 모서리를 만납니다.</strong><span>만난 위치가 단면의 꼭짓점이 됩니다.</span></div></div>
+        <div class="narrative-step"><span class="step-no">2</span><div><strong>같은 면 안의 이웃한 교점을 잇습니다.</strong><span>그 선분이 입체의 면과 자르는 평면의 교선입니다.</span></div></div>
+        <div class="narrative-step"><span class="step-no">3</span><div><strong>교선이 닫히면 단면이 됩니다.</strong><span>원래 면의 모양과 단면의 모양은 같지 않을 수 있습니다.</span></div></div>
+      </section>
+      <section class="panel-section">
+        <label class="control-label" for="sectionPresetSelect">비교할 절단</label>
+        <select id="sectionPresetSelect">${SECTION_PRESETS.map((item,index)=>`<option value="${index}" ${index===state.sectionPresetIndex?'selected':''}>${item.short_title}</option>`).join('')}</select>
+        <div class="callout"><strong>먼저 예상해 보기</strong>${preset.question}</div>
+      </section>
+      <section class="panel-section"><h3>자동으로 평면 이동</h3>
+        <div class="progress-row"><span>밖</span><input id="sectionProgressSlider" aria-label="자르는 평면 이동 진행" type="range" min="0" max="100" value="${Math.round(state.sectionProgress*100)}"><span id="sectionProgressValue" class="progress-value">${Math.round(state.sectionProgress*100)}%</span></div>
+        <div class="inline-actions"><button id="sectionPlayToggle" class="action-button primary" type="button" aria-pressed="false">▶ 평면 이동 재생</button><button id="sectionRestart" class="action-button" type="button">처음</button><button id="sectionTarget" class="action-button success" type="button">결과</button></div>
+        <div class="inline-actions"><button id="sectionPrevPreset" class="action-button" type="button">← 앞 사례</button><button id="sectionNextPreset" class="action-button" type="button">다음 사례 →</button></div>
+      </section>
+      <details class="panel-section"><summary><strong>직접 평면을 옮겨 보기</strong></summary>
+        <p class="small-note">슬라이더 대신 −/＋ 버튼으로도 같은 기능을 수행할 수 있습니다.</p>
+        <input id="sectionOffsetSlider" aria-label="자르는 평면 위치" type="range">
+        <div class="inline-actions"><button id="sectionOffsetMinus" class="action-button" type="button">− 평면</button><button id="sectionOffsetPlus" class="action-button" type="button">＋ 평면</button></div>
+      </details>`;
+
+    refs.right.innerHTML=`
+      <section class="panel-section"><h2>${preset.title}</h2>
+        <div class="callout success"><strong id="sectionStageText">교선을 찾는 중</strong><span id="sectionExplanation">평면이 움직인 뒤 단면의 모양을 확인합니다.</span></div>
+        <div class="section-result-grid"><div class="section-result-card"><span>단면</span><b id="sectionSideCount">-</b></div><div class="section-result-card"><span>교점</span><b id="sectionPointCount">0</b></div><div class="section-result-card"><span>지나는 면</span><b id="sectionFaceCount">0</b></div></div>
+      </section>
+      <section class="panel-section"><h3>실제 교선</h3><p>굵게 표시된 각 선분은 자르는 평면과 원래 입체의 한 면이 만난 선입니다. 선분들이 끝과 끝으로 이어져 단면의 둘레가 됩니다.</p><div id="sectionSegmentList" class="section-segment-list"></div></section>
+      <section class="panel-section"><h3>정확 데이터 확인</h3><div class="formula-box">평면 위치 값 <span id="sectionPlaneValue">0.00</span><br>교점은 입체의 실제 모서리와 평면의 교차로 계산</div><p class="small-note">표시된 중간 상태는 정확한 선분-평면 교차 계산을 사용합니다. 단면의 변은 원래 입체의 면 위에 놓입니다.</p></section>`;
+
+    const selectPreset=index=>{stopSectionPlayback();state.sectionPresetIndex=(index+SECTION_PRESETS.length)%SECTION_PRESETS.length;state.sectionProgress=0;renderCurrentTab();announce(`${currentSectionPreset().title} 사례입니다. 단면 모양을 먼저 예상한 뒤 평면을 이동하세요.`);};
+    $('#sectionPresetSelect').addEventListener('change',event=>selectPreset(Number(event.target.value)));
+    $('#sectionPrevPreset').addEventListener('click',()=>selectPreset(state.sectionPresetIndex-1));
+    $('#sectionNextPreset').addEventListener('click',()=>selectPreset(state.sectionPresetIndex+1));
+    $('#sectionProgressSlider').addEventListener('input',event=>{stopSectionPlayback();applySectionProgress(Number(event.target.value)/100);});
+    $('#sectionPlayToggle').addEventListener('click',()=>{if(state.sectionPlaying){stopSectionPlayback();announce('평면 이동을 일시정지했습니다.');return;}if(state.sectionProgress>=.999)applySectionProgress(0);startSectionPlayback();});
+    $('#sectionRestart').addEventListener('click',()=>{stopSectionPlayback();applySectionProgress(0,{announceChange:true});});
+    $('#sectionTarget').addEventListener('click',()=>{stopSectionPlayback();applySectionProgress(1,{announceChange:true});});
+    $('#sectionOffsetSlider').addEventListener('input',event=>{stopSectionPlayback();applySectionD(Number(event.target.value),{announceChange:true});});
+    const stepD=direction=>{stopSectionPlayback();const support=planeSupportRange(solid,preset.normal);const step=(support.max-support.min)/20;applySectionD(clamp(state.sectionD+direction*step,support.min+.001,support.max-.001),{announceChange:true});};
+    $('#sectionOffsetMinus').addEventListener('click',()=>stepD(-1));
+    $('#sectionOffsetPlus').addEventListener('click',()=>stepD(1));
+    applySectionProgress(state.sectionProgress);
+    refreshUniversalMapping({force:true});
+  }
+

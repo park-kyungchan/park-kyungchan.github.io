@@ -1,0 +1,152 @@
+  let generatorAnimationHandle = null;
+  let generatorAnimationLast = 0;
+  function stopGeneratorPlayback() {
+    state.generatorPlaying = false;
+    if (generatorAnimationHandle) cancelAnimationFrame(generatorAnimationHandle);
+    generatorAnimationHandle = null; generatorAnimationLast = 0;
+    const button = $('#generatorPlayToggle', refs.right);
+    if (button) { button.textContent = '▶ 원인 애니메이션'; button.setAttribute('aria-pressed','false'); }
+  }
+  function generatorProject(point, w, h) {
+    const yaw = -.66, pitch = .58;
+    const cy=Math.cos(yaw),sy=Math.sin(yaw),cx=Math.cos(pitch),sx=Math.sin(pitch);
+    const x1=cy*point[0]+sy*point[2], z1=-sy*point[0]+cy*point[2];
+    const y2=cx*point[1]-sx*z1, z2=sx*point[1]+cx*z1;
+    const camera=5.3, z=camera-z2, f=Math.min(w,h)*1.28;
+    return {x:w*.5+x1*f/z,y:h*.61-y2*f/z,depth:z};
+  }
+  function generatorRay(phi,beta,r=1.28){ return [r*Math.sin(beta)*Math.cos(phi),r*Math.sin(beta)*Math.sin(phi),r*Math.cos(beta)]; }
+  function drawGeneratorPatch() {
+    const canvas = $('#vertexPatchCanvas', refs.right);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const rect=canvas.getBoundingClientRect(), dpr=Math.min(window.devicePixelRatio||1,2);
+    const w=Math.max(1,Math.round(rect.width*dpr)), h=Math.max(1,Math.round(rect.height*dpr));
+    if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
+    ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,rect.width,rect.height);
+    const W=rect.width,H=rect.height;
+    const bg=ctx.createRadialGradient(W*.5,H*.38,15,W*.5,H*.52,Math.max(W,H)*.72);
+    bg.addColorStop(0,'#f9fdff'); bg.addColorStop(.58,'#d7ecff'); bg.addColorStop(1,'#9ebbd5');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+    const st=angleStatus(state.generatorP,state.generatorQ), progress=clamp(state.generatorDemoProgress,0,1);
+    const alpha=radians(st.interior), delta=Math.PI*2/state.generatorQ;
+    let beta=Math.PI/2;
+    if(st.relation==='less'){
+      const cosSq=clamp((Math.cos(alpha)-Math.cos(delta))/Math.max(1e-9,1-Math.cos(delta)),0,1);
+      beta=lerp(Math.PI/2,Math.acos(Math.sqrt(cosSq)),smoothstep01(progress));
+    } else if(st.relation==='greater') beta=Math.PI/2-.12*Math.sin(Math.PI*progress);
+    const colors=['#32a7ed','#35bd91','#f0a43b','#8f78e8','#e75e7c','#5c8de8','#90bd45'];
+    const faces=[];
+    for(let i=0;i<state.generatorQ;i++){
+      let phiA,phiB;
+      if(st.relation==='less'){
+        phiA=lerp(i*alpha,i*delta,smoothstep01(progress));
+        phiB=lerp((i+1)*alpha,(i+1)*delta,smoothstep01(progress));
+      }else if(st.relation==='equal'){
+        phiA=i*delta;phiB=(i+1)*delta;
+      }else{
+        const center=i*delta;
+        phiA=center-alpha*.5;phiB=center+alpha*.5;
+      }
+      const zNudge=st.relation==='greater'?(i%2?1:-1)*.045*progress:0;
+      const a=generatorRay(phiA,beta),b=generatorRay(phiB,beta);a[2]+=zNudge;b[2]+=zNudge;
+      const pts=[[0,0,0],a,b].map(p=>generatorProject(p,W,H));
+      faces.push({i,pts,depth:pts.reduce((s,p)=>s+p.depth,0)/3,color:colors[i%colors.length]});
+    }
+    faces.sort((a,b)=>b.depth-a.depth);
+    ctx.save();ctx.globalAlpha=.22;ctx.fillStyle='#294f72';ctx.beginPath();ctx.ellipse(W*.5,H*.77,Math.min(W*.31,130),19,0,0,Math.PI*2);ctx.fill();ctx.restore();
+    faces.forEach(face=>{
+      const [o,a,b]=face.pts;
+      ctx.beginPath();ctx.moveTo(o.x,o.y);ctx.lineTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.closePath();
+      const grad=ctx.createLinearGradient(o.x,o.y,(a.x+b.x)/2,(a.y+b.y)/2);grad.addColorStop(0,face.color);grad.addColorStop(1,'#4a6781');
+      ctx.globalAlpha=st.relation==='greater'?.55:.82;ctx.fillStyle=grad;ctx.fill();ctx.globalAlpha=1;
+      ctx.strokeStyle=st.relation==='greater'?'#a82749':'rgba(29,65,98,.72)';ctx.lineWidth=st.relation==='greater'?2.5:1.6;ctx.stroke();
+    });
+    const apex=generatorProject([0,0,0],W,H);
+    const outerVertexMap=new Map();
+    faces.forEach(face=>face.pts.slice(1).forEach(point=>outerVertexMap.set(`${Math.round(point.x*10)}:${Math.round(point.y*10)}`,point)));
+    [...outerVertexMap.values()].forEach((point,index)=>{ctx.beginPath();ctx.arc(point.x,point.y,4.8,0,Math.PI*2);ctx.fillStyle='white';ctx.fill();ctx.strokeStyle='#173c63';ctx.lineWidth=1.7;ctx.stroke();if(index<12){ctx.fillStyle='#4c3996';ctx.font=`800 10px ${HAND_CANVAS_FONT}`;ctx.fillText(String.fromCharCode(66+index),point.x,point.y-12);}});
+    ctx.beginPath();ctx.arc(apex.x,apex.y,7.5,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.strokeStyle='#164b7b';ctx.lineWidth=2.2;ctx.stroke();
+    ctx.fillStyle='#4c3996';ctx.font=`900 11px ${HAND_CANVAS_FONT}`;ctx.fillText('A',apex.x,apex.y-16);
+    if(st.relation==='less'){
+      const rise=(Math.PI/2-beta)*92;
+      ctx.save();ctx.setLineDash([7,5]);ctx.strokeStyle='#087a55';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(apex.x,apex.y+rise);ctx.lineTo(apex.x,apex.y);ctx.stroke();ctx.restore();
+      ctx.fillStyle='#087a55';ctx.font=`900 15px ${HAND_CANVAS_FONT}`;ctx.fillText(progress<.3?'빈 각을 확인':'빈 각을 닫으며 꼭짓점 상승',W*.5,28);
+    }else if(st.relation==='equal'){
+      ctx.save();ctx.strokeStyle='#8b5600';ctx.lineWidth=3;ctx.setLineDash([10,6]);ctx.beginPath();ctx.ellipse(W*.5,H*.61,Math.min(W,H)*.23,Math.min(W,H)*.12,0,0,Math.PI*2);ctx.stroke();ctx.restore();
+      ctx.fillStyle='#7b4d00';ctx.font=`900 15px ${HAND_CANVAS_FONT}`;ctx.fillText('360°를 채워 평면에서 정지',W*.5,28);
+    }else{
+      const pulse=state.reducedMotion?1:.76+.24*Math.sin(progress*Math.PI*6);
+      ctx.save();ctx.globalAlpha=pulse;ctx.strokeStyle='#b82449';ctx.lineWidth=4;ctx.setLineDash([9,6]);ctx.beginPath();ctx.arc(W*.5,H*.61,Math.min(W,H)*.225,0,Math.PI*2);ctx.stroke();ctx.restore();
+      ctx.save();ctx.translate(W*.5,H*.61);ctx.rotate(-.45);ctx.fillStyle='rgba(191,49,84,.18)';ctx.fillRect(-68,-18,136,36);ctx.strokeStyle='#a82749';ctx.lineWidth=2;for(let x=-65;x<65;x+=10){ctx.beginPath();ctx.moveTo(x,-18);ctx.lineTo(x+25,18);ctx.stroke();}ctx.restore();
+      ctx.fillStyle='#a82749';ctx.font=`900 15px ${HAND_CANVAS_FONT}`;ctx.fillText(`초과 ${round(st.sum-360,1)}° · 같은 자리를 차지하려 해 겹침`,W*.5,28);
+      ctx.font=`900 24px ${HAND_CANVAS_FONT}`;ctx.fillText('×',W*.5,H*.61);
+    }
+    ctx.fillStyle='rgba(255,255,255,.86)';ctx.fillRect(14,H-43,W-28,30);
+    ctx.fillStyle='#233f5e';ctx.font=`800 14px ${HAND_CANVAS_FONT}`;ctx.fillText(`처음 ${progress<.33?'●':'○'}   움직이는 중 ${progress>=.33&&progress<.78?'●':'○'}   결과 ${progress>=.78?'●':'○'}`,W*.5,H-28);
+  }
+  function applyGeneratorProgress(value,{announceChange=true,syncSlider=true}={}){
+    state.generatorDemoProgress=clamp(value,0,1);
+    const slider=$('#generatorDemoSlider',refs.right),label=$('#generatorDemoValue',refs.right);
+    if(syncSlider&&slider)slider.value=String(Math.round(state.generatorDemoProgress*100));
+    if(label)label.textContent=`${Math.round(state.generatorDemoProgress*100)}%`;
+    drawGeneratorPatch();
+    refreshUniversalMapping();
+    if(announceChange){const phase=state.generatorDemoProgress<.33?'처음 · 평면에서 각을 모음':state.generatorDemoProgress<.78?'움직이는 중 · 입체가 되는지 확인':'결과 · 세 경우 비교';announce(phase);}
+  }
+  function startGeneratorPlayback(){
+    stopGeneratorPlayback();state.generatorPlaying=true;
+    const button=$('#generatorPlayToggle',refs.right);if(button){button.textContent='Ⅱ 일시정지';button.setAttribute('aria-pressed','true');}
+    if(state.reducedMotion){
+      [0,.55,1].forEach((v,i)=>setTimeout(()=>{if(!state.generatorPlaying||state.tab!=='generator'||document.hidden)return;applyGeneratorProgress(v,{announceChange:true});if(v===1)stopGeneratorPlayback();},i*1050));
+      return;
+    }
+    const tick=t=>{if(!state.generatorPlaying||state.tab!=='generator'||document.hidden){stopGeneratorPlayback();return;}if(!generatorAnimationLast)generatorAnimationLast=t;const dt=Math.min(.05,(t-generatorAnimationLast)/1000);generatorAnimationLast=t;const next=Math.min(1,state.generatorDemoProgress+dt*.34);applyGeneratorProgress(next,{announceChange:false});if(next>=1){stopGeneratorPlayback();announce('처음·움직이는 중·결과 비교가 끝났습니다.');return;}generatorAnimationHandle=requestAnimationFrame(tick);};
+    generatorAnimationHandle=requestAnimationFrame(tick);
+  }
+  function generatorRightHTML(st){
+    const deficit=360-st.sum,relationText=st.relation==='less'
+      ? `360°까지 남은 각 ${round(deficit,1)}°가 남습니다. 면을 휘지 않고도 그 빈 각을 닫으면서 꼭짓점이 평면 밖으로 올라올 수 있습니다.`
+      : st.relation==='equal'
+        ? '360°까지 남은 각이 0°입니다. 면들이 평면을 빈틈없이 채워서, 모양이 변하지 않는 면을 유지하면 입체 꼭짓점으로 올라갈 여유가 없습니다.'
+        : `각의 합이 360°를 ${round(-deficit,1)}° 초과합니다. 두 면이 같은 공간을 요구해 경계가 겹치고 서로 겹치므로 볼록 꼭짓점이 될 수 없습니다.`;
+    const cls=st.relation==='less'?'success':st.relation==='equal'?'warning':'danger',icon=st.relation==='less'?'△':st.relation==='equal'?'＝':'×';
+    const result=st.solidId
+      ? `<div class="callout success"><strong>${DATA.solids[st.solidId].korean_name}와 연결됩니다.</strong>이 한 꼭짓점 주변의 조건은 필요한 조건입니다. 실제로는 면들이 전체에서 정확히 닫혀야 하며, 아래 다섯 경우는 그 입체 전체의 구조까지 성립합니다.</div><button id="showGeneratedSolid" class="action-button primary" type="button">입체 읽기에서 보기</button>`
+      : `<div class="callout ${cls}"><strong>${st.relation==='equal'?'입체 꼭짓점이 되지 않습니다.':'이 조합으로 볼록 정다면체는 만들 수 없습니다.'}</strong>${relationText}</div>`;
+    return `<section class="panel-section"><h2>가운데 꼭짓점의 세부 원인 확대도</h2>
+      <div class="vertex-patch-wrap"><canvas id="vertexPatchCanvas" class="vertex-patch-canvas" role="img" aria-label="정${state.generatorP}각형 ${state.generatorQ}개가 꼭짓점에서 모일 때의 입체화 또는 충돌 설명 그림"></canvas></div>
+      <div class="collision-legend" aria-label="설명 그림 기호"><span data-symbol="△">빈 각</span><span data-symbol="＝">평면 정지</span><span data-symbol="×">겹침·겹쳐 들어감</span></div>
+      <div class="demo-caption ${cls}"><span class="demo-icon" aria-hidden="true">${icon}</span><div><strong>${st.relation==='less'?'빈 각을 닫으며 입체화':st.relation==='equal'?'평면에서 정지':'접촉 경계와 겹쳐 들어감 발생'}</strong><p>${relationText}</p></div></div>
+      <div class="progress-row"><span>0%</span><input id="generatorDemoSlider" aria-label="각도 원인 애니메이션 진행" type="range" min="0" max="100" value="${Math.round(state.generatorDemoProgress*100)}"><span id="generatorDemoValue" class="progress-value">${Math.round(state.generatorDemoProgress*100)}%</span></div>
+      <div class="inline-actions"><button id="generatorPlayToggle" class="action-button primary" type="button" aria-pressed="false">▶ 원인 애니메이션</button><button data-generator-state="0" class="action-button" type="button">처음</button><button data-generator-state="0.55" class="action-button" type="button">움직이는 중</button><button data-generator-state="1" class="action-button" type="button">결과</button></div>
+    </section>
+    <section class="panel-section"><h3>평면 각도 확인</h3><div class="angle-svg-wrap">${angleGaugeSVG(state.generatorP,state.generatorQ)}</div></section>
+    <section class="panel-section"><div class="angle-summary"><div class="angle-number"><span>정${state.generatorP}각형의 내각</span><strong>${round(st.interior,1)}°</strong></div><div class="angle-number"><span>${state.generatorQ}개 각의 합</span><strong>${round(st.sum,1)}°</strong></div></div>
+      <div class="formula-box">${state.generatorQ} × ${round(st.interior,1)}° = ${round(st.sum,1)}° ${st.relation==='less'?'&lt;':st.relation==='equal'?'=':'&gt;'} 360°</div>${result}</section>
+    <section class="panel-section"><h3>가능한 다섯 경우</h3><div class="table-wrap"><table><thead><tr><th>(p,q)</th><th>각의 합</th><th>정다면체</th></tr></thead><tbody>${Object.entries(DATA.platonic_generator_valid_pairs).map(([pair,id])=>{const[p,q]=pair.split(',').map(Number),a=angleStatus(p,q);return `<tr><td>(${pair})</td><td>${round(a.sum,1)}°</td><td>${DATA.solids[id].korean_name}</td></tr>`;}).join('')}</tbody></table></div><p class="small-note">각의 합이 360°보다 작다는 사실만으로 임의의 다면체 존재가 증명되는 것은 아닙니다. 여기서는 정다각형·합동면·같은 꼭짓점 배열과 전체 닫힘 조건까지 만족하는 다섯 경우만 연결합니다.</p></section>`;
+  }
+  function renderGenerator(){
+    stopFoldPlayback();stopEulerPlayback();showModuleOverlay(false);
+    const st=angleStatus(state.generatorP,state.generatorQ);
+    if(st.solidId)renderer.setSolid(st.solidId);else renderer.setEmpty('가운데 설명 그림에서 평면과 겹침을 확인하세요.');
+    renderer.setLabelMode('none');renderer.setViewStyle('solid');setInteractionUI(st.solidId?'navigate':'select');
+    if(refs.stageContext)refs.stageContext.textContent='꼭짓점 각도 실험';if(refs.foldStageBadge)refs.foldStageBadge.hidden=true;
+    refs.left.innerHTML=`<section class="panel-section"><h2>꼭짓점 조건 조절</h2>
+      <label class="control-label" for="polygonRange">한 면의 변 수 p: <strong>${state.generatorP}</strong></label><input id="polygonRange" type="range" min="3" max="8" step="1" value="${state.generatorP}">
+      <label class="control-label" for="meetingRange">한 꼭짓점에 모이는 면 수 q: <strong>${state.generatorQ}</strong></label><input id="meetingRange" type="range" min="3" max="7" step="1" value="${state.generatorQ}">
+      <div class="button-grid">${[3,4,5,6].map(p=>`<button class="chip-button ${p===state.generatorP?'is-active':''}" data-p="${p}" type="button">정${p}각형</button>`).join('')}</div></section>
+      <section class="panel-section"><h3>핵심 비교</h3><div class="button-stack"><button class="choice-button" data-generator-case="3,5" type="button">300° · 빈 각이 남음</button><button class="choice-button" data-generator-case="3,6" type="button">360° · 평면을 채움</button><button class="choice-button" data-generator-case="5,4" type="button">432° · 겹침·겹쳐 들어감</button><button class="choice-button" data-generator-case="7,3" type="button">경계 근처 · 약 385.7°</button></div></section>
+      <section class="panel-section"><h3>관찰 순서</h3><ol><li>처음에는 평면 각의 합과 빈 각 또는 초과 각을 찾습니다.</li><li>움직이는 중에는 면을 휘지 않고 회전시켜 봅니다.</li><li>결과에서는 꼭짓점 상승·평면 정지·겹쳐 들어감을 비교합니다.</li><li>한 꼭짓점 주변의 각도 조건과 전체 다면체가 만들어지는지를 구분합니다.</li></ol></section>`;
+    refs.right.innerHTML=generatorRightHTML(st);
+    const update=()=>{stopGeneratorPlayback();state.generatorP=Number($('#polygonRange').value);state.generatorQ=Number($('#meetingRange').value);state.generatorDemoProgress=0;renderCurrentTab();};
+    $('#polygonRange').addEventListener('input',update);$('#meetingRange').addEventListener('input',update);
+    $$('[data-p]',refs.left).forEach(b=>b.addEventListener('click',()=>{stopGeneratorPlayback();state.generatorP=Number(b.dataset.p);state.generatorDemoProgress=0;renderCurrentTab();}));
+    $$('[data-generator-case]',refs.left).forEach(b=>b.addEventListener('click',()=>{stopGeneratorPlayback();const[p,q]=b.dataset.generatorCase.split(',').map(Number);state.generatorP=p;state.generatorQ=q;state.generatorDemoProgress=0;renderCurrentTab();}));
+    $('#generatorDemoSlider',refs.right).addEventListener('input',e=>{stopGeneratorPlayback();applyGeneratorProgress(Number(e.target.value)/100);});
+    $('#generatorPlayToggle',refs.right).addEventListener('click',()=>{if(state.generatorPlaying)stopGeneratorPlayback();else{if(state.generatorDemoProgress>=.999)applyGeneratorProgress(0,{announceChange:false});startGeneratorPlayback();}});
+    $$('[data-generator-state]',refs.right).forEach(b=>b.addEventListener('click',()=>{stopGeneratorPlayback();applyGeneratorProgress(Number(b.dataset.generatorState));}));
+    $('#showGeneratedSolid',refs.right)?.addEventListener('click',()=>{state.solidId=st.solidId;state.tab='explorer';activateTabButton('explorer');renderCurrentTab();});
+    applyGeneratorProgress(state.generatorDemoProgress,{announceChange:false});renderer.onPick=null;
+  }
+

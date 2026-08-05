@@ -1,0 +1,116 @@
+  /* P003 R007 modules: solids of revolution, analytic sections, distance domains, and unfolding paths. */
+  const R007_EXACT = DATA.r007_exact || {};
+  const R007_NET_COUNTS = Object.fromEntries(Object.entries(DATA.net_variants || {}).map(([key,value])=>[key,value.length]));
+  const R007_PHASES = ['예측','조작','관찰','근거','설명','전이'];
+  const R007_QUESTIONS = {
+    explorer:'도형을 돌려 보아도 V, E, F는 어떻게 유지될까요?',
+    generator:'꼭짓점 주위 각의 합이 360°보다 작아야 하는 이유는 무엇일까요?',
+    net:'평면의 서로 다른 점과 모서리는 조립 뒤 어떻게 하나로 합쳐질까요?',
+    section:'절단 평면이 실제로 지난 면의 교선은 어떻게 닫힌 단면을 만들까요?',
+    euler:'두 종류의 제거 연산은 왜 V−E+F를 바꾸지 않을까요?',
+    soccer:'정이십면체의 꼭짓점을 자르면 왜 오각형과 육각형이 생길까요?',
+    revolution:'평면도형의 어느 선분이 회전체의 곡면과 밑면을 만들까요?',
+    revsection:'자르는 방향과 위치가 바뀌면 실제 단면 경계의 구성은 어떻게 달라질까요?',
+    locus:'단면 곡선은 절단 평면과 곡면이 만난 점들의 어떤 자취일까요?',
+    distance:'“최단거리”라고 말하기 전에 어떤 경로를 허용하는지 왜 밝혀야 할까요?',
+    geodesic:'입체의 겉면을 펼치면 왜 평면의 직선으로 후보 경로를 비교할 수 있을까요?',
+    transfer:'새로운 입체와 조건에서도 단면과 최단 경로의 근거를 설명할 수 있을까요?'
+  };
+
+  Object.assign(state, {
+    revolutionProfile:'cylinder', revolutionProgress:0, revolutionPrediction:null, revolutionRevealed:false,
+    revSectionCase:'CYLINDER-OBLIQUE-CAPS', revSectionProgress:0, revSectionPrediction:null, revSectionRevealed:false,
+    locusCase:'CYLINDER-OBLIQUE-CAPS', locusProgress:0, locusPlaying:false,
+    distancePrediction:null, distanceRevealed:false, distanceFocus:'surface',
+    pathCase:'cube', pathCandidateIndex:0, pathProgress:0, pathRevealed:false,
+    transferTask:0, transferChoice:null, transferRevealed:false,
+    r007Playing:false, r007CurrentPhase:0,
+  });
+
+  const escapeHTML = value => String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+  const formatNumber = (value, digits=3) => Number(value).toLocaleString('ko-KR',{maximumFractionDigits:digits});
+  const phaseAt = progress => Math.min(5, Math.max(0, Math.floor(clamp(progress,0,.999999)*6)));
+  const phaseBadge = progress => R007_PHASES[phaseAt(progress)];
+  const progressToOpacity = (progress, start, end) => clamp((progress-start)/(end-start),0,1);
+  const svgText = (x,y,text,attrs='') => `<text x="${x}" y="${y}" ${attrs}>${escapeHTML(text)}</text>`;
+  const exactPaths = () => R007_EXACT.shortest_paths || {};
+  const exactSections = () => R007_EXACT.sections || {};
+
+  let r007AnimationHandle = null;
+  let r007AnimationLast = 0;
+  function stopR007Playback({announceStop=false}={}) {
+    state.r007Playing=false;
+    if(r007AnimationHandle) cancelAnimationFrame(r007AnimationHandle);
+    r007AnimationHandle=null; r007AnimationLast=0;
+    const buttons=['#revolutionPlay','#revSectionPlay','#locusPlay','#pathPlay'];
+    buttons.forEach(selector=>{const button=$(selector,refs.left);if(button){button.textContent='▶ 자동재생';button.setAttribute('aria-pressed','false');}});
+    if(announceStop) announce('자동재생을 일시정지했습니다.');
+  }
+  function startR007Playback(key, draw, seconds=8) {
+    stopR007Playback();
+    if(state[key]>=.999) state[key]=0;
+    state.r007Playing=true;
+    const button=$('#revolutionPlay,#revSectionPlay,#locusPlay,#pathPlay',refs.left);
+    if(button){button.textContent='Ⅱ 일시정지';button.setAttribute('aria-pressed','true');}
+    if(state.reducedMotion){
+      const sequence=[0,.24,.52,.78,1];
+      sequence.forEach((value,index)=>setTimeout(()=>{
+        if(!state.r007Playing||document.hidden)return;
+        state[key]=value;draw(value,true);renderR007Timeline();
+        if(index===sequence.length-1)stopR007Playback();
+      },index*850));
+      return;
+    }
+    const tick=timestamp=>{
+      if(!state.r007Playing||document.hidden){stopR007Playback();return;}
+      if(!r007AnimationLast)r007AnimationLast=timestamp;
+      const dt=Math.min(.05,(timestamp-r007AnimationLast)/1000);r007AnimationLast=timestamp;
+      state[key]=Math.min(1,state[key]+dt/seconds);draw(state[key],false);renderR007Timeline();
+      if(state[key]>=1){stopR007Playback();announce('변화를 끝까지 관찰했습니다. 근거를 확인하고 자신의 말로 설명해 보세요.');return;}
+      r007AnimationHandle=requestAnimationFrame(tick);
+    };
+    r007AnimationHandle=requestAnimationFrame(tick);
+  }
+
+  function moduleShell(title,subtitle,progress,svg,caption='') {
+    return `<div class="r007-module-shell"><div class="r007-module-card">
+      <div class="r007-module-heading"><div><h2>${escapeHTML(title)}</h2><p>${escapeHTML(subtitle)}</p></div><span class="r007-phase-badge">${phaseBadge(progress)}</span></div>
+      <div class="r007-svg-card">${svg}</div>
+      <div class="r007-caption">${caption}</div>
+    </div></div>`;
+  }
+
+  function renderR007Timeline() { /* duplicate floating transport removed in R009 */ }
+  function r007PlayCurrent(){
+    if(state.r007Playing){stopR007Playback({announceStop:true});renderR007Timeline();return;}
+    const map={generator:'#generatorPlayToggle',net:'#foldPlayToggle',section:'#sectionPlayToggle',euler:'#eulerPlayToggle',soccer:'#soccerPlayToggle',revolution:'#revolutionPlay',revsection:'#revSectionPlay',locus:'#locusPlay',geodesic:'#pathPlay'};
+    const button=$(map[state.tab]||'',state.tab==='generator'?refs.right:refs.left);
+    if(button){button.click();return;}
+    announce('이 장은 직접 선택과 설명이 중심입니다. 다음 선택을 해 보세요.');
+  }
+  function r007ReplayCurrent(){
+    stopR007Playback();
+    const restartMap={net:'#foldFlat',section:'#sectionRestart',soccer:'#soccerStart'};
+    const button=$(restartMap[state.tab]||'',refs.left);
+    if(button){button.click();return;}
+    if(state.tab==='generator'){state.generatorDemoProgress=0;renderCurrentTab();return;}
+    if(state.tab==='euler'){state.eulerAutoProgress=0;renderCurrentTab();return;}
+    if(state.tab==='revolution'){state.revolutionProgress=0;drawRevolutionVisual(0,true);}
+    else if(state.tab==='revsection'){state.revSectionProgress=0;drawRevSectionVisual(0,true);}
+    else if(state.tab==='locus'){state.locusProgress=0;drawLocusVisual(0,true);}
+    else if(state.tab==='geodesic'){state.pathProgress=0;drawPathVisual(0,true);}
+    else renderCurrentTab();
+    renderR007Timeline();announce('현재 장을 처음 상태로 되돌렸습니다.');
+  }
+  function r007ResetCurrent(){
+    stopR007Playback();
+    if(state.tab==='revolution'){state.revolutionProgress=0;state.revolutionPrediction=null;state.revolutionRevealed=false;}
+    if(state.tab==='revsection'){state.revSectionProgress=0;state.revSectionPrediction=null;state.revSectionRevealed=false;}
+    if(state.tab==='locus'){state.locusProgress=0;}
+    if(state.tab==='distance'){state.distancePrediction=null;state.distanceRevealed=false;}
+    if(state.tab==='geodesic'){state.pathProgress=0;state.pathCandidateIndex=0;state.pathRevealed=false;}
+    if(state.tab==='transfer'){state.transferChoice=null;state.transferRevealed=false;}
+    renderCurrentTab();announce('현재 장의 선택과 진행 상태를 초기화했습니다.');
+  }
+
+

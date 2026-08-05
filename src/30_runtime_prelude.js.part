@@ -1,0 +1,106 @@
+  <script>
+(() => {
+  'use strict';
+
+  const DATA = window.P003_DATA;
+  if (!DATA) {
+    document.body.innerHTML = '<main style="padding:2rem;font-family:sans-serif"><h1>데이터를 불러오지 못했습니다.</h1><p>data/data.js가 index.html과 같은 폴더 구조에 있는지 확인해 주세요.</p></main>';
+    return;
+  }
+
+  const FORCE_CANVAS_2D = (() => { try { return new URLSearchParams(location.search).get('renderer') === 'canvas2d'; } catch (_) { return false; } })();
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const radians = (deg) => deg * Math.PI / 180;
+  const round = (value, digits = 2) => Number(value.toFixed(digits));
+  const edgeIdFromIndex = (index) => `E${String(index + 1).padStart(3, '0')}`;
+  const faceIdFromIndex = (index) => `F${String(index + 1).padStart(3, '0')}`;
+  const vertexIdFromIndex = (index) => `V${String(index + 1).padStart(3, '0')}`;
+
+  const PUBLIC_VERTEX_TOKENS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const HAND_CANVAS_FONT = '-apple-system, BlinkMacSystemFont, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif';
+  const CIRCLED_NUMBERS = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫'];
+  const copySuffix = (index, count) => count > 1 ? (CIRCLED_NUMBERS[index] || `(${index + 1})`) : '';
+  function cornerAlphabetToken(index) {
+    let n = Number(index) + 1, token = '';
+    while (n > 0) { n -= 1; token = String.fromCharCode(65 + (n % 26)) + token; n = Math.floor(n / 26); }
+    return token;
+  }
+  function cornerAlphabetRank(token) {
+    return String(token || '').split('').reduce((rank,ch)=>rank*26 + Math.max(1,ch.charCodeAt(0)-64),0);
+  }
+  function netPointKey(corner) {
+    return corner?.net_point_id || `${round(Number(corner?.point?.[0] || 0),6)},${round(Number(corner?.point?.[1] || 0),6)}`;
+  }
+  function netCornerTokenMap(net) {
+    const pointRecords = new Map();
+    (net?.corners || []).forEach(corner => {
+      const key = netPointKey(corner);
+      if (!pointRecords.has(key)) pointRecords.set(key, { key, point: corner.point, corners: [] });
+      pointRecords.get(key).corners.push(corner);
+    });
+    const ordered = [...pointRecords.values()].sort((a,b) => {
+      const ay = Number(a.point?.[1] || 0), by = Number(b.point?.[1] || 0);
+      if (Math.abs(ay - by) > 1e-8) return by - ay;
+      return Number(a.point?.[0] || 0) - Number(b.point?.[0] || 0);
+    });
+    const tokenByPoint = new Map(ordered.map((record,index) => [record.key, cornerAlphabetToken(index)]));
+    return new Map((net?.corners || []).map(corner => [corner.corner_id, tokenByPoint.get(netPointKey(corner))]));
+  }
+  function mergedCornerLabel(tokens) {
+    const unique = [...new Set(tokens.filter(Boolean))].sort((a,b)=>cornerAlphabetRank(a)-cornerAlphabetRank(b));
+    if (unique.length <= 1) return unique[0] || '';
+    return `${unique[0]}(${unique.slice(1).join(',')})`;
+  }
+  function publicVertexToken(solid, index, localMap = null) {
+    if (!solid) return '';
+    if (solid.topology.V <= 26) return PUBLIC_VERTEX_TOKENS[index] || `A${index + 1}`;
+    return localMap?.get(index) || '';
+  }
+  function makeLocalVertexMap(solid, seedVertices = []) {
+    const map = new Map();
+    if (!solid || solid.topology.V <= 26) {
+      (solid?.vertices || []).forEach((_, index) => map.set(index, PUBLIC_VERTEX_TOKENS[index] || `A${index + 1}`));
+      return map;
+    }
+    const ordered = [];
+    const add = value => { if (Number.isInteger(value) && !ordered.includes(value)) ordered.push(value); };
+    seedVertices.forEach(add);
+    for (let cursor = 0; cursor < ordered.length && ordered.length < 10; cursor++) {
+      const v = ordered[cursor];
+      solid.topology.edges.forEach(([a, b]) => {
+        if (a === v) add(b);
+        if (b === v) add(a);
+      });
+    }
+    ordered.slice(0, 10).forEach((vertexIndex, localIndex) => map.set(vertexIndex, PUBLIC_VERTEX_TOKENS[localIndex]));
+    return map;
+  }
+  function publicEdgeName(solid, edgeIndex, localMap = null, withPrefix = true) {
+    const edge = solid?.topology?.edges?.[edgeIndex];
+    if (!edge) return withPrefix ? '모서리' : '';
+    const labels = edge.map(v => publicVertexToken(solid, v, localMap)).filter(Boolean).sort();
+    const token = labels.length === 2 ? labels.join('') : '이 부분의 모서리';
+    return withPrefix ? `모서리 ${token}` : token;
+  }
+  function publicFaceName(solid, faceIndex, localMap = null, withPrefix = true) {
+    const face = solid?.faces?.[faceIndex];
+    if (!face) return withPrefix ? '면' : '';
+    const labels = face.map(v => publicVertexToken(solid, v, localMap)).filter(Boolean);
+    const token = labels.length === face.length ? labels.join('') : '이 부분의 면';
+    return withPrefix ? `면 ${token}` : token;
+  }
+  function publicVertexName(solid, vertexIndex, localMap = null, withPrefix = true) {
+    const token = publicVertexToken(solid, vertexIndex, localMap) || '이 부분의 꼭짓점';
+    return withPrefix ? `꼭짓점 ${token}` : token;
+  }
+  function seedVerticesForSelection(solid, selection) {
+    if (!solid || !selection) return [];
+    if (selection.type === 'face') return [...solid.faces[selection.index]];
+    if (selection.type === 'edge') return [...solid.topology.edges[selection.index]];
+    const incident = solid.topology.edges.filter(([a, b]) => a === selection.index || b === selection.index).flat();
+    return [selection.index, ...incident];
+  }
+
