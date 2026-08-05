@@ -1,5 +1,4 @@
   /* P003 R007 modules: solids of revolution, analytic sections, distance domains, and unfolding paths. */
-  const R007_EXACT = DATA.r007_exact || {};
   const R007_NET_COUNTS = Object.fromEntries(Object.entries(DATA.net_variants || {}).map(([key,value])=>[key,value.length]));
   const R007_PHASES = ['예측','조작','관찰','근거','설명','전이'];
   const R007_QUESTIONS = {
@@ -33,8 +32,6 @@
   const phaseBadge = progress => R007_PHASES[phaseAt(progress)];
   const progressToOpacity = (progress, start, end) => clamp((progress-start)/(end-start),0,1);
   const svgText = (x,y,text,attrs='') => `<text x="${x}" y="${y}" ${attrs}>${escapeHTML(text)}</text>`;
-  const exactPaths = () => R007_EXACT.shortest_paths || {};
-  const exactSections = () => R007_EXACT.sections || {};
 
   let r007AnimationHandle = null;
   let r007AnimationLast = 0;
