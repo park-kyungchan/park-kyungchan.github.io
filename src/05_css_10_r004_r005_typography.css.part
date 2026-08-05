@@ -259,7 +259,7 @@ button, select, input, .formula-box, .metric-card strong, .proof-counter, .progr
 .learning-guide { margin:-10px -13px 9px; padding:9px 13px; gap:6px; }
 .learning-guide-card { padding:6px 9px; }
 .learning-guide-card strong { font-size:.86rem; }
-.learning-guide-card span { font-size:.74rem; }
+.learning-guide-card span { font-size:.82rem; }
 #glCanvas,#labelCanvas{transform:translateY(-28px);}
 @media (max-width:1270px){ .app-main{grid-template-columns:minmax(222px,258px) minmax(0,1fr);} }
 @media (max-width:900px){
@@ -287,7 +287,7 @@ button, select, input, .formula-box, .metric-card strong, .proof-counter, .progr
 .learning-guide-card span { font-size: .71rem; }
 .net-vertex-label { font-size: .082px; stroke-width: .025; }
 .net-corner { r: .055; }
-.vertex-key { font-size: .75rem; }
+.vertex-key { font-size: .82rem; }
 @media (max-width: 1270px) {
   .app-main { grid-template-columns: minmax(208px, 238px) minmax(0, 1fr); }
 }

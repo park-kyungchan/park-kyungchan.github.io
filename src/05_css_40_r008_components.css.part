@@ -77,7 +77,7 @@ input[type="range"] { accent-color: var(--r8-accent); }
   -webkit-backdrop-filter: blur(18px) saturate(145%);
   pointer-events: none;
 }
-.r008-spatial-title p { margin: 0 0 3px; color: var(--r8-accent); font-size: .68rem; font-weight: 850; }
+.r008-spatial-title p { margin: 0 0 3px; color: var(--r8-accent); font-size: .80rem; font-weight: 850; }
 .r008-spatial-title h2 { margin: 0; color: var(--r8-ink-strong); font-size: clamp(1.05rem, 1.9vw, 1.42rem); letter-spacing: -.045em; }
 .r008-spatial-title span { display: block; margin-top: 4px; color: var(--r8-ink-secondary); font-size: .72rem; }
 .r008-spatial-legend {
@@ -91,13 +91,13 @@ input[type="range"] { accent-color: var(--r8-accent); }
   max-width: min(650px, calc(100% - 38px));
   pointer-events: none;
 }
-.r008-spatial-legend span { min-height: 28px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 999px; color: #36516d; background: rgba(255,255,255,.66); border: 1px solid rgba(255,255,255,.88); box-shadow: 0 7px 18px rgba(31,55,92,.09); font-size: .66rem; font-weight: 760; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.r008-spatial-legend span { min-height: 28px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 999px; color: #36516d; background: rgba(255,255,255,.66); border: 1px solid rgba(255,255,255,.88); box-shadow: 0 7px 18px rgba(31,55,92,.09); font-size: .80rem; line-height: 1.35; font-weight: 760; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
 .r008-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 3px rgba(255,255,255,.62); }
 .r008-dot.axis { color: var(--r8-amber); }
 .r008-dot.surface { color: var(--r8-accent); }
 .r008-dot.plane { color: #dd7f16; }
 .r008-dot.intersection { color: var(--r8-rose); }
-.r008-model-note { position: absolute; z-index: 8; right: 18px; bottom: calc(var(--r8-transport-height) + 20px); max-width: 310px; padding: 7px 10px; border-radius: 12px; color: #596a7d; background: rgba(255,255,255,.62); border: 1px solid rgba(255,255,255,.82); font-size: .61rem; line-height: 1.35; pointer-events: none; }
+.r008-model-note { position: absolute; z-index: 8; right: 18px; bottom: calc(var(--r8-transport-height) + 20px); max-width: 310px; padding: 7px 10px; border-radius: 12px; color: #596a7d; background: rgba(255,255,255,.62); border: 1px solid rgba(255,255,255,.82); font-size: .79rem; line-height: 1.45; pointer-events: none; }
 
 .r008-cut-inset {
   position: absolute;
@@ -113,7 +113,7 @@ input[type="range"] { accent-color: var(--r8-accent); }
   overflow: hidden;
   pointer-events: none;
 }
-.r008-cut-inset p { margin: 9px 11px 0; color: var(--r8-ink-secondary); font-size: .64rem; font-weight: 800; }
+.r008-cut-inset p { margin: 9px 11px 0; color: var(--r8-ink-secondary); font-size: .80rem; font-weight: 800; }
 .r008-cut-inset canvas { width: 100%; height: calc(100% - 26px); display: block; }
 
 /* Existing non-spatial overlays inherit the new system. */

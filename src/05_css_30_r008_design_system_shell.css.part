@@ -34,12 +34,12 @@
   /* Type scale */
   --r8-font-ui: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
   --r8-font-display: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
-  --r8-type-11: .6875rem;
-  --r8-type-12: .75rem;
-  --r8-type-13: .8125rem;
-  --r8-type-15: .9375rem;
-  --r8-type-17: 1.0625rem;
-  --r8-type-20: 1.25rem;
+  --r8-type-11: .80rem;
+  --r8-type-12: .84rem;
+  --r8-type-13: .88rem;
+  --r8-type-15: .98rem;
+  --r8-type-17: 1.10rem;
+  --r8-type-20: 1.30rem;
   --r8-type-24: 1.5rem;
   --r8-type-32: 2rem;
 
@@ -58,6 +58,7 @@
   --r8-radius-30: 30px;
   --r8-radius-pill: 999px;
   --r8-control-min: 46px;
+  --r8-touch-min: 44px;
   --r8-panel-width: clamp(292px, 23vw, 356px);
   --r8-header-height: 64px;
   --r8-tabs-height: 58px;
@@ -194,8 +195,8 @@ body::before {
   background: rgba(10,104,255,.08) !important;
   border: 0 !important;
 }
-.tab-copy strong { font-size: .76rem !important; letter-spacing: -.025em; }
-.tab-copy small { font-size: .57rem !important; margin-top: 2px !important; }
+.tab-copy strong { font-size: .84rem !important; letter-spacing: -.02em; }
+.tab-copy small { font-size: .78rem !important; margin-top: 2px !important; line-height: 1.2 !important; }
 .tab-button.is-active {
   color: var(--r8-ink-strong) !important;
   background: rgba(255,255,255,.77) !important;
@@ -361,11 +362,11 @@ body::before {
 }
 .live-guide > * { position: relative; z-index: 1; }
 .live-guide-kicker { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--r8-accent); font-size: var(--r8-type-11); font-weight: 850; letter-spacing: .03em; }
-.live-guide-step { display: inline-flex; min-height: 26px; align-items: center; padding: 3px 8px; border-radius: var(--r8-radius-pill); color: #36506e; background: rgba(255,255,255,.72); border: 1px solid rgba(24,48,82,.10); font-size: .67rem; }
-.live-guide h2 { margin: 8px 0 4px; color: var(--r8-ink-strong); font-size: var(--r8-type-17); line-height: 1.23; letter-spacing: -.035em; }
-.live-guide p { margin: 0; color: var(--r8-ink-secondary); font-size: var(--r8-type-12); line-height: 1.43; }
+.live-guide-step { display: inline-flex; min-height: 26px; align-items: center; padding: 3px 8px; border-radius: var(--r8-radius-pill); color: #36506e; background: rgba(255,255,255,.72); border: 1px solid rgba(24,48,82,.10); font-size: .80rem; }
+.live-guide h2 { margin: 9px 0 5px; color: var(--r8-ink-strong); font-size: var(--r8-type-17); line-height: 1.28; letter-spacing: -.03em; }
+.live-guide p { margin: 0; color: var(--r8-ink-secondary); font-size: var(--r8-type-12); line-height: 1.5; }
 .live-guide-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
-.live-guide-chips span { min-height: 25px; display: inline-flex; align-items: center; padding: 3px 8px; border-radius: var(--r8-radius-pill); color: #36516d; background: rgba(255,255,255,.66); border: 1px solid rgba(24,48,82,.09); font-size: .65rem; font-weight: 760; }
+.live-guide-chips span { min-height: 25px; display: inline-flex; align-items: center; padding: 3px 8px; border-radius: var(--r8-radius-pill); color: #36516d; background: rgba(255,255,255,.66); border: 1px solid rgba(24,48,82,.09); font-size: .79rem; line-height: 1.35; font-weight: 760; }
 .live-guide.is-pulsing { animation: r8-guide-pulse .46s var(--r8-ease-spring); }
 @keyframes r8-guide-pulse { 0% { transform: scale(.985); opacity: .82; } 100% { transform: scale(1); opacity: 1; } }
 
@@ -401,7 +402,7 @@ body::before {
   z-index: 50 !important;
 }
 .chapter-nav button { min-height: 40px !important; border-radius: 14px !important; }
-.footer-scope { font-size: .65rem !important; }
+.footer-scope { font-size: .79rem !important; }
 
 @media (max-width: 1040px) {
   :root { --r8-panel-width: 276px; }
@@ -430,7 +431,7 @@ body::before {
   .app-header { margin-inline: 5px !important; padding-inline: 7px !important; border-radius: 21px !important; }
   .brand-mark { width: 38px !important; height: 38px !important; flex-basis: 38px !important; border-radius: 13px !important; }
   .title-block h1 { font-size: 1.02rem !important; }
-  .title-block .eyebrow { font-size: .58rem !important; }
+  .title-block .eyebrow { font-size: .78rem !important; }
   .header-actions .glass-button.compact span:last-child { display: none; }
   .header-actions .glass-button.compact { width: 42px; min-width: 42px; min-height: 42px !important; padding: 4px !important; justify-content: center; }
   .lab-tabs { margin-inline: 5px !important; border-radius: 18px !important; }
@@ -438,8 +439,8 @@ body::before {
   .tab-copy small { display: none; }
   .viewer-stage { min-height: 640px !important; border-radius: 24px !important; }
   .live-guide { top: 61px; left: 10px; right: 10px; width: auto; min-height: 110px; padding: 11px 12px; border-radius: 19px; }
-  .live-guide h2 { font-size: .96rem; }
-  .live-guide p { font-size: .70rem; }
+  .live-guide h2 { font-size: 1.02rem; }
+  .live-guide p { font-size: .82rem; }
   .learning-dock, #centerLearningDock { width: calc(100% - 20px) !important; bottom: 10px !important; border-radius: 21px !important; }
   .viewer-toolbar { display: none !important; }
   .stage-topline { left: 10px !important; right: 10px !important; top: 10px !important; }

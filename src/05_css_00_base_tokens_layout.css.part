@@ -283,19 +283,19 @@ input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; accent-
   color: #224061; background: rgba(255,255,255,.73); border: 1px solid rgba(255,255,255,.82);
   box-shadow: 0 8px 20px rgba(44,75,120,.12),inset 0 1px 0 white;
   backdrop-filter: blur(20px) saturate(145%); -webkit-backdrop-filter: blur(20px) saturate(145%);
-  font-size: .75rem; font-weight: 790;
+  font-size: .82rem; font-weight: 790;
 }
 .status-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 5px rgba(19,168,117,.13),0 0 15px rgba(19,168,117,.34); animation: status-breathe 2.4s ease-in-out infinite; }
 @keyframes status-breathe { 50% { transform: scale(.78); opacity: .72; } }
 .fold-stage-badge { display: grid; grid-template-columns: auto auto; column-gap: 7px; align-items: center; }
-.fold-stage-step { color: var(--accent); font-size: .67rem; font-weight: 900; }
+.fold-stage-step { color: var(--accent); font-size: .80rem; font-weight: 900; }
 .fold-stage-title { color: var(--ink-strong); font-size: .78rem; }
 .viewer-toolbar {
   position: absolute; z-index: 9; left: 14px; top: 60px;
   display: flex; gap: 5px; padding: 5px; border-radius: 20px;
 }
 .viewer-toolbar > * { position: relative; z-index: 1; }
-.tool-button { min-height: 46px; display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 15px; font-size: .76rem; box-shadow: none; }
+.tool-button { min-height: 46px; display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 15px; font-size: .82rem; box-shadow: none; }
 .viewer-hint { position: absolute; z-index: 8; left: 50%; bottom: 15px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 30px); pointer-events: none; text-align: center; }
 .viewer-fallback { position: absolute; inset: 0; z-index: 11; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 30px; background: rgba(239,247,255,.92); }
 .viewer-fallback[hidden] { display: none !important; }
@@ -371,7 +371,7 @@ tr:last-child td { border-bottom: 0; }
 /* direct proof workspace */
 .proof-workspace { display: grid; grid-template-rows: auto minmax(330px,1fr) auto; gap: 10px; max-width: 1040px; margin: 0 auto; min-height: 100%; }
 .proof-stage-rail { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 5px; }
-.proof-stage-rail span { position: relative; min-height: 42px; display: grid; place-items: center; padding: 5px 4px; border-radius: 12px; color: #71849f; background: rgba(255,255,255,.60); border: 1px solid var(--line); text-align: center; font-size: .66rem; font-weight: 780; }
+.proof-stage-rail span { position: relative; min-height: 44px; display: grid; place-items: center; padding: 6px 5px; border-radius: 12px; color: #5c6d85; background: rgba(255,255,255,.60); border: 1px solid var(--line); text-align: center; font-size: .80rem; line-height: 1.35; font-weight: 780; }
 .proof-stage-rail span.is-active { color: white; background: linear-gradient(145deg,#0b8cff,#615cff); border-color: transparent; box-shadow: 0 8px 17px rgba(48,88,228,.22); }
 .proof-stage-rail span.is-complete::after { content: "✓"; position: absolute; right: 5px; top: 3px; color: var(--success); font-size: .63rem; }
 .proof-board { position: relative; min-height: 350px; border-radius: 24px; overflow: hidden; background: rgba(255,255,255,.78); border: 1px solid rgba(255,255,255,.92); box-shadow: 0 16px 36px rgba(42,73,116,.13),inset 0 1px 0 white; }
@@ -394,7 +394,7 @@ tr:last-child td { border-bottom: 0; }
 .proof-face-label { fill: #35587f; font-size: 14px; font-weight: 760; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 4; }
 .proof-outside-label { fill: #875300; font-size: 15px; font-weight: 900; }
 .proof-counter-bar { position: absolute; z-index: 3; left: 14px; right: 14px; bottom: 12px; display: grid; grid-template-columns: repeat(4,auto) 1fr; gap: 8px; align-items: center; pointer-events: none; }
-.proof-counter { min-width: 74px; padding: 7px 10px; border-radius: 13px; color: #27486d; background: rgba(255,255,255,.86); border: 1px solid rgba(255,255,255,.94); box-shadow: 0 6px 15px rgba(44,75,120,.10); font-size: .75rem; font-weight: 800; text-align: center; }
+.proof-counter { min-width: 74px; padding: 7px 10px; border-radius: 13px; color: #27486d; background: rgba(255,255,255,.86); border: 1px solid rgba(255,255,255,.94); box-shadow: 0 6px 15px rgba(44,75,120,.10); font-size: .82rem; font-weight: 800; text-align: center; }
 .proof-counter strong { display: block; color: var(--ink-strong); font-size: 1.16rem; font-variant-numeric: tabular-nums; }
 .proof-invariant { justify-self: end; color: white; background: linear-gradient(145deg,#0d9169,#12b27f); }
 .proof-invariant strong { color: white; }
@@ -427,7 +427,7 @@ tr:last-child td { border-bottom: 0; }
 
 /* why-five collision view */
 .collision-legend { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
-.collision-legend span { display: grid; place-items: center; min-height: 38px; padding: 5px; border-radius: 11px; background: rgba(255,255,255,.62); border: 1px solid var(--line); color: #3a587a; font-size: .68rem; font-weight: 780; text-align: center; }
+.collision-legend span { display: grid; place-items: center; min-height: 38px; padding: 5px; border-radius: 11px; background: rgba(255,255,255,.62); border: 1px solid var(--line); color: #3a587a; font-size: .80rem; line-height: 1.35; font-weight: 780; text-align: center; }
 .collision-legend span::before { content: attr(data-symbol); display: block; color: var(--accent); font-size: .95rem; }
 
 /* dialog */
@@ -451,7 +451,7 @@ tr:last-child td { border-bottom: 0; }
   position: relative; z-index: 18; min-height: 43px;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   margin: 0 14px 9px; padding: 7px 14px; border-radius: 17px;
-  color: var(--muted); font-size: .74rem;
+  color: var(--muted); font-size: .82rem;
 }
 .app-footer > * { position: relative; z-index: 1; }
 #statusLive { color: #355476; font-weight: 760; }
