@@ -176,7 +176,7 @@
     if(refs.stageContext)refs.stageContext.textContent='평면과 입체의 교선으로 만드는 단면';
 
     refs.left.innerHTML=`
-      <section class="panel-section"><h2>4. 단면과 교선</h2>
+      <section class="panel-section"><h2>${r009ChapterNo('section')}. 단면과 교선</h2>
         <div class="narrative-step"><span class="step-no">1</span><div><strong>자르는 평면이 모서리를 만납니다.</strong><span>만난 위치가 단면의 꼭짓점이 됩니다.</span></div></div>
         <div class="narrative-step"><span class="step-no">2</span><div><strong>같은 면 안의 이웃한 교점을 잇습니다.</strong><span>그 선분이 입체의 면과 자르는 평면의 교선입니다.</span></div></div>
         <div class="narrative-step"><span class="step-no">3</span><div><strong>교선이 닫히면 단면이 됩니다.</strong><span>원래 면의 모양과 단면의 모양은 같지 않을 수 있습니다.</span></div></div>

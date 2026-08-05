@@ -1,5 +1,5 @@
 {
-  "schema_version": "P003-R009-INTEGRATED-SPATIAL-1.0",
+  "schema_version": "P003-R009-INTEGRATED-SPATIAL-1.1",
   "axis_convention": "all R009 solids of revolution use the +y object-local axis",
   "revolution_profiles": {
     "cylinder": {
@@ -530,6 +530,7 @@
         "d": 0.0
       },
       "classification": "ellipse",
+      "scope": "ENRICHMENT_NOT_ASSESSMENT",
       "exact": {
         "semi_minor": 1.5,
         "semi_major": 1.5461646096066226
@@ -619,6 +620,7 @@
         "d": 0.19611613513818402
       },
       "classification": "ellipse",
+      "scope": "ENRICHMENT_NOT_ASSESSMENT",
       "exact": {
         "passes_apex": false
       },
@@ -823,14 +825,14 @@
   },
   "chapter_order": [
     "explorer",
-    "generator",
     "net",
     "section",
-    "euler",
-    "soccer",
     "revolution",
     "revsection",
-    "geodesic"
+    "geodesic",
+    "generator",
+    "euler",
+    "soccer"
   ],
   "model_disclosure": {
     "analytic_authority": "classification, displayed values, path lengths, and metric-domain decisions",

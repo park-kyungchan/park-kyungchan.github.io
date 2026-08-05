@@ -12,11 +12,18 @@
     r009AfterRender();
   };
 
+  function r009ProgressText(tab){
+    const curriculum=window.P003_CURRICULUM,name=R009_CHAPTER_NAMES[tab]||'';
+    const entry=curriculum&&curriculum.chapters?curriculum.chapters[tab]:null;if(!entry)return name;
+    const scopeOf=chapter=>((curriculum.tracks||{})[chapter.track]||{}).scope||'core';
+    const scope=scopeOf(entry),total=Object.values(curriculum.chapters).filter(chapter=>scopeOf(chapter)===scope).length;
+    return `${scope==='enrichment'?'심화':'기본'} ${entry.no}/${total} · ${name}`;
+  }
   updateChapterNav = function(){
     const index=Math.max(0,R009_CHAPTER_ORDER.indexOf(state.tab)),prev=$('#chapterPrevButton'),next=$('#chapterNextButton'),progress=$('#chapterProgress');
     if(prev){prev.disabled=index<=0;prev.textContent=index>0?`← ${R009_CHAPTER_NAMES[R009_CHAPTER_ORDER[index-1]]}`:'← 처음';}
     if(next){next.disabled=index>=R009_CHAPTER_ORDER.length-1;next.textContent=index<R009_CHAPTER_ORDER.length-1?`${R009_CHAPTER_NAMES[R009_CHAPTER_ORDER[index+1]]} →`:'마침';}
-    if(progress)progress.textContent=`${index+1}/${R009_CHAPTER_ORDER.length} · ${R009_CHAPTER_NAMES[state.tab]||''}`;
+    if(progress)progress.textContent=r009ProgressText(state.tab);
   };
   goChapter = function(direction){
     const index=R009_CHAPTER_ORDER.indexOf(state.tab),next=clamp(index+direction,0,R009_CHAPTER_ORDER.length-1);if(next===index)return;

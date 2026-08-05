@@ -6,6 +6,13 @@
     euler:'오일러 증명', soccer:'축구공 확장', revolution:'회전체 생성',
     revsection:'회전체 단면·교선', geodesic:'거리·펼친 최단길'
   });
+  /* Chapter numerals come from P003_CURRICULUM only; never hardcode them in copy. */
+  function r009ChapterNo(tab){
+    const curriculum=window.P003_CURRICULUM,entry=curriculum&&curriculum.chapters?curriculum.chapters[tab]:null;
+    if(!entry)return '';
+    const track=curriculum.tracks?curriculum.tracks[entry.track]:null;
+    return track&&track.scope==='enrichment'?`심화 ${entry.no}`:String(entry.no);
+  }
   const R009_CONTEXT_LABELS = Object.freeze({
     revolution:'평면도형의 회전과 회전체 생성',
     revsection:'절단 평면과 회전체가 만나는 실제 교선',
@@ -44,7 +51,7 @@
   }
   function r009ProfileOptions(){
     const groupNames={basic:'기본 회전체',offset:'회전축에서 떨어진 도형',composite:'여러 평면도형 조합'};
-    return Object.entries(R009_EXACT.revolution_groups).map(([group,ids])=>`<optgroup label="${groupNames[group]}">${ids.map(id=>{const item=R009_EXACT.revolution_profiles[id];return `<option value="${id}" ${id===state.revolutionProfile?'selected':''}>${escapeHTML(item.label)} — ${escapeHTML(item.profile_label)}</option>`}).join('')}</optgroup>`).join('');
+    return Object.entries(R009_EXACT.revolution_groups).map(([group,ids])=>`<optgroup label="${groupNames[group]}">${ids.map(id=>{const item=R009_EXACT.revolution_profiles[id];return `<option value="${id}" ${id===state.revolutionProfile?'selected':''}>${escapeHTML(item.label)} — ${escapeHTML(item.profile_label)}${item.category==='enrichment'?' · 심화':''}</option>`}).join('')}</optgroup>`).join('');
   }
   function r009ExactList(exact){
     const labels={radius:'반지름',height:'높이',base_radius:'밑면 반지름',bottom_radius:'아랫면 반지름',top_radius:'윗면 반지름',inner_radius:'안쪽 반지름',outer_radius:'바깥 반지름',major_radius:'큰 원 반지름',minor_radius:'작은 원 반지름',parts:'조합'};
@@ -67,14 +74,14 @@
   };
   function r009RevolutionEvidence(){
     const item=R009_EXACT.revolution_profiles[state.revolutionProfile],axis=item.axis_relation==='offset_from_axis'?'평면도형이 회전축에서 떨어져 있어 가운데 빈 공간이 생깁니다.':'평면도형이 회전축에 닿아 회전축까지 채워진 회전체가 됩니다.';
-    refs.right.innerHTML=`<section class="panel-section"><p class="eyebrow">7 · 정확 데이터</p><h2>${escapeHTML(item.label)}</h2><div class="callout"><strong>${escapeHTML(item.profile_label)}을 1회전</strong>${escapeHTML(axis)}</div><ul>${r009ExactList(item.exact)}</ul></section>
+    refs.right.innerHTML=`<section class="panel-section"><p class="eyebrow">${r009ChapterNo('revolution')} · 정확 데이터</p><h2>${escapeHTML(item.label)}</h2><div class="callout"><strong>${escapeHTML(item.profile_label)}을 1회전</strong>${escapeHTML(axis)}</div><ul>${r009ExactList(item.exact)}</ul></section>
     <section class="panel-section"><h3>어떤 요소가 무엇을 만드는가</h3><ul><li>회전축에 평행한 선분 → 원기둥 모양의 옆면</li><li>회전축으로 향하는 선분 → 원 모양의 밑면·윗면</li><li>곡선 → 그 곡선이 쓸고 간 곡면</li><li>축에서 떨어진 도형 → 속이 빈 회전체 또는 고리 모양</li></ul></section>
     <section class="panel-section"><h3>정확성과 표시 모델</h3><p>평면도형·회전축·수치는 deterministic data가 권위입니다. 3D 곡면은 ${R009_EXACT.model_disclosure.sweep_segments}개 회전 구간으로 표시한 근사 mesh이며, 반지름 2에서 기록한 최대 원호 처짐 오차는 약 ${r9fmt(R009_EXACT.model_disclosure.max_circle_sagitta_error_radius_2_segments_84,6)}입니다.</p></section>`;
   }
   renderRevolution = function(){
     stopR007Playback();showModuleOverlay(false);renderer.resetView('solid');renderer.setInteractionMode('navigate');setInteractionUI('navigate');
     const item=R009_EXACT.revolution_profiles[state.revolutionProfile];
-    refs.left.innerHTML=`<section class="panel-section"><p class="eyebrow">7 · 회전체 생성</p><h2>평면도형을 1회전시키면</h2><p>기본 4종, 축에서 떨어진 도형, 여러 도형의 조합을 같은 회전 원리로 비교합니다.</p>
+    refs.left.innerHTML=`<section class="panel-section"><p class="eyebrow">${r009ChapterNo('revolution')} · 회전체 생성</p><h2>평면도형을 1회전시키면</h2><p>기본 4종, 축에서 떨어진 도형, 여러 도형의 조합을 같은 회전 원리로 비교합니다.</p>
       <label class="control-label" for="revolutionProfileSelect">회전시킬 평면도형</label><select id="revolutionProfileSelect">${r009ProfileOptions()}</select>
       <div class="r009-card-grid" aria-label="기본 회전체 빠른 선택">${R009_EXACT.revolution_groups.basic.map(id=>{const v=R009_EXACT.revolution_profiles[id];return `<button data-r9-profile="${id}" class="choice-button ${id===state.revolutionProfile?'is-active':''}" type="button"><strong>${escapeHTML(v.label)}</strong><small>${escapeHTML(v.profile_label)}을 회전</small></button>`}).join('')}</div>
       <div class="r009-status-line">${escapeHTML(item.axis_relation==='offset_from_axis'?'회전축에서 떨어짐 → 가운데 빈 공간을 관찰':'회전축에 닿음 → 축까지 채워지는 과정을 관찰')}</div></section>
@@ -99,7 +106,7 @@
   };
   function r009SectionEvidence(){
     const item=r9SectionCase(),revealed=state.revSectionRevealed||state.revSectionProgress>=.9;
-    refs.right.innerHTML=`<section class="panel-section"><p class="eyebrow">8 · analytic source</p><h2>${escapeHTML(item.label)}</h2>${revealed?`<div class="callout success"><strong>${escapeHTML(r9ClassificationLabel(item.classification))}</strong>${escapeHTML((item.boundary_components||[]).map(r009BoundaryLabel).join(' + '))}</div>`:`<div class="callout"><strong>예측을 먼저 남기세요.</strong>평면이 실제로 지난 옆면·윗면·밑면·꼭짓점을 확인한 뒤 결과를 비교합니다.</div>`}<ul>${r009ExactList(item.exact)}</ul></section>
+    refs.right.innerHTML=`<section class="panel-section"><p class="eyebrow">${r009ChapterNo('revsection')} · 정확 데이터</p><h2>${escapeHTML(item.label)}</h2>${revealed?`<div class="callout success"><strong>${escapeHTML(r9ClassificationLabel(item.classification))}</strong>${escapeHTML((item.boundary_components||[]).map(r009BoundaryLabel).join(' + '))}</div>`:`<div class="callout"><strong>예측을 먼저 남기세요.</strong>평면이 실제로 지난 옆면·윗면·밑면·꼭짓점을 확인한 뒤 결과를 비교합니다.</div>`}<ul>${r009ExactList(item.exact)}</ul></section>
     <section class="panel-section"><h3>교선의 자취가 단면 경계가 되는 과정</h3><ol><li>절단 평면이 회전체 밖에서 접근합니다.</li><li>평면과 표면을 동시에 만족하는 첫 점이 생깁니다.</li><li>그 점들이 표면을 따라 이어져 교선이 됩니다.</li><li>유한한 입체에서는 cap과의 선분도 함께 실제 경계를 닫습니다.</li></ol></section>
     <section class="panel-section"><h3>모델 한계</h3><p>분류·표시 수치·경계 구성은 analytic data가 권위입니다. 화면의 곡선은 deterministic mesh–plane intersection polyline이며 exact analytic curve 자체라고 주장하지 않습니다.</p></section>`;
   }
@@ -107,7 +114,7 @@
   renderRevSections = function(){
     stopR007Playback();showModuleOverlay(false);renderer.resetView('solid');renderer.setInteractionMode('navigate');setInteractionUI('navigate');state.r009SectionDirectD=null;
     const item=r9SectionCase();
-    refs.left.innerHTML=`<section class="panel-section"><p class="eyebrow">8 · 회전체 단면 + 교선의 자취</p><h2>평면과 곡면이 만나는 점을 추적</h2><p>기존 두 장을 한 state graph로 합쳤습니다. 결과보다 먼저 실제로 지난 표면을 찾습니다.</p>
+    refs.left.innerHTML=`<section class="panel-section"><p class="eyebrow">${r009ChapterNo('revsection')} · 회전체 단면 + 교선의 자취</p><h2>평면과 곡면이 만나는 점을 추적</h2><p>기존 두 장을 한 state graph로 합쳤습니다. 결과보다 먼저 실제로 지난 표면을 찾습니다.</p>
       <label class="control-label" for="revSectionCaseSelect">절단 사례</label><select id="revSectionCaseSelect">${r009SectionOptions()}</select>
       <div class="r009-prediction" aria-label="단면 모양 예측">${R009_SECTION_CHOICES.map(([value,label])=>`<button data-r9-section-pred="${value}" class="choice-button ${state.revSectionPrediction===value?'is-active':''}" type="button">${label}</button>`).join('')}</div></section>
     <section class="panel-section"><h3>절단 평면 자동재생</h3><div class="r009-control-row"><span>밖</span><input id="revSectionProgress" type="range" min="0" max="1" step="0.01" value="${state.revSectionProgress}" aria-label="절단 평면 이동 진행률"><output id="revSectionProgressValue" class="progress-value">${Math.round(state.revSectionProgress*100)}%</output></div>
@@ -135,14 +142,14 @@
     else if(key==='cylinder')body=`<div class="formula-box">내부 chord ≈ ${r9fmt(ex.interior_chord)}<br>옆면 최단 ≈ ${r9fmt(ex.surface_minimum)}<br>선택된 periodic copy: k=${ex.minimum_k}</div><p>${ex.periodic_copies.map(v=>`k=${v.k}: ${r9fmt(v.length)}`).join(' · ')}</p>`;
     else if(key==='cone')body=`<div class="formula-box">모선 ${r9fmt(ex.slant_height)}<br>부채꼴 중심각 ${r9fmt(ex.sector_angle)} rad<br>옆면 최단 ≈ ${r9fmt(ex.surface_minimum)}</div><p>${ex.seam_copies.map(v=>`k=${v.k}: ${r9fmt(v.length)}`).join(' · ')}</p>`;
     else body=`<div class="formula-box">내부 chord ≈ ${r9fmt(ex.interior_chord)}<br>표면의 짧은 큰원호 ≈ ${r9fmt(ex.surface_short_arc)}</div><p>구의 표면 최단경로는 심화 관찰이며 중학교 평가 범위로 주장하지 않습니다.</p>`;
-    refs.right.innerHTML=`<section class="panel-section"><p class="eyebrow">9 · 같은 두 점, 다른 metric domain</p><h2>${escapeHTML(ex.label)} · ${escapeHTML(modeLabel)}</h2>${body}</section>
+    refs.right.innerHTML=`<section class="panel-section"><p class="eyebrow">${r009ChapterNo('geodesic')} · 같은 두 점, 다른 metric domain</p><h2>${escapeHTML(ex.label)} · ${escapeHTML(modeLabel)}</h2>${body}</section>
     <section class="panel-section"><h3>겉면 최단경로를 판단하는 순서</h3><ol><li>지나갈 수 있는 영역을 먼저 정합니다.</li><li>길이를 보존하는 펼침 또는 periodic/seam copy를 만듭니다.</li><li>평면의 직선이 선택한 face chain 안을 올바르게 지나는지 확인합니다.</li><li>여러 유효 후보의 길이를 비교합니다.</li><li>직선을 다시 입체 표면에 대응시킵니다.</li></ol></section>
     <section class="panel-section"><h3>표시 모델</h3><p>${escapeHTML(R009_EXACT.model_disclosure.unfold_interpolation)}. 표시식과 길이는 같은 exact data에서 생성됩니다.</p></section>`;
   }
   renderShortestPaths = function(){
     stopR007Playback();showModuleOverlay(false);renderer.resetView('solid');renderer.distance=6.4;renderer.requestRender();renderer.setInteractionMode('navigate');setInteractionUI('navigate');
     const edgeAllowed=state.pathCase==='cube';if(!edgeAllowed&&state.distanceFocus==='edge')state.distanceFocus='surface';
-    refs.left.innerHTML=`<section class="panel-section"><p class="eyebrow">9 · 거리 조건 + 펼친 최단길</p><h2>“어디를 따라가나”를 먼저 정하기</h2><p>기존 두 장을 하나로 합쳐, 허용 경로를 고른 직후 같은 화면에서 펼침과 후보 비교까지 이어집니다.</p>
+    refs.left.innerHTML=`<section class="panel-section"><p class="eyebrow">${r009ChapterNo('geodesic')} · 거리 조건 + 펼친 최단길</p><h2>“어디를 따라가나”를 먼저 정하기</h2><p>기존 두 장을 하나로 합쳐, 허용 경로를 고른 직후 같은 화면에서 펼침과 후보 비교까지 이어집니다.</p>
       <label class="control-label" for="pathCaseSelect">입체와 두 점</label><select id="pathCaseSelect"><option value="cube" ${state.pathCase==='cube'?'selected':''}>정육면체 · 마주 보는 꼭짓점</option><option value="cylinder" ${state.pathCase==='cylinder'?'selected':''}>원기둥 · 옆면의 두 점</option><option value="cone" ${state.pathCase==='cone'?'selected':''}>원뿔 · 옆면의 두 점</option><option value="sphere" ${state.pathCase==='sphere'?'selected':''}>구 · 내부와 표면 비교(심화)</option></select>
       <div class="r009-prediction" role="group" aria-label="허용 경로 선택"><button data-r9-distance-mode="interior" class="choice-button ${state.distanceFocus==='interior'?'is-active':''}" type="button">입체 내부</button><button data-r9-distance-mode="surface" class="choice-button ${state.distanceFocus==='surface'?'is-active':''}" type="button">겉면</button><button data-r9-distance-mode="edge" class="choice-button ${state.distanceFocus==='edge'?'is-active':''}" type="button" ${edgeAllowed?'':'disabled'}>모서리만</button></div></section>
     <section class="panel-section"><h3>펼치기와 후보 비교</h3><div class="r009-control-row"><span>입체</span><input id="pathProgress" type="range" min="0" max="1" step="0.01" value="${state.pathProgress}" aria-label="최단거리 펼침 진행률"><output id="pathProgressValue" class="progress-value">${Math.round(state.pathProgress*100)}%</output></div>

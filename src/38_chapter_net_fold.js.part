@@ -122,7 +122,7 @@
     const plan = buildRigidFoldPlan('PLATONIC_CUBE', net);
     const stage = foldStageForProgress(state.foldProgress, plan);
     refs.left.innerHTML = `
-      <section class="panel-section"><h2>3. 전개도에서 입체로</h2>
+      <section class="panel-section"><h2>${r009ChapterNo('net')}. 전개도에서 입체로</h2>
         <div class="narrative-step"><span class="step-no">1</span><div><strong>전개도 종류를 고릅니다.</strong><span>평면에서 면이 붙어 있는 모양 자체가 달라집니다.</span></div></div>
         <div class="narrative-step"><span class="step-no">2</span><div><strong>자동 조립을 재생합니다.</strong><span>한 번에 한 면만 움직이고, 공유한 모서리를 기준으로 모양을 유지합니다.</span></div></div>
         <div class="narrative-step"><span class="step-no">3</span><div><strong>꼭짓점이 닿는 순간을 확인합니다.</strong><span>미리 겹쳐 보이지 않고, 실제 접촉 뒤에만 문자가 합쳐집니다.</span></div></div>

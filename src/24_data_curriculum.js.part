@@ -1,0 +1,16 @@
+  <script>
+/* P1-1 curriculum coordinate system: chapter numbering, track, standards, prerequisites. */
+window.P003_CURRICULUM = { schema_version: "P1-1",
+  tracks: { A:{label:'다면체', scope:'core'}, B:{label:'회전체', scope:'core'}, E:{label:'심화 탐구', scope:'enrichment'} },
+  chapters: {
+    explorer:{no:1, track:'A', standards:['9수03-07'], prerequisites:[]},
+    net:{no:2, track:'A', standards:['9수03-07'], prerequisites:['explorer']},
+    section:{no:3, track:'A', standards:['9수03-07'], prerequisites:['explorer']},
+    revolution:{no:4, track:'B', standards:['9수03-07'], prerequisites:['explorer']},
+    revsection:{no:5, track:'B', standards:['9수03-07'], prerequisites:['revolution','section']},
+    geodesic:{no:6, track:'B', standards:['9수03-07'], role:'application', prerequisites:['net','revolution']},
+    generator:{no:1, track:'E', standards:['9수03-07'], prerequisites:['explorer']},
+    euler:{no:2, track:'E', standards:[], prerequisites:['explorer']},
+    soccer:{no:3, track:'E', standards:[], prerequisites:['explorer','euler']}
+  } };
+</script>

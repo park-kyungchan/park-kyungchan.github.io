@@ -3,7 +3,7 @@
     "index.html",
     "P003_R009_Integrated_Spatial_Revolution_Lab_Standalone.html"
   ],
-  "expected_sha256": "cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a",
+  "expected_sha256": "98ebb812ee4454b1aa34c18e2157aa99d8ae7cabb3e522279ad2b81a4b7cadae",
   "parts": [
     "00_document_head.html.part",
     "05_css_00_base_tokens_layout.css.part",
@@ -17,6 +17,7 @@
     "21_data_p003_core.js.part",
     "22_data_script_open_r007_nets.js.part",
     "23_data_r007_exact_merge.js.part",
+    "24_data_curriculum.js.part",
     "30_runtime_prelude.js.part",
     "31_runtime_vec_quat_math.js.part",
     "32_runtime_fold_plan.js.part",

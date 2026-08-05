@@ -72,3 +72,22 @@ body.reduced-motion .r009-focus-ring{animation:none!important;display:none!impor
   .r009-card-grid,.r009-prediction{grid-template-columns:1fr 1fr}.r009-play-row{grid-template-columns:1fr 1fr}.r009-play-row button:first-child{grid-column:1/-1}
 }
 
+
+/* ===== P1-1 curriculum grouping: 기본 과정 vs. 심화 탐구 in the chapter nav ===== */
+.tab-group-label{
+  flex:0 0 auto;align-self:center;display:inline-flex;align-items:center;
+  padding:5px 9px;border-radius:var(--r8-radius-pill);
+  color:var(--r8-ink-secondary);background:rgba(255,255,255,.52);
+  border:1px solid rgba(24,48,82,.09);
+  font-family:var(--r8-font-ui);font-size:.58rem;font-weight:850;letter-spacing:.08em;white-space:nowrap;
+  scroll-snap-align:start;
+}
+.tab-group-label.is-enrichment{color:#5b3fd0;background:rgba(108,76,255,.07);border:1px dashed rgba(108,76,255,.34)}
+.tab-button.is-enrichment{
+  border:1px dashed rgba(108,76,255,.30)!important;
+  background:linear-gradient(145deg, rgba(255,255,255,.74), rgba(245,242,255,.60))!important;
+}
+.tab-button.is-enrichment .tab-symbol{color:#6c4cff!important;background:rgba(108,76,255,.10)!important;font-size:.62rem!important;letter-spacing:-.02em}
+.tab-button.is-enrichment.is-active{border:1px solid rgba(108,76,255,.44)!important;background:rgba(255,255,255,.80)!important}
+.tab-button.is-enrichment.is-active .tab-symbol{color:#fff!important;background:linear-gradient(145deg,#6c4cff,#9a4bff)!important}
+@media(max-width:820px){.tab-group-label{padding:4px 7px;font-size:.54rem;letter-spacing:.05em}}

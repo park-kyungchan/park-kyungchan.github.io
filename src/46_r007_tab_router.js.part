@@ -7,7 +7,7 @@
     renderer.resetView('net');renderer.setSelectionType('face');renderer.setPublicLabelMap(makeLocalVertexMap(solid));renderer.setLabelMode('none');renderer.setViewStyle('solid');renderer.setRelationEdgeHighlights([]);setInteractionUI('navigate');renderer.onPick=null;
     const plan=buildRigidFoldPlan(state.netSolidId,net),stage=foldStageForProgress(state.foldProgress,plan);
     const countClaim=state.netSolidId==='PLATONIC_CUBE'?'회전하거나 뒤집어서 같아지는 모양을 하나로 센 전체 11개':'평면에서 서로 다른 모양으로 검증한 다양한 예시';
-    refs.left.innerHTML=`<section class="panel-section"><h2>3. 다섯 정다면체 전개도</h2>
+    refs.left.innerHTML=`<section class="panel-section"><h2>${r009ChapterNo('net')}. 다섯 정다면체 전개도</h2>
       <div class="narrative-step"><span class="step-no">1</span><div><strong>입체와 전개도 종류를 고릅니다.</strong><span>같은 입체도 자르는 모서리에 따라 평면 배열이 달라집니다.</span></div></div>
       <div class="narrative-step"><span class="step-no">2</span><div><strong>공유 모서리를 축으로 한 면씩 접습니다.</strong><span>면은 늘어나거나 비틀리지 않습니다.</span></div></div>
       <div class="narrative-step"><span class="step-no">3</span><div><strong>모서리와 꼭짓점의 합쳐짐을 추적합니다.</strong><span>접촉하기 전에는 문자가 미리 합쳐지지 않습니다.</span></div></div></section>
