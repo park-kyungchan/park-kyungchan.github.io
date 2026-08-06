@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;overflow:hidden;}
+*{box-sizing:border-box;}
+a{color:#41608f;text-decoration-color:rgba(65,96,143,.4);} a:hover{color:#b97a2e;}
+button,select,input{font-family:inherit;}
+input[type=range]{accent-color:#b97a2e;}
+::selection{background:rgba(217,160,91,.45);}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:rgba(38,50,75,.18);border-radius:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+@keyframes floatIn{from{opacity:0;transform:translateY(14px) scale(.98);}to{opacity:1;transform:none;}}
+@keyframes chipIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:none;}}
+</style>
+<script src="p003-data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="lab-engine.js"></script>
+</helmet>
+<div data-screen-label="입체 탐구랩" style="position:fixed;inset:0;overflow:hidden;background:#f7f4ec;font-family:'Noto Sans KR',sans-serif;color:#26324b;">
+  <sc-if value="{{ paperGrid }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(38,50,75,0.05) 1px, transparent 1px),linear-gradient(90deg, rgba(38,50,75,0.05) 1px, transparent 1px);background-size:28px 28px;"></div>
+    <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 42%, transparent 55%, rgba(38,50,75,0.05) 100%);"></div>
+  </sc-if>
+  <div ref="{{ setStage }}" style="position:absolute;inset:0;"></div>
+
+  <div style="position:absolute;left:18px;top:12px;display:flex;align-items:baseline;gap:10px;z-index:30;pointer-events:none;">
+    <div style="font-family:'Gaegu',cursive;font-weight:700;font-size:27px;line-height:1;">입체 탐구랩</div>
+    <div style="font-size:11.5px;letter-spacing:0.05em;color:rgba(38,50,75,0.6);">기하 탐구 플랫폼 · 중1 입체도형</div>
+  </div>
+
+  <sc-if value="{{ playing }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;top:16px;transform:translateX(-50%);z-index:40;pointer-events:none;">
+      <div style="font-family:'Gaegu',cursive;font-weight:700;font-size:20px;background:#26324b;color:#f7f4ec;padding:7px 20px 8px;border-radius:999px;box-shadow:0 10px 26px rgba(38,50,75,0.3);animation:chipIn 0.35s cubic-bezier(0.2,0.9,0.25,1) both;">{{ phaseLabel }}</div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ curShow }}" hint-placeholder-val="{{ true }}">
+  <div data-panel="cur" style="{{ curWrap }}">
+    <div style="width:250px;background:rgba(255,255,253,0.93);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(38,50,75,0.14);border-radius:16px;box-shadow:0 14px 34px rgba(38,50,75,0.16);overflow:hidden;animation:floatIn 0.5s cubic-bezier(0.2,0.9,0.25,1) both;">
+      <div onPointerDown="{{ dragCur }}" onPointerMove="{{ dragMove }}" onPointerUp="{{ dragEnd }}" onDoubleClick="{{ minCur }}" style="display:flex;align-items:center;gap:8px;padding:10px 10px 10px 14px;cursor:grab;touch-action:none;user-select:none;">
+        <span style="font-family:'Gowun Batang',serif;font-weight:700;font-size:15px;flex:1;">커리큘럼</span>
+        <button onClick="{{ minCur }}" title="최소화" style="width:30px;height:30px;border:none;background:rgba(38,50,75,0.06);border-radius:8px;cursor:pointer;color:#26324b;font-size:14px;">–</button>
+        <button onClick="{{ toggleCur }}" style="width:30px;height:30px;border:none;background:rgba(38,50,75,0.06);border-radius:8px;cursor:pointer;color:#26324b;font-size:13px;">{{ curChev }}</button>
+      </div>
+      <sc-if value="{{ curOpen }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:2px 10px 12px;max-height:58vh;overflow-y:auto;border-top:1px solid rgba(38,50,75,0.08);">
+          <sc-for list="{{ units }}" as="u" hint-placeholder-count="3">
+            <div style="padding-top:10px;">
+              <div style="display:flex;align-items:baseline;gap:8px;padding:0 8px 5px;">
+                <span style="font-family:'Gowun Batang',serif;font-weight:700;font-size:13.5px;color:#41608f;">{{ u.numeral }}</span>
+                <span style="font-size:12px;font-weight:700;letter-spacing:0.07em;">{{ u.title }}</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                <sc-for list="{{ u.chapters }}" as="ch" hint-placeholder-count="3">
+                  <button onClick="{{ ch.go }}" style="{{ ch.rowStyle }}">
+                    <span style="{{ ch.noStyle }}">{{ ch.no }}</span>
+                    <span>{{ ch.title }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  </sc-if>
+
+  <sc-if value="{{ boardVisible }}" hint-placeholder-val="{{ false }}">
+    <sc-if value="{{ boardShow }}" hint-placeholder-val="{{ true }}">
+    <div data-panel="board" style="{{ boardWrap }}">
+      <div style="width:312px;background:rgba(255,255,253,0.93);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(38,50,75,0.14);border-radius:16px;box-shadow:0 14px 34px rgba(38,50,75,0.16);overflow:hidden;animation:floatIn 0.5s cubic-bezier(0.2,0.9,0.25,1) both;">
+        <div onPointerDown="{{ dragBoard }}" onPointerMove="{{ dragMove }}" onPointerUp="{{ dragEnd }}" onDoubleClick="{{ minBoard }}" style="display:flex;align-items:center;gap:8px;padding:10px 10px 10px 14px;cursor:grab;touch-action:none;user-select:none;">
+          <span style="font-family:'Gowun Batang',serif;font-weight:700;font-size:15px;flex:1;">{{ boardTitle }}</span>
+          <button onClick="{{ minBoard }}" title="최소화" style="width:30px;height:30px;border:none;background:rgba(38,50,75,0.06);border-radius:8px;cursor:pointer;color:#26324b;font-size:14px;">–</button>
+          <button onClick="{{ toggleBoard }}" style="width:30px;height:30px;border:none;background:rgba(38,50,75,0.06);border-radius:8px;cursor:pointer;color:#26324b;font-size:13px;">{{ boardChev }}</button>
+        </div>
+        <sc-if value="{{ boardOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:6px 14px 14px;border-top:1px solid rgba(38,50,75,0.08);">{{ boardEl }}
+            <div style="font-size:11.5px;color:rgba(38,50,75,0.55);padding-top:6px;">{{ boardCaption }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ noteShow }}" hint-placeholder-val="{{ true }}">
+  <div data-panel="note" style="{{ noteWrap }}">
+    <div style="width:330px;background:rgba(255,255,253,0.93);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(38,50,75,0.14);border-radius:16px;box-shadow:0 14px 34px rgba(38,50,75,0.16);overflow:hidden;animation:floatIn 0.5s cubic-bezier(0.2,0.9,0.25,1) both;">
+      <div onPointerDown="{{ dragNote }}" onPointerMove="{{ dragMove }}" onPointerUp="{{ dragEnd }}" onDoubleClick="{{ minNote }}" style="display:flex;align-items:center;gap:8px;padding:10px 10px 10px 14px;cursor:grab;touch-action:none;user-select:none;">
+        <span style="font-family:'Gowun Batang',serif;font-weight:700;font-size:15px;flex:1;">학습 노트</span>
+        <button onClick="{{ minNote }}" title="최소화" style="width:30px;height:30px;border:none;background:rgba(38,50,75,0.06);border-radius:8px;cursor:pointer;color:#26324b;font-size:14px;">–</button>
+        <button onClick="{{ toggleNote }}" style="width:30px;height:30px;border:none;background:rgba(38,50,75,0.06);border-radius:8px;cursor:pointer;color:#26324b;font-size:13px;">{{ noteChev }}</button>
+      </div>
+      <sc-if value="{{ noteOpen }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:12px 18px 16px;border-top:1px solid rgba(38,50,75,0.08);max-height:62vh;overflow-y:auto;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#41608f;">{{ noteKicker }}</div>
+          <div style="font-family:'Gowun Batang',serif;font-weight:700;font-size:20px;line-height:1.3;padding:4px 0 10px;">{{ noteTitle }}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;padding-bottom:10px;">
+            <sc-for list="{{ noteStats }}" as="s" hint-placeholder-count="3">
+              <div style="border:1px solid rgba(38,50,75,0.16);border-radius:8px;padding:3px 9px;font-size:12px;background:rgba(247,244,236,0.85);display:flex;gap:5px;align-items:baseline;">
+                <span style="color:rgba(38,50,75,0.58);">{{ s.k }}</span>
+                <b>{{ s.v }}</b>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:13.5px;line-height:1.7;text-wrap:pretty;">{{ noteBody }}</div>
+          <div style="margin-top:12px;border-top:2px dashed rgba(38,50,75,0.2);padding-top:10px;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;color:#b97a2e;padding-bottom:2px;">탐구 질문</div>
+            <div style="font-family:'Gaegu',cursive;font-size:19px;line-height:1.45;">{{ noteQuestion }}</div>
+          </div>
+          <div style="margin-top:10px;">
+            <button onClick="{{ toggleAnswer }}" style="border:1px solid rgba(38,50,75,0.2);background:rgba(255,255,253,0.9);color:#26324b;border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:500;cursor:pointer;">{{ answerBtnLabel }}</button>
+            <sc-if value="{{ answerShown }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:8px;background:rgba(217,160,91,0.13);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.65;text-wrap:pretty;animation:chipIn 0.3s ease both;">{{ noteAnswer }}</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  </sc-if>
+
+  <sc-if value="{{ dockShow }}" hint-placeholder-val="{{ true }}">
+  <div data-panel="dock" style="{{ dockWrap }}">
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:center;animation:floatIn 0.6s cubic-bezier(0.2,0.9,0.25,1) both;">
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,253,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(38,50,75,0.14);border-radius:999px;padding:8px 16px 8px 10px;box-shadow:0 14px 34px rgba(38,50,75,0.18);flex-wrap:wrap;justify-content:center;max-width:min(92vw,880px);">
+        <span onPointerDown="{{ dragDock }}" onPointerMove="{{ dragMove }}" onPointerUp="{{ dragEnd }}" onDoubleClick="{{ minDock }}" style="cursor:grab;touch-action:none;color:rgba(38,50,75,0.4);font-size:15px;padding:6px 4px;user-select:none;letter-spacing:-2px;">⠿</span>
+        <button onClick="{{ minDock }}" title="최소화" style="width:30px;height:30px;border:none;background:rgba(38,50,75,0.06);border-radius:8px;cursor:pointer;color:#26324b;font-size:14px;flex:none;">–</button>
+        <sc-if value="{{ hasSelect }}" hint-placeholder-val="{{ false }}">
+          <select value="{{ selectValue }}" onChange="{{ selectChange }}" style="border:1px solid rgba(38,50,75,0.2);background:rgba(247,244,236,0.9);color:#26324b;border-radius:10px;padding:8px 10px;font-size:13px;max-width:210px;cursor:pointer;">
+            <sc-for list="{{ selectGroups }}" as="g" hint-placeholder-count="2">
+              <optgroup label="{{ g.label }}">
+                <sc-for list="{{ g.opts }}" as="o" hint-placeholder-count="3">
+                  <option value="{{ o.id }}">{{ o.name }}</option>
+                </sc-for>
+              </optgroup>
+            </sc-for>
+          </select>
+        </sc-if>
+        <sc-for list="{{ segGroups }}" as="sg" hint-placeholder-count="1">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-size:11.5px;color:rgba(38,50,75,0.6);white-space:nowrap;">{{ sg.label }}</span>
+            <div style="display:flex;gap:2px;background:rgba(38,50,75,0.07);border-radius:999px;padding:3px;">
+              <sc-for list="{{ sg.items }}" as="it" hint-placeholder-count="3">
+                <button onClick="{{ it.on }}" style="{{ it.style }}">{{ it.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="1">
+          <button onClick="{{ c.on }}" style="{{ c.style }}">{{ c.label }}</button>
+        </sc-for>
+        <sc-if value="{{ hasSlider }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:11.5px;color:rgba(38,50,75,0.6);white-space:nowrap;">{{ sliderLabel }}</span>
+            <input type="range" min="{{ sliderMin }}" max="{{ sliderMax }}" step="{{ sliderStep }}" value="{{ sliderValue }}" onInput="{{ sliderChange }}" style="width:150px;">
+          </div>
+        </sc-if>
+        <span style="font-size:12.5px;font-weight:700;color:#8a5a1d;white-space:nowrap;">{{ dockReadout }}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:#26324b;color:#f7f4ec;border-radius:999px;padding:8px 14px;box-shadow:0 16px 34px rgba(38,50,75,0.3);">
+        <div style="min-width:120px;text-align:right;">
+          <div style="font-size:10.5px;letter-spacing:0.08em;color:rgba(247,244,236,0.55);">{{ unitLabel }}</div>
+          <div style="font-family:'Gowun Batang',serif;font-weight:700;font-size:14px;white-space:nowrap;">{{ chapterNo }} · {{ chapterTitle }}</div>
+        </div>
+        <button onClick="{{ prevCh }}" style="width:40px;height:40px;border-radius:50%;border:1px solid rgba(247,244,236,0.25);background:transparent;color:#f7f4ec;font-size:13px;cursor:pointer;">◀</button>
+        <button onClick="{{ togglePlay }}" style="width:48px;height:48px;border-radius:50%;border:none;background:#f7f4ec;color:#26324b;font-size:17px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.25);">{{ playGlyph }}</button>
+        <button onClick="{{ nextCh }}" style="width:40px;height:40px;border-radius:50%;border:1px solid rgba(247,244,236,0.25);background:transparent;color:#f7f4ec;font-size:13px;cursor:pointer;">▶</button>
+        <div style="width:140px;height:5px;border-radius:999px;background:rgba(247,244,236,0.22);overflow:hidden;">
+          <div style="{{ progressStyle }}"></div>
+        </div>
+        <button onClick="{{ resetView }}" title="시점 초기화" style="width:40px;height:40px;border-radius:50%;border:1px solid rgba(247,244,236,0.25);background:transparent;color:#f7f4ec;font-size:15px;cursor:pointer;">⟳</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:36;align-items:flex-end;">
+    <sc-for list="{{ tray }}" as="t" hint-placeholder-count="0">
+      <button onClick="{{ t.on }}" style="border:none;background:#26324b;color:#f7f4ec;border-radius:999px;padding:9px 16px;font-family:'Gaegu',cursive;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 10px 24px rgba(38,50,75,0.3);animation:chipIn 0.3s ease both;">{{ t.label }}</button>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;motionScale&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:10,&quot;min&quot;:0,&quot;max&quot;:10,&quot;step&quot;:1,&quot;unit&quot;:&quot;&quot;,&quot;section&quot;:&quot;모션&quot;,&quot;tsType&quot;:&quot;number&quot;},&quot;autoOrbit&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;section&quot;:&quot;모션&quot;,&quot;tsType&quot;:&quot;boolean&quot;},&quot;paperGrid&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;section&quot;:&quot;화면&quot;,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    chapter: 'explorer', solidId: 'FAMILY_PRISM_3',
+    countType: null, countN: 0,
+    genN: 3, genK: 3, genShown: 99,
+    netSolid: null, netFace: -1,
+    presetIdx: 0, secD: 0, secRange: [-1, 1], clip: false, secSides: 0,
+    profId: 'cylinder', sweep: 360,
+    caseIdx: 0, revD: 0, revRange: [-1, 1], revLoops: 0,
+    soccerMode: 'all', soccerCount: '',
+    geoCase: 'cube', geoMode: 'surface',
+    playing: false, phaseLabel: '', progress: 0, answerShown: false,
+    panels: { cur: { x: 16, y: 58, open: true, min: false }, note: { x: null, y: 58, open: true, min: false }, board: { x: 16, y: null, open: true, min: false }, dock: { x: null, y: null, min: false } },
+    ready: false,
+  };
+  get mf() { const m = this.props.motionScale ?? 10; return Math.max(0.12, m / 10); }
+  componentDidMount() {
+    this._anims = []; this._drag = null;
+    this.UNITS = [
+      { numeral: 'Ⅰ', title: '다면체', chs: ['explorer', 'generator', 'euler', 'net', 'section'] },
+      { numeral: 'Ⅱ', title: '회전체', chs: ['revolution', 'revsection'] },
+      { numeral: 'Ⅲ', title: '심화 탐구', chs: ['soccer', 'geodesic'] }];
+    this.CHM = {
+      explorer: { no: '01', u: 0, title: '다면체 관찰실' },
+      generator: { no: '02', u: 0, title: '정다면체, 왜 다섯뿐인가' },
+      euler: { no: '03', u: 0, title: '오일러 공식' },
+      net: { no: '04', u: 0, title: '전개도' },
+      section: { no: '05', u: 0, title: '다면체의 단면' },
+      revolution: { no: '06', u: 1, title: '회전체 만들기' },
+      revsection: { no: '07', u: 1, title: '회전체의 단면' },
+      soccer: { no: '08', u: 2, title: '축구공의 기하학' },
+      geodesic: { no: '09', u: 2, title: '겉면 위의 최단거리' } };
+    this.ORDER = this.UNITS.flatMap(u => u.chs);
+    this.CUBE = { vertices: [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]],
+      faces: [[3,2,1,0],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]],
+      topology: { edges: [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]], V: 8, E: 12, F: 6 } };
+    this._poll = setInterval(() => {
+      if (window.THREE && window.LabEngine && window.P003_DATA && window.P003_R009_EXACT && this._stage) {
+        clearInterval(this._poll); this._poll = null;
+        this.D = window.P003_DATA; this.E = window.P003_R009_EXACT;
+        this.engine = new LabEngine(this._stage);
+        this.engine.autoOrbit = this.props.autoOrbit ?? true;
+        this.engine.onTick = dt => this._tick(dt);
+        const nets = Object.keys(this.D.nets || {});
+        this.setState({ ready: true, netSolid: nets[0] || null });
+        this.enterChapter('explorer');
+      }
+    }, 60);
+  }
+  componentWillUnmount() { if (this._poll) clearInterval(this._poll); if (this.engine) this.engine.dispose(); }
+
+  _tick(dt) {
+    if (!this._anims.length) return;
+    const a = this._anims[0];
+    a.t += dt;
+    const p = Math.min(1, a.t / a.dur);
+    const pe = a.ease ? a.ease(p) : p;
+    if (a.onU) a.onU(pe, p);
+    if (a.phases) {
+      const ph = a.phases.find(x => p <= x.until) || a.phases[a.phases.length - 1];
+      if (ph && ph.label !== this.state.phaseLabel) this.setState({ phaseLabel: ph.label });
+    }
+    this.setState({ progress: ((this._chainI || 0) + p) / (this._chainN || 1) });
+    if (p >= 1) {
+      this._anims.shift(); this._chainI = (this._chainI || 0) + 1;
+      if (a.onDone) a.onDone();
+      if (!this._anims.length) this.setState({ playing: false, phaseLabel: '', progress: 0 });
+    }
+  }
+  playSteps(steps) {
+    this.stopPlay();
+    const f = this.mf;
+    this._anims = steps.map(s => Object.assign({ t: 0 }, s, { dur: Math.max(0.08, s.dur * f) }));
+    this._chainI = 0; this._chainN = steps.length;
+    this.setState({ playing: true });
+  }
+  stopPlay() { this._anims = []; if (this.state.playing) this.setState({ playing: false, phaseLabel: '', progress: 0 }); }
+  easeIO(p) { return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
+
+  enterChapter(id) {
+    this.stopPlay();
+    const e = this.engine; if (!e) return;
+    e.clearSolid();
+    this.setState({ chapter: id, answerShown: false, countType: null, countN: 0, genShown: 99, netFace: -1 });
+    const st = this.state;
+    if (id === 'explorer' || id === 'euler') this.buildSolid(st.solidId);
+    else if (id === 'generator') this.applyGen(st.genN, st.genK);
+    else if (id === 'net') this.buildNet(st.netSolid);
+    else if (id === 'section') this.applyPreset(st.presetIdx);
+    else if (id === 'revolution') this.applyProfile(st.profId, 360);
+    else if (id === 'revsection') this.applyCase(st.caseIdx);
+    else if (id === 'soccer') this.buildSoccer('all');
+    else if (id === 'geodesic') this.applyGeo(st.geoCase, st.geoMode);
+  }
+  buildSolid(id) {
+    const s = this.D.solids[id]; if (!s) return;
+    this.engine.setPolyhedron(s); this.engine.frame();
+    this.setState({ solidId: id, countType: null, countN: 0 });
+  }
+  applyGen(n, k) {
+    const id = this.D.platonic_generator_valid_pairs[n + ',' + k];
+    const e = this.engine; e.clearSolid();
+    if (id) { e.setPolyhedron(this.D.solids[id]); e.frame(); }
+    this.setState({ genN: n, genK: k, genShown: 99 });
+  }
+  buildNet(id) {
+    if (!id) return;
+    const s = this.D.solids[id];
+    this.engine.setPolyhedron(s); this.engine.frame();
+    this.setState({ netSolid: id, netFace: -1 });
+  }
+  applyPreset(i) {
+    const pr = this.D.cross_section_presets[i]; if (!pr) return;
+    const e = this.engine;
+    e.setPolyhedron(this.D.solids[pr.solid_id]); e.frame();
+    const nl = Math.hypot(pr.normal[0], pr.normal[1], pr.normal[2]) || 1;
+    const range = e.projRange(pr.normal);
+    const target = pr.target_d * e.solidScale / nl;
+    this.setState({ presetIdx: i, secRange: range, answerShown: false });
+    this.updateSection(target);
+  }
+  updateSection(d) {
+    const pr = this.D.cross_section_presets[this.state.presetIdx];
+    const res = this.engine.showSection(pr.normal, d, { clip: this.state.clip });
+    this.setState({ secD: d, secSides: res.sides });
+  }
+  applyProfile(id, sweep) {
+    const pf = this.E.revolution_profiles[id]; if (!pf) return;
+    this.engine.setLathe(pf, sweep);
+    this.engine.frame();
+    this.setState({ profId: id, sweep: sweep });
+  }
+  applyCase(i) {
+    const c = this.E.section_cases[i]; if (!c) return;
+    const e = this.engine;
+    e.setLathe(this.E.revolution_profiles[c.profile], 360);
+    e.frame();
+    const nl = Math.hypot(c.plane.normal[0], c.plane.normal[1], c.plane.normal[2]) || 1;
+    const range = e.projRange(c.plane.normal);
+    this.setState({ caseIdx: i, revRange: range, answerShown: false });
+    this.updateRev(c.plane.d / nl);
+  }
+  updateRev(d) {
+    const c = this.E.section_cases[this.state.caseIdx];
+    const res = this.engine.showSection(c.plane.normal, d, { clip: this.state.clip });
+    this.setState({ revD: d, revLoops: res.loops });
+  }
+  buildSoccer(mode) {
+    const s = this.D.solids.ARCH_TRUNC_ICOSA; if (!s) return;
+    const e = this.engine;
+    e.setPolyhedron(s, { faceColor: (i, sides) => sides === 5 ? 0x41608f : 0xf2ede1 });
+    e.frame();
+    s.faces.forEach((f, i) => {
+      const sides = f.length;
+      e.setFaceDim(i, mode === 'penta' ? sides !== 5 : mode === 'hexa' ? sides !== 6 : false);
+    });
+    this.setState({ soccerMode: mode, soccerCount: '' });
+  }
+  applyGeo(caseId, mode) {
+    const e = this.engine; e.clearSolid();
+    if (caseId === 'cube') {
+      e.setPolyhedron(this.CUBE);
+      const s = e.solidScale;
+      const P = new THREE.Vector3(-s, -s, -s), Q = new THREE.Vector3(s, s, s);
+      const sp = this.E.shortest_paths.cube;
+      let pts, len;
+      if (mode === 'interior') { pts = [P, Q]; len = '내부 지름길 √3·a ≈ ' + sp.interior_distance.toFixed(3) + 'a'; }
+      else if (mode === 'edge') { pts = [P, new THREE.Vector3(s, -s, -s), new THREE.Vector3(s, s, -s), Q]; len = '모서리 경로 3a'; }
+      else { pts = [P, new THREE.Vector3(s, -s, 0), Q]; len = '겉면 최단 √5·a ≈ ' + sp.surface_distance.toFixed(3) + 'a'; }
+      this._geo = { P, Q, pts, len };
+    } else {
+      e.setLathe({ components: [{ kind: 'polygon', points: [[0, -1], [1, -1], [1, 1], [0, 1]] }] }, 360, { noPop: false });
+      const sp = this.E.shortest_paths.cylinder;
+      const TH = sp.Q.theta;
+      const P = new THREE.Vector3(1, -1, 0), Q = new THREE.Vector3(Math.cos(TH), 1, Math.sin(TH));
+      let pts, len;
+      if (mode === 'interior') { pts = [P, Q]; len = '내부 지름길 ≈ ' + sp.interior_chord.toFixed(3); }
+      else {
+        pts = [];
+        for (let i = 0; i <= 48; i++) { const t = i / 48; pts.push(new THREE.Vector3(Math.cos(t * TH), -1 + 2 * t, Math.sin(t * TH))); }
+        len = '옆면 최단 ≈ ' + Math.hypot(TH, 2).toFixed(3);
+      }
+      this._geo = { P, Q, pts, len };
+    }
+    e.frame();
+    this._redrawGeo(1);
+    this.setState({ geoCase: caseId, geoMode: mode, answerShown: false });
+  }
+  _redrawGeo(f) {
+    const e = this.engine, g = this._geo; if (!g) return;
+    e.clearOverlays();
+    e.addDot(g.P, 0x26324b, 0.11); e.addDot(g.Q, 0xb97a2e, 0.11);
+    const n = Math.max(2, Math.ceil(g.pts.length * f));
+    e.addPath(g.pts.slice(0, n), { color: 0xb97a2e, r: 0.05 });
+  }
+
+  buildPlay() {
+    const st = this.state, e = this.engine, D = this.D, E = this.E;
+    const ch = st.chapter;
+    if (ch === 'explorer' || ch === 'euler') {
+      const steps = ['v', 'e', 'f'].map(t => this.countStep(t));
+      steps.push({ dur: 1.6, phases: [{ until: 1, label: '오일러 확인 · V−E+F = 2' }], onDone: () => { if (ch === 'euler') this.setState({ answerShown: true }); } });
+      return steps;
+    }
+    if (ch === 'generator') {
+      const k = st.genK, ANG = { 3: 60, 4: 90, 5: 108, 6: 120 }, sum = k * ANG[st.genN];
+      const valid = !!D.platonic_generator_valid_pairs[st.genN + ',' + st.genK];
+      return [
+        { dur: 1.8, phases: [{ until: 1, label: '한 꼭짓점에 면을 모아 봅니다' }], onU: p => { const m = Math.max(1, Math.ceil(p * k)); if (m !== this.state.genShown) this.setState({ genShown: m }); } },
+        { dur: 1.4, phases: [{ until: 1, label: valid ? sum + '° < 360° · 입체로 접힙니다' : (sum === 360 ? '360° · 평면이 되어 접히지 않습니다' : sum + '° > 360° · 겹쳐서 만들 수 없습니다') }], onDone: () => { if (valid) e.popIn(); this.setState({ answerShown: true }); } }];
+    }
+    if (ch === 'net') {
+      const net = D.nets[st.netSolid]; if (!net) return [];
+      const F = net.faces.length;
+      return [{ dur: 0.55 * F, phases: [{ until: 1, label: '전개도의 면과 입체의 면을 짝지어 봅니다' }],
+        onU: p => { const k = Math.min(F - 1, Math.floor(p * F)); if (k !== this.state.netFace) { e.clearHighlights(); e.highlightFace(net.faces[k].source_face_index, true); this.setState({ netFace: k }); } },
+        onDone: () => { e.clearHighlights(); this.setState({ netFace: -1 }); } }];
+    }
+    if (ch === 'section') {
+      const lo = st.secRange[0] + 0.04, target = st.secD;
+      return [
+        { dur: 0.8, phases: [{ until: 1, label: '자르는 평면 준비' }], onU: () => this.updateSection(lo) },
+        { dur: 2.8, ease: p => this.easeIO(p), phases: [{ until: 1, label: '평면이 입체를 지나갑니다' }], onU: pe => this.updateSection(lo + (target - lo) * pe) },
+        { dur: 1.0, phases: [{ until: 1, label: '단면 확인' }], onDone: () => this.setState({ answerShown: true }) }];
+    }
+    if (ch === 'revolution') {
+      return [
+        { dur: 0.7, phases: [{ until: 1, label: '회전 준비 · 평면도형에서 시작' }], onU: () => { e.setLatheSweep(7); } },
+        { dur: 3.0, ease: p => this.easeIO(p), phases: [{ until: 0.9, label: '축을 중심으로 1회전' }, { until: 1, label: '정리' }],
+          onU: pe => { const s = 7 + pe * 353; e.setLatheSweep(s); this.setState({ sweep: Math.round(s) }); } },
+        { dur: 0.6, phases: [{ until: 1, label: '회전체 완성' }], onDone: () => { e.frame(); this.setState({ answerShown: true }); } }];
+    }
+    if (ch === 'revsection') {
+      const c = E.section_cases[st.caseIdx];
+      const nl = Math.hypot(c.plane.normal[0], c.plane.normal[1], c.plane.normal[2]) || 1;
+      const lo = st.revRange[0] + 0.05, target = c.plane.d / nl;
+      return [
+        { dur: 0.8, phases: [{ until: 1, label: '자르는 평면 준비' }], onU: () => this.updateRev(lo) },
+        { dur: 2.8, ease: p => this.easeIO(p), phases: [{ until: 1, label: '평면이 회전체를 지나갑니다' }], onU: pe => this.updateRev(lo + (target - lo) * pe) },
+        { dur: 1.0, phases: [{ until: 1, label: '단면 확인' }], onDone: () => this.setState({ answerShown: true }) }];
+    }
+    if (ch === 'soccer') {
+      const s = D.solids.ARCH_TRUNC_ICOSA;
+      const penta = [], hexa = [];
+      s.faces.forEach((f, i) => (f.length === 5 ? penta : hexa).push(i));
+      return [
+        { dur: 3.4, phases: [{ until: 1, label: '정오각형 세기' }], onU: p => { const k = Math.ceil(p * penta.length); penta.forEach((fi, j) => e.highlightFace(fi, j < k)); const t = '정오각형 ' + k + ' / 12'; if (t !== this.state.soccerCount) this.setState({ soccerCount: t }); } },
+        { dur: 3.8, phases: [{ until: 1, label: '정육각형 세기' }], onU: p => { const k = Math.ceil(p * hexa.length); hexa.forEach((fi, j) => e.highlightFace(fi, j < k, 0xd9a05b)); const t = '정육각형 ' + k + ' / 20'; if (t !== this.state.soccerCount) this.setState({ soccerCount: t }); } },
+        { dur: 1.6, phases: [{ until: 1, label: '60 − 90 + 32 = 2' }], onDone: () => { e.clearHighlights(); this.buildSoccer(this.state.soccerMode); this.setState({ answerShown: true }); } }];
+    }
+    if (ch === 'geodesic') {
+      return [
+        { dur: 0.6, phases: [{ until: 1, label: '두 점 P와 Q' }], onU: () => this._redrawGeo(0.01) },
+        { dur: 2.2, ease: p => this.easeIO(p), phases: [{ until: 1, label: '경로를 그립니다' }], onU: pe => this._redrawGeo(pe) },
+        { dur: 1.0, phases: [{ until: 1, label: this._geo ? this._geo.len : '' }], onDone: () => this.setState({ answerShown: true }) }];
+    }
+    return [];
+  }
+  countStep(type) {
+    const s = this.D.solids[this.state.solidId], topo = s.topology, e = this.engine;
+    const N = type === 'v' ? topo.V : type === 'e' ? topo.E : topo.F;
+    const label = { v: '꼭짓점 세기', e: '모서리 세기', f: '면 세기' }[type];
+    return { dur: Math.min(5, 0.22 * N + 0.7), phases: [{ until: 1, label: label }],
+      onU: p => {
+        const k = Math.floor(p * N);
+        for (let i = 0; i < N; i++) {
+          const on = i < k;
+          if (type === 'v') e.highlightVertex(i, on); else if (type === 'e') e.highlightEdge(i, on); else e.highlightFace(i, on);
+        }
+        if (k !== this.state.countN || type !== this.state.countType) this.setState({ countN: k, countType: type });
+      },
+      onDone: () => this.setState({ countN: N, countType: type }) };
+  }
+
+  minimizePanel(key) {
+    const panels = { ...this.state.panels };
+    panels[key] = { ...panels[key], min: true };
+    this.setState({ panels });
+  }
+  restorePanel(key) {
+    const panels = { ...this.state.panels };
+    panels[key] = { ...panels[key], min: false, x: null, y: null };
+    this.setState({ panels });
+  }
+  _dragStart(key) {
+    return e => {
+      const w = e.currentTarget.closest('[data-panel]'); if (!w) return;
+      const r = w.getBoundingClientRect();
+      this._drag = { key, sx: e.clientX, sy: e.clientY, ox: r.left, oy: r.top };
+      e.currentTarget.setPointerCapture(e.pointerId);
+    };
+  }
+  boardSvg() {
+    const h = React.createElement, st = this.state, ch = st.chapter;
+    const INK = '#26324b', ACC = '#41608f', AMB = '#b97a2e';
+    if (!this.D) return null;
+    if (ch === 'generator') {
+      const ANG = { 3: 60, 4: 90, 5: 108, 6: 120 }, a = ANG[st.genN], k = st.genK, sum = a * k;
+      const shown = Math.min(k, st.genShown);
+      const cx = 142, cy = 128, R = 96;
+      const kids = [];
+      for (let i = 0; i < shown; i++) {
+        const a0 = (-90 + i * a) * Math.PI / 180, a1 = (-90 + (i + 1) * a) * Math.PI / 180;
+        const large = a > 180 ? 1 : 0;
+        kids.push(h('path', { key: 'w' + i, d: `M ${cx} ${cy} L ${cx + R * Math.cos(a0)} ${cy + R * Math.sin(a0)} A ${R} ${R} 0 ${large} 1 ${cx + R * Math.cos(a1)} ${cy + R * Math.sin(a1)} Z`, fill: sum > 360 && i === k - 1 ? 'rgba(178,58,58,0.3)' : 'rgba(65,96,143,0.16)', stroke: ACC, strokeWidth: 1.6 }));
+      }
+      if (sum < 360) {
+        const a0 = (-90 + sum) * Math.PI / 180, a1 = (-90 + 360) * Math.PI / 180;
+        kids.push(h('path', { key: 'gap', d: `M ${cx + (R + 8) * Math.cos(a0)} ${cy + (R + 8) * Math.sin(a0)} A ${R + 8} ${R + 8} 0 ${360 - sum > 180 ? 1 : 0} 1 ${cx + (R + 8) * Math.cos(a1)} ${cy + (R + 8) * Math.sin(a1)}`, fill: 'none', stroke: AMB, strokeWidth: 2.5, strokeDasharray: '5 4' }));
+      }
+      kids.push(h('circle', { key: 'c', cx, cy, r: 3.5, fill: INK }));
+      kids.push(h('text', { key: 't', x: cx, y: 252, textAnchor: 'middle', fontFamily: 'Gaegu, cursive', fontSize: 22, fontWeight: 700, fill: INK }, `${a}° × ${k} = ${sum}°  ${sum < 360 ? '< 360° ✓' : sum === 360 ? '= 360° ✗' : '> 360° ✗'}`));
+      return h('svg', { viewBox: '0 0 284 264', width: '100%' }, kids);
+    }
+    if (ch === 'net') {
+      const net = this.D.nets[st.netSolid]; if (!net) return null;
+      let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      net.faces.forEach(f => f.points.forEach(p => { x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); y0 = Math.min(y0, -p[1]); y1 = Math.max(y1, -p[1]); }));
+      const pad = 0.12;
+      const kids = net.faces.map((f, i) => h('polygon', {
+        key: i, points: f.points.map(p => p[0] + ',' + (-p[1])).join(' '),
+        fill: i === st.netFace ? 'rgba(217,160,91,0.75)' : 'rgba(65,96,143,0.13)',
+        stroke: INK, strokeWidth: 0.025, style: { cursor: 'pointer' },
+        onClick: () => { this.engine.clearHighlights(); this.engine.highlightFace(f.source_face_index, true); this.setState({ netFace: i }); }
+      }));
+      return h('svg', { viewBox: `${x0 - pad} ${y0 - pad} ${x1 - x0 + 2 * pad} ${y1 - y0 + 2 * pad}`, width: '100%' }, kids);
+    }
+    if (ch === 'revolution') {
+      const pf = this.E.revolution_profiles[st.profId]; if (!pf) return null;
+      const S = 46, cx = 90, cy = 120;
+      const kids = [h('line', { key: 'ax', x1: cx, y1: 8, x2: cx, y2: 232, stroke: INK, strokeWidth: 1.5, strokeDasharray: '6 5' }),
+        h('text', { key: 'axl', x: cx + 6, y: 20, fontSize: 11, fill: 'rgba(38,50,75,0.6)', fontFamily: 'Noto Sans KR, sans-serif' }, '회전축 ℓ')];
+      (pf.components || []).forEach((comp, ci) => {
+        if (comp.kind === 'circle') {
+          kids.push(h('circle', { key: 'c' + ci, cx: cx + comp.center[0] * S, cy: cy - comp.center[1] * S, r: comp.radius * S, fill: 'rgba(217,160,91,0.35)', stroke: AMB, strokeWidth: 2 }));
+        } else {
+          const pts = this.engine ? this.engine._profilePoints(comp) : (comp.points || []);
+          kids.push(h('polygon', { key: 'p' + ci, points: pts.map(p => (cx + p[0] * S) + ',' + (cy - p[1] * S)).join(' '), fill: 'rgba(217,160,91,0.35)', stroke: AMB, strokeWidth: 2 }));
+        }
+      });
+      kids.push(h('path', { key: 'arr', d: `M ${cx - 34} 236 A 34 10 0 1 0 ${cx + 34} 236`, fill: 'none', stroke: ACC, strokeWidth: 1.8, strokeDasharray: '4 4' }));
+      return h('svg', { viewBox: '0 0 284 252', width: '100%' }, kids);
+    }
+    if (ch === 'geodesic') {
+      const kids = [];
+      if (st.geoCase === 'cube') {
+        const S = 118, ox = 20, oy = 30;
+        kids.push(h('rect', { key: 'r1', x: ox, y: oy, width: S, height: S, fill: 'rgba(65,96,143,0.1)', stroke: INK, strokeWidth: 1.4 }));
+        kids.push(h('rect', { key: 'r2', x: ox + S, y: oy, width: S, height: S, fill: 'rgba(65,96,143,0.16)', stroke: INK, strokeWidth: 1.4 }));
+        kids.push(h('line', { key: 'ln', x1: ox, y1: oy + S, x2: ox + 2 * S, y2: oy, stroke: AMB, strokeWidth: 2.6 }));
+        kids.push(h('circle', { key: 'p', cx: ox, cy: oy + S, r: 5, fill: INK }));
+        kids.push(h('circle', { key: 'q', cx: ox + 2 * S, cy: oy, r: 5, fill: AMB }));
+        kids.push(h('text', { key: 'tp', x: ox - 4, y: oy + S + 20, fontFamily: 'Gaegu, cursive', fontSize: 19, fontWeight: 700, fill: INK }, 'P'));
+        kids.push(h('text', { key: 'tq', x: ox + 2 * S - 8, y: oy - 10, fontFamily: 'Gaegu, cursive', fontSize: 19, fontWeight: 700, fill: AMB }, 'Q'));
+        kids.push(h('text', { key: 'tl', x: ox + S, y: oy + S + 26, textAnchor: 'middle', fontFamily: 'Gaegu, cursive', fontSize: 20, fontWeight: 700, fill: INK }, '펼치면 선분 · 길이 √5·a'));
+        return h('svg', { viewBox: '0 0 284 190', width: '100%' }, kids);
+      }
+      const sp = this.E.shortest_paths.cylinder, W = 2 * Math.PI, H = 2, S2 = 40, ox = 12, oy = 22;
+      kids.push(h('rect', { key: 'r', x: ox, y: oy, width: W * S2, height: H * S2, fill: 'rgba(65,96,143,0.1)', stroke: INK, strokeWidth: 1.4 }));
+      kids.push(h('line', { key: 'l', x1: ox, y1: oy + H * S2, x2: ox + sp.Q.theta * S2, y2: oy, stroke: AMB, strokeWidth: 2.6 }));
+      kids.push(h('circle', { key: 'p', cx: ox, cy: oy + H * S2, r: 5, fill: INK }));
+      kids.push(h('circle', { key: 'q', cx: ox + sp.Q.theta * S2, cy: oy, r: 5, fill: AMB }));
+      kids.push(h('text', { key: 't', x: ox + W * S2 / 2, y: oy + H * S2 + 24, textAnchor: 'middle', fontFamily: 'Gaegu, cursive', fontSize: 19, fontWeight: 700, fill: INK }, '옆면 전개도 = 직사각형, 최단 경로는 선분'));
+      return h('svg', { viewBox: '0 0 284 138', width: '100%' }, kids);
+    }
+    return null;
+  }
+
+  renderVals() {
+    const st = this.state, D = this.D, E = this.E, ch = st.chapter, meta = (this.CHM || {})[ch] || { no: '01', u: 0, title: '' };
+    if (this.engine) this.engine.autoOrbit = this.props.autoOrbit ?? true;
+    const ROW = active => ({ display: 'flex', alignItems: 'center', gap: 9, width: '100%', textAlign: 'left', border: 'none', borderRadius: 10, padding: '9px 10px', fontSize: 13, fontWeight: active ? 700 : 400, cursor: 'pointer', color: active ? '#f7f4ec' : '#26324b', background: active ? '#26324b' : 'transparent', transition: 'background .18s, color .18s' });
+    const NO = active => ({ fontFamily: 'Gowun Batang, serif', fontWeight: 700, fontSize: 11.5, color: active ? 'rgba(247,244,236,0.6)' : '#41608f', minWidth: 18 });
+    const units = (this.UNITS || []).map(u => ({
+      numeral: u.numeral, title: u.title,
+      chapters: u.chs.map(id => ({ id, no: this.CHM[id].no, title: this.CHM[id].title, go: () => this.enterChapter(id), rowStyle: ROW(id === ch), noStyle: NO(id === ch) }))
+    }));
+    const seg = (label, on, disabled) => ({ border: 'none', borderRadius: 999, padding: '7px 12px', fontSize: 12.5, fontWeight: on ? 700 : 400, cursor: disabled ? 'default' : 'pointer', background: on ? '#26324b' : 'transparent', color: disabled ? 'rgba(38,50,75,0.3)' : on ? '#f7f4ec' : '#26324b', transition: 'background .18s, color .18s', whiteSpace: 'nowrap' });
+    const chipStyle = on => ({ border: '1px solid ' + (on ? '#b97a2e' : 'rgba(38,50,75,0.2)'), background: on ? 'rgba(217,160,91,0.2)' : 'rgba(247,244,236,0.9)', color: on ? '#8a5a1d' : '#26324b', borderRadius: 999, padding: '8px 14px', fontSize: 12.5, fontWeight: on ? 700 : 400, cursor: 'pointer', whiteSpace: 'nowrap' });
+    let selectGroups = [], selectValue = '', segGroups = [], chips = [], slider = null, readout = '';
+    let noteTitle = meta.title, noteBody = '', noteQuestion = '', noteAnswer = '', noteStats = [];
+    let boardVisible = false, boardTitle = '', boardCaption = '';
+    if (D && E) {
+      const solidGroups = [
+        { label: '기본 입체 (각기둥 · 각뿔)', ids: D.ui.family_order }, { label: '정다면체', ids: D.ui.platonic_order }, { label: '아르키메데스 입체', ids: D.ui.extension_order }
+      ].map(g => ({ label: g.label, opts: g.ids.map(id => ({ id, name: D.solids[id].korean_name })) }));
+      const topoOf = id => (D.solids[id] || {}).topology || {};
+      if (ch === 'explorer' || ch === 'euler') {
+        selectGroups = solidGroups; selectValue = st.solidId;
+        const t = topoOf(st.solidId), name = D.solids[st.solidId].korean_name;
+        segGroups = [{ label: '세어 보기', items: [['v', '꼭짓점'], ['e', '모서리'], ['f', '면']].map(pair => ({ label: pair[1], on: () => this.playSteps([this.countStep(pair[0])]), style: seg(pair[1], st.countType === pair[0]) })) }];
+        readout = st.countType ? ({ v: '꼭짓점', e: '모서리', f: '면' })[st.countType] + ' ' + st.countN + ' / ' + (st.countType === 'v' ? t.V : st.countType === 'e' ? t.E : t.F) : 'V ' + t.V + ' · E ' + t.E + ' · F ' + t.F;
+        noteStats = [{ k: '이름', v: name }, { k: 'V', v: t.V }, { k: 'E', v: t.E }, { k: 'F', v: t.F }, { k: 'V−E+F', v: t.euler }];
+        if (ch === 'explorer') {
+          noteBody = '다면체는 다각형인 면만으로 둘러싸인 입체도형이다. 면·모서리·꼭짓점을 직접 세어 구조를 파악해 보자. ' + (D.solids[st.solidId].face_description ? '이 입체의 면은 ' + D.solids[st.solidId].face_description + '로 이루어져 있다.' : '');
+          noteQuestion = '각기둥과 각뿔의 옆면은 각각 어떤 다각형일까?';
+          noteAnswer = '각기둥의 옆면은 직사각형, 각뿔의 옆면은 삼각형이다. 옆면의 개수는 밑면의 변의 수와 같다.';
+        } else {
+          noteBody = '볼록한 다면체에서 꼭짓점의 수를 V, 모서리의 수를 E, 면의 수를 F라 하면 V − E + F = 2 가 항상 성립한다. 재생을 눌러 세 값을 차례로 세어 보자.';
+          noteQuestion = '면의 수가 아무리 늘어나도 V−E+F가 2로 유지되는 까닭은?';
+          noteAnswer = '면을 늘리면 그만큼 모서리와 꼭짓점도 함께 늘어나 증가분이 상쇄되기 때문이다. 이 값은 입체의 생김새가 아니라 면·모서리·꼭짓점이 연결된 구조가 결정한다.';
+        }
+      } else if (ch === 'generator') {
+        const ANG = { 3: 60, 4: 90, 5: 108, 6: 120 }, sum = ANG[st.genN] * st.genK;
+        const valid = D.platonic_generator_valid_pairs[st.genN + ',' + st.genK];
+        segGroups = [
+          { label: '정n각형', items: [3, 4, 5, 6].map(n => ({ label: String(n), on: () => this.applyGen(n, this.state.genK), style: seg(n, st.genN === n) })) },
+          { label: '한 꼭짓점에', items: [3, 4, 5].map(k => ({ label: k + '개', on: () => this.applyGen(this.state.genN, k), style: seg(k, st.genK === k) })) }];
+        readout = ANG[st.genN] + '°×' + st.genK + ' = ' + sum + '°' + (valid ? ' → ' + D.solids[valid].korean_name : sum === 360 ? ' → 평면' : sum > 360 ? ' → 불가능' : ' → ?');
+        boardVisible = true; boardTitle = '칠판 · 한 꼭짓점에 모인 각'; boardCaption = '360°보다 작아야 입체로 접힌다';
+        noteStats = [{ k: '한 내각', v: ANG[st.genN] + '°' }, { k: '각의 합', v: sum + '°' }, { k: '판정', v: valid ? D.solids[valid].korean_name : '만들 수 없음' }];
+        noteBody = '정다면체는 모든 면이 합동인 정다각형이고, 각 꼭짓점에 모이는 면의 개수가 같은 볼록 다면체이다. 한 꼭짓점에 모인 각의 합이 360°보다 작아야 입체로 접을 수 있다.';
+        noteQuestion = '정육각형(한 각 120°)으로는 왜 정다면체를 만들 수 없을까?';
+        noteAnswer = '정육각형 3개가 한 꼭짓점에 모이면 120°×3 = 360°가 되어 평면에 그대로 펼쳐진다. 접을 여유 각이 없으므로 입체가 만들어지지 않는다. 가능한 조합은 (3,3) (3,4) (3,5) (4,3) (5,3)의 다섯 가지뿐이다.';
+      } else if (ch === 'net') {
+        const netIds = Object.keys(D.nets || {});
+        selectGroups = [{ label: '전개도가 준비된 입체', opts: netIds.map(id => ({ id, name: (D.solids[id] || {}).korean_name || id })) }];
+        selectValue = st.netSolid || '';
+        const net = D.nets[st.netSolid];
+        readout = net ? '면 ' + net.faces.length + '개 · 칠판의 면을 눌러 보세요' : '';
+        boardVisible = true; boardTitle = '칠판 · 전개도'; boardCaption = '면을 누르면 입체에서 같은 면이 켜집니다';
+        noteStats = net ? [{ k: '면', v: net.faces.length + '개' }] : [];
+        noteBody = '전개도는 입체도형의 겉면을 모서리를 따라 잘라 한 평면 위에 겹치지 않게 펼친 그림이다. 전개도를 접으면 원래의 입체가 된다.';
+        noteQuestion = '같은 입체의 전개도는 한 가지뿐일까?';
+        noteAnswer = '아니다. 어느 모서리를 자르는지에 따라 여러 가지 전개도가 나온다. 정육면체의 서로 다른 전개도는 모두 11가지이다.';
+      } else if (ch === 'section') {
+        const prs = D.cross_section_presets;
+        selectGroups = [{ label: '탐구 사례', opts: prs.map((p, i) => ({ id: String(i), name: p.short_title })) }];
+        selectValue = String(st.presetIdx);
+        const pr = prs[st.presetIdx];
+        slider = { label: '평면 위치', min: st.secRange[0] + 0.03, max: st.secRange[1] - 0.03, step: 0.01, value: st.secD };
+        chips = [{ label: '잘라 보기', on: () => { this.setState({ clip: !st.clip }); setTimeout(() => this.updateSection(this.state.secD), 0); }, style: chipStyle(st.clip) }];
+        readout = '단면: ' + (st.secSides || '–') + '각형 (예상 ' + pr.expected_sides + '각형)' + (st.secSides === pr.expected_sides ? ' ✓' : '');
+        noteStats = [{ k: '입체', v: D.solids[pr.solid_id].korean_name }, { k: '예상 단면', v: pr.expected_sides + '각형' }];
+        noteBody = '입체도형을 한 평면으로 자를 때 생기는 면을 단면이라 한다. 자르는 평면의 방향과 위치에 따라 단면의 모양이 달라진다.';
+        noteQuestion = pr.question; noteAnswer = pr.explanation;
+      } else if (ch === 'revolution') {
+        const grp = E.revolution_groups, prof = E.revolution_profiles;
+        selectGroups = [
+          { label: '기본 회전체', ids: grp.basic }, { label: '축에서 떨어진 도형', ids: grp.offset }, { label: '복합 회전체', ids: grp.composite }
+        ].map(g => ({ label: g.label, opts: g.ids.map(id => ({ id, name: prof[id].label })) }));
+        selectValue = st.profId;
+        const pf = prof[st.profId];
+        slider = { label: '회전각', min: 0, max: 360, step: 1, value: st.sweep };
+        readout = st.sweep + '°';
+        boardVisible = true; boardTitle = '칠판 · 회전시킬 평면도형'; boardCaption = '이 도형을 축 ℓ 둘레로 1회전한다';
+        const KM = { radius: '반지름', height: '높이', base_radius: '밑면 반지름', top_radius: '윗면 반지름', major_radius: '큰 반지름', minor_radius: '작은 반지름', outer_radius: '바깥 반지름', inner_radius: '안쪽 반지름' };
+        noteStats = [{ k: '회전시킨 도형', v: pf.profile_label }].concat(Object.entries(pf.exact || {}).map(pair => ({ k: KM[pair[0]] || pair[0], v: typeof pair[1] === 'number' ? +pair[1].toFixed(2) : pair[1] })));
+        noteBody = '평면도형을 한 직선 ℓ을 축으로 하여 1회전 시킬 때 생기는 입체도형을 회전체라 한다. 원기둥·원뿔·원뿔대·구가 대표적인 회전체이다.';
+        noteQuestion = '회전시키는 평면도형이 축에서 떨어져 있으면 어떤 회전체가 생길까?';
+        noteAnswer = '축과 도형 사이가 빈 회전체가 생긴다. 원을 축에서 떨어뜨려 회전하면 가운데가 뚫린 도넛 모양(토러스)이 된다.';
+      } else if (ch === 'revsection') {
+        const cases = E.section_cases;
+        selectGroups = [{ label: '탐구 사례', opts: cases.map((c, i) => ({ id: String(i), name: c.label })) }];
+        selectValue = String(st.caseIdx);
+        const c = cases[st.caseIdx];
+        slider = { label: '평면 위치', min: st.revRange[0] + 0.04, max: st.revRange[1] - 0.04, step: 0.01, value: st.revD };
+        chips = [{ label: '잘라 보기', on: () => { this.setState({ clip: !st.clip }); setTimeout(() => this.updateRev(this.state.revD), 0); }, style: chipStyle(st.clip) }];
+        const CLS = { circle: '원', annulus: '고리 모양(원환)', two_circles: '원 2개', rectangle: '직사각형', triangle: '삼각형' };
+        readout = '단면 경계 ' + st.revLoops + '개 · ' + (CLS[c.classification] || c.classification);
+        noteStats = [{ k: '회전체', v: E.revolution_profiles[c.profile].label }, { k: '단면', v: CLS[c.classification] || c.classification }];
+        noteBody = '회전체를 회전축에 수직인 평면으로 자르면 단면은 항상 원이거나 원으로 둘러싸인 도형이다. 축을 포함하는 평면으로 자르면 축에 대하여 선대칭인 도형이 된다.';
+        noteQuestion = c.label + ' — 단면은 어떤 모양일까?';
+        noteAnswer = '이 위치에서 단면의 경계는 ' + st.revLoops + '개의 곡선으로 이루어진 ' + (CLS[c.classification] || c.classification) + '이다. 평면 위치 슬라이더를 움직여 단면이 어떻게 변하는지 관찰해 보자.';
+      } else if (ch === 'soccer') {
+        segGroups = [{ label: '보기', items: [['all', '전체'], ['penta', '오각형'], ['hexa', '육각형']].map(pair => ({ label: pair[1], on: () => this.buildSoccer(pair[0]), style: seg(pair[1], st.soccerMode === pair[0]) })) }];
+        readout = st.soccerCount || '정오각형 12 · 정육각형 20';
+        noteStats = [{ k: 'V', v: 60 }, { k: 'E', v: 90 }, { k: 'F', v: '32 (12+20)' }, { k: 'V−E+F', v: 2 }];
+        noteBody = '축구공은 정이십면체의 열두 꼭짓점을 잘라 만든 「깎은 정이십면체」이다. 정오각형 12개와 정육각형 20개, 모두 32개의 면으로 이루어진다.';
+        noteQuestion = 'V−E+F를 확인해 보자. 60 − 90 + 32 = ?';
+        noteAnswer = '60 − 90 + 32 = 2. 면이 32개인 복잡한 다면체에서도 오일러 공식은 그대로 성립한다.';
+      } else if (ch === 'geodesic') {
+        const isCube = st.geoCase === 'cube';
+        segGroups = [
+          { label: '입체', items: [['cube', '정육면체'], ['cylinder', '원기둥']].map(pair => ({ label: pair[1], on: () => this.applyGeo(pair[0], pair[0] === 'cylinder' && this.state.geoMode === 'edge' ? 'surface' : this.state.geoMode), style: seg(pair[1], st.geoCase === pair[0]) })) },
+          { label: '경로', items: [['interior', '내부'], ['surface', '겉면'], ['edge', '모서리']].map(pair => {
+            const dis = pair[0] === 'edge' && !isCube;
+            return { label: pair[1], on: dis ? () => {} : () => this.applyGeo(this.state.geoCase, pair[0]), style: seg(pair[1], st.geoMode === pair[0], dis) };
+          }) }];
+        readout = this._geo ? this._geo.len : '';
+        boardVisible = true; boardTitle = '칠판 · 전개도에서 보기'; boardCaption = '겉면 최단 경로는 전개도에서 선분이 된다';
+        const spc = E.shortest_paths.cube;
+        noteStats = isCube
+          ? [{ k: '내부', v: '√3a ≈ ' + spc.interior_distance.toFixed(3) + 'a' }, { k: '겉면', v: '√5a ≈ ' + spc.surface_distance.toFixed(3) + 'a' }, { k: '모서리', v: '3a' }]
+          : [{ k: '내부', v: '≈ ' + E.shortest_paths.cylinder.interior_chord.toFixed(3) }, { k: '옆면', v: '≈ ' + Math.hypot(E.shortest_paths.cylinder.Q.theta, 2).toFixed(3) }];
+        noteBody = '입체의 겉면을 따라 두 점을 잇는 최단 경로는, 겉면을 평면에 펼친 전개도 위에서 두 점을 잇는 선분이 된다.';
+        noteQuestion = isCube ? '겉면을 따라가는 최단 경로는 왜 모서리의 한가운데를 지날까?' : '옆면을 따라 도는 최단 경로는 어떤 곡선일까?';
+        noteAnswer = isCube
+          ? '전개도에서 P와 Q를 잇는 선분이 두 면의 공통 모서리를 정확히 절반 지점에서 지나기 때문이다. 길이는 √5·a로, 모서리를 따라가는 3a보다 짧다.'
+          : '전개도(직사각형)에서는 선분이지만, 다시 말아 올리면 옆면을 비스듬히 감는 나선 모양의 곡선이 된다.';
+      }
+    }
+    const wrap = (key, defX, defY) => {
+      const p = st.panels[key];
+      if (key === 'dock' && p.x == null) return { position: 'absolute', left: '50%', bottom: '14px', transform: 'translateX(-50%)', zIndex: 20 };
+      const W = typeof window !== 'undefined' ? window.innerWidth : 1400;
+      const H = typeof window !== 'undefined' ? window.innerHeight : 900;
+      const x = p.x != null ? p.x : (defX < 0 ? W + defX : defX);
+      const y = p.y != null ? p.y : (defY < 0 ? H + defY : defY);
+      return { position: 'absolute', left: 0, top: 0, transform: 'translate(' + Math.max(2, Math.min(W - 60, x)) + 'px,' + Math.max(2, Math.min(H - 48, y)) + 'px)', zIndex: key === 'dock' ? 20 : key === 'cur' ? 14 : 12 };
+    };
+    const togglePanel = key => () => { const panels = { ...this.state.panels }; panels[key] = { ...panels[key], open: !panels[key].open }; this.setState({ panels }); };
+    return {
+      paperGrid: this.props.paperGrid ?? true,
+      setStage: el => { this._stage = el; },
+      units,
+      curWrap: wrap('cur', 16, 58), noteWrap: wrap('note', -348, 58), boardWrap: wrap('board', 16, -420), dockWrap: wrap('dock', 0, 0),
+      dragCur: this._dragStart('cur'), dragNote: this._dragStart('note'), dragBoard: this._dragStart('board'), dragDock: this._dragStart('dock'),
+      dragMove: e => {
+        if (!this._drag) return; const d = this._drag;
+        const now = performance.now();
+        if (d.lt) { const dt = (now - d.lt) / 1000; if (dt > 0.001) { d.vx = (e.clientX - d.lx) / dt; d.vy = (e.clientY - d.ly) / dt; } }
+        d.lx = e.clientX; d.ly = e.clientY; d.lt = now;
+        const panels = { ...this.state.panels };
+        panels[d.key] = { ...panels[d.key], x: d.ox + e.clientX - d.sx, y: d.oy + e.clientY - d.sy };
+        this.setState({ panels });
+      },
+      dragEnd: () => {
+        const d = this._drag; this._drag = null;
+        if (!d || !d.lt) return;
+        const stale = performance.now() - d.lt > 130;
+        const speed = stale ? 0 : Math.hypot(d.vx || 0, d.vy || 0);
+        const p = this.state.panels[d.key];
+        const W = window.innerWidth, H = window.innerHeight;
+        const off = p.x != null && (p.x < -60 || p.x > W - 50 || p.y < -40 || p.y > H - 40);
+        if (speed > 900 || off) this.minimizePanel(d.key);
+      },
+      curShow: !st.panels.cur.min, noteShow: !st.panels.note.min, boardShow: !st.panels.board.min, dockShow: !st.panels.dock.min,
+      minCur: () => this.minimizePanel('cur'), minNote: () => this.minimizePanel('note'), minBoard: () => this.minimizePanel('board'), minDock: () => this.minimizePanel('dock'),
+      tray: [['cur', '커리큘럼'], ['note', '노트'], ['board', '칠판'], ['dock', '컨트롤']]
+        .filter(p => st.panels[p[0]].min && (p[0] !== 'board' || boardVisible))
+        .map(p => ({ label: p[1], on: () => this.restorePanel(p[0]) })),
+      curOpen: st.panels.cur.open, noteOpen: st.panels.note.open, boardOpen: st.panels.board.open,
+      toggleCur: togglePanel('cur'), toggleNote: togglePanel('note'), toggleBoard: togglePanel('board'),
+      curChev: st.panels.cur.open ? '▾' : '▸', noteChev: st.panels.note.open ? '▾' : '▸', boardChev: st.panels.board.open ? '▾' : '▸',
+      boardVisible, boardTitle, boardCaption, boardEl: boardVisible ? this.boardSvg() : null,
+      unitLabel: (this.UNITS ? this.UNITS[meta.u].numeral + ' ' + this.UNITS[meta.u].title : ''),
+      chapterNo: meta.no, chapterTitle: meta.title,
+      playing: st.playing, phaseLabel: st.phaseLabel,
+      progressStyle: { width: Math.round(st.progress * 100) + '%', height: '100%', background: '#d9a05b', borderRadius: 999, transition: 'width .1s linear' },
+      togglePlay: () => { if (this.state.playing) this.stopPlay(); else { const s = this.buildPlay(); if (s.length) this.playSteps(s); } },
+      playGlyph: st.playing ? '■' : '▶',
+      prevCh: () => this.enterChapter(this.ORDER[(this.ORDER.indexOf(ch) + this.ORDER.length - 1) % this.ORDER.length]),
+      nextCh: () => this.enterChapter(this.ORDER[(this.ORDER.indexOf(ch) + 1) % this.ORDER.length]),
+      resetView: () => { if (this.engine) this.engine.resetView(); },
+      hasSelect: selectGroups.length > 0, selectGroups, selectValue,
+      selectChange: e => {
+        const v = e.target.value;
+        if (ch === 'explorer' || ch === 'euler') this.buildSolid(v);
+        else if (ch === 'net') this.buildNet(v);
+        else if (ch === 'section') this.applyPreset(parseInt(v, 10));
+        else if (ch === 'revolution') this.applyProfile(v, 360);
+        else if (ch === 'revsection') this.applyCase(parseInt(v, 10));
+      },
+      segGroups, chips,
+      hasSlider: !!slider,
+      sliderLabel: slider ? slider.label : '', sliderMin: slider ? slider.min : 0, sliderMax: slider ? slider.max : 1, sliderStep: slider ? slider.step : 0.01, sliderValue: slider ? slider.value : 0,
+      sliderChange: e => {
+        const v = parseFloat(e.target.value);
+        if (ch === 'section') this.updateSection(v);
+        else if (ch === 'revolution') { this.engine.setLatheSweep(v); this.setState({ sweep: Math.round(v) }); }
+        else if (ch === 'revsection') this.updateRev(v);
+      },
+      dockReadout: readout,
+      noteKicker: (this.UNITS ? this.UNITS[meta.u].numeral + '단원 ' + this.UNITS[meta.u].title + ' · ' + meta.no : ''),
+      noteTitle, noteBody, noteQuestion, noteAnswer, noteStats,
+      answerShown: st.answerShown,
+      toggleAnswer: () => this.setState({ answerShown: !this.state.answerShown }),
+      answerBtnLabel: st.answerShown ? '풀이 접기' : '풀이 보기',
+    };
+  }
+}
+</script>
+</body>
+</html>
