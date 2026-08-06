@@ -164,3 +164,48 @@ body.reduced-motion .r009-focus-ring{animation:none!important;display:none!impor
   .p13-stage-panel{left:10px;right:10px;top:auto;bottom:84px;width:auto;height:38%;}
 }
 @media(max-width:560px){.p13-stage-panel{height:34%;padding:9px 10px;border-radius:18px}}
+
+/* Mobile Touch Isolation & SVG Focus Rings */
+#glCanvas, #viewerStage canvas {
+  touch-action: none !important;
+}
+
+svg path:focus-visible, svg polygon:focus-visible, svg rect:focus-visible, svg circle:focus-visible, .p13-svg polygon:focus-visible {
+  outline: 3px solid var(--r8-focus) !important;
+  outline-offset: 2px !important;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Responsive Floating HUD Tray Layout (< 768px auto-collapse) */
+@media (max-width: 768px) {
+  .hud-tray-panel {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 30 !important;
+    max-height: 60vh !important;
+    overflow-y: auto !important;
+    border-radius: 24px 24px 0 0 !important;
+    box-shadow: var(--r8-shadow-float) !important;
+    backdrop-filter: blur(20px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  }
+  .app-main.controls-collapsed .hud-tray-panel {
+    transform: translateY(100%) !important;
+    display: block !important;
+  }
+}
+

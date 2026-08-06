@@ -51,11 +51,12 @@
     <button class="tab-button is-enrichment" data-tab="soccer" type="button"><span class="tab-symbol" aria-hidden="true">★3</span><span class="tab-copy"><strong>축구공 확장</strong><small>꼭짓점 자르기</small></span></button>
   </nav>
 
-  <main id="appMain" class="app-main" tabindex="-1">
-    <aside id="leftPanel" class="panel controls-panel glass-surface" aria-label="현재 탐구 조작"></aside>
-    <section id="viewerStage" class="viewer-stage" aria-label="수학 대상 3D 탐구 화면">
+  <main id="appMain" class="app-main" role="main" tabindex="-1">
+    <aside id="leftPanel" class="panel controls-panel glass-surface hud-tray-panel" aria-label="현재 탐구 조작"></aside>
+    <section id="viewerStage" class="viewer-stage" role="region" aria-label="수학 대상 3D 탐구 화면">
       <div class="stage-background" aria-hidden="true"></div>
       <canvas id="glCanvas" aria-label="회전·확대할 수 있는 다면체와 회전체 3D 화면">이 브라우저에서 입체도형 화면을 바로 열 수 없습니다.</canvas>
+      <div id="ariaLiveFeedback" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <canvas id="labelCanvas" aria-hidden="true"></canvas>
       <div id="moduleOverlay" class="module-overlay" hidden></div>
       <div id="viewerFallback" class="viewer-fallback" hidden role="status"><strong>입체도형 표시 방식을 바꿉니다.</strong><span>다른 표시 방식으로 계속 탐구합니다.</span></div>
@@ -73,7 +74,7 @@
 
   <dialog id="evidenceDialog" class="evidence-dialog" aria-labelledby="evidenceDialogTitle"><div class="evidence-dialog-shell glass-surface"><header class="evidence-dialog-header"><div><p class="eyebrow">정확 데이터 · 이유 · 표현 대응</p><h2 id="evidenceDialogTitle">근거 보기</h2></div><button id="evidenceClose" class="evidence-dialog-close" type="button" aria-label="근거 시트 닫기">×</button></header><div id="rightPanelContent" class="evidence-content"></div></div></dialog>
 
-  <footer class="app-footer glass-surface">
+  <footer class="app-footer glass-surface" role="contentinfo">
     <div id="statusLive" role="status" aria-live="polite">탐구 준비됨</div>
     <div class="chapter-nav" aria-label="탐구 순서 이동"><button id="chapterPrevButton" type="button">← 처음</button><span id="chapterProgress" class="chapter-progress">기본 1/8 · 입체 읽기</span><button id="chapterNextButton" type="button">전개도 조립 →</button></div>
     <div class="footer-scope">오프라인 · 외부 요청 0 · 로그인·저장 없음</div>

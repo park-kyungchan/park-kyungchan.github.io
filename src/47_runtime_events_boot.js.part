@@ -89,4 +89,21 @@
     if (state.tab === 'geodesic') requestAnimationFrame(() => drawPathVisual(state.pathProgress));
   }, { passive: true });
 
+  // SVG Net Diagram Keyboard Navigation
+  document.addEventListener('keydown', (event) => {
+    const activeElement = document.activeElement;
+    if (activeElement && activeElement.closest('svg')) {
+      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        const nextBtn = document.querySelector('#foldNextStepButton, #foldAutoButton');
+        if (nextBtn) nextBtn.click();
+      } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        const prevBtn = document.querySelector('#foldPrevStepButton');
+        if (prevBtn) prevBtn.click();
+      }
+    }
+  });
+
+
 
