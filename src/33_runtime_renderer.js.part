@@ -60,16 +60,16 @@
         event.preventDefault();
         this.contextLossCount += 1;
         this.available = false;
-        this.ctx2d = canvas.getContext('2d');
+        this.ctx2d = null;
         this.requestRender();
       });
       canvas.addEventListener('webglcontextrestored', () => {
         try {
           this.gl = canvas.getContext('webgl', { antialias: true, alpha: true, preserveDrawingBuffer: true });
           this.available = !!this.gl;
-          this.ctx2d = this.available ? null : canvas.getContext('2d');
+          this.ctx2d = null;
           if (this.available) { this.initWebGL(); this.contextRestoreCount += 1; this.uploadGeometry(); }
-        } catch (_) { this.available = false; this.ctx2d = canvas.getContext('2d'); }
+        } catch (_) { this.available = false; this.ctx2d = null; }
         this.requestRender();
       });
       window.addEventListener('resize', () => this.requestRender(), { passive: true });
