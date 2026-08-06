@@ -1,0 +1,14 @@
+{
+  "projectId": "981db508-760f-4220-8116-f6a8563bc9c8",
+  "shape": "package",
+  "pkg": "@tamgu/ui",
+  "globalName": "TamguUI",
+  "buildCmd": "npm --prefix design-system run build",
+  "cssEntry": "src/styles.css",
+  "guidelinesGlob": ["../docs/07_DESIGN_TOKENS.md"],
+  "overrides": {
+    "NotePanel": { "cardMode": "column" },
+    "Dock": { "cardMode": "column" }
+  },
+  "readmeHeader": ".design-sync/conventions.md"
+}
