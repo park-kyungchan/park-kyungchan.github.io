@@ -44,9 +44,9 @@
   --shadow-float: 0 14px 36px rgba(35,62,105,.18), inset 0 1px 0 rgba(255,255,255,.9);
   --shadow-press: 0 5px 14px rgba(35,62,105,.13), inset 0 1px 0 rgba(255,255,255,.8);
   --spring: cubic-bezier(.22,.8,.25,1);
-  /* P1-4: numeric readouts stay on the sans stack. Gaegu has no tabular
-     figures, so a live-updating digit run visibly reflows on it. */
-  --p14-font-num: -apple-system, BlinkMacSystemFont, "SF Pro Text", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  /* P1-4: numeric readouts stay on tabular Pretendard / Inter stack for stable live updates. */
+  --p14-font-num: "Pretendard Variable", Pretendard, "Inter", "JetBrains Mono", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
 * { box-sizing: border-box; }
@@ -575,26 +575,28 @@ body.reduced-motion .proof-edge.is-active { stroke-dasharray: none; }
   font-display: swap;
 }
 :root {
-  --font-hand: "Gaegu", "P003 Korean Hand", "Nanum Pen Script", "Gamja Flower", "Poor Story", "Apple SD Gothic Neo", "Malgun Gothic", cursive;
-  --font-ui: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Text", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-hand: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-ui: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-math: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 body {
-  font-family: var(--font-hand);
-  line-height: 1.58;
-  letter-spacing: .006em;
-  font-size: 1.04rem;
+  font-family: var(--font-ui);
+  line-height: 1.5;
+  letter-spacing: -.011em;
+  font-size: 1rem;
 }
 button, select, input, .formula-box, .metric-card strong, .proof-counter, .progress-value,
 .table-wrap, .scope-chip, .status-pill, .session-value {
   font-family: var(--font-ui);
+  font-feature-settings: "tnum" 1;
 }
 .formula-box, .proof-counter strong { font-family: var(--font-math); }
 .title-block h1, .panel h2, .panel h3, .tab-copy strong, .mapping-notebook h2,
-.mapping-card strong, .stage-map-guide strong, .fold-readout strong { font-family: var(--font-hand); }
-.panel h2 { font-size: 1.34rem; }
-.panel h3 { font-size: 1.08rem; }
-.panel p, .panel li, .small-note, .callout { font-size: 1rem; }
+.mapping-card strong, .stage-map-guide strong, .fold-readout strong { font-family: var(--font-ui); }
+.panel h2 { font-size: 1.375rem; }
+.panel h3 { font-size: 1.125rem; }
+.panel p, .panel li, .small-note, .callout { font-size: 0.875rem; }
+small, .tab-copy small { font-size: 0.75rem; }
 
 .stage-map-guide {
   position: absolute;
@@ -1344,16 +1346,16 @@ body.r007-resizing { user-select:none; cursor:col-resize; }
   --r8-focus: #005ce6;
 
   /* Type scale */
-  --r8-font-ui: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
-  --r8-font-display: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
-  --r8-type-11: .80rem;
-  --r8-type-12: .84rem;
-  --r8-type-13: .88rem;
-  --r8-type-15: .98rem;
-  --r8-type-17: 1.10rem;
-  --r8-type-20: 1.30rem;
+  --r8-font-ui: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, "Noto Sans KR", system-ui, sans-serif;
+  --r8-font-display: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Noto Sans KR", system-ui, sans-serif;
+  --r8-type-11: .75rem;   /* 12px minimum floor */
+  --r8-type-12: .8125rem; /* 13px */
+  --r8-type-13: .875rem;  /* 14px */
+  --r8-type-15: 1.00rem;  /* 16px */
+  --r8-type-17: 1.125rem; /* 18px */
+  --r8-type-20: 1.375rem; /* 22px */
   --r8-type-24: 1.5rem;
-  --r8-type-32: 2rem;
+  --r8-type-32: 2.25rem;
 
   /* Spacing and shape */
   --r8-space-1: 4px;

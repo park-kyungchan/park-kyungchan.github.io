@@ -33,16 +33,16 @@
   --r8-focus: #005ce6;
 
   /* Type scale */
-  --r8-font-ui: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
-  --r8-font-display: "Gaegu", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
-  --r8-type-11: .80rem;
-  --r8-type-12: .84rem;
-  --r8-type-13: .88rem;
-  --r8-type-15: .98rem;
-  --r8-type-17: 1.10rem;
-  --r8-type-20: 1.30rem;
+  --r8-font-ui: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, "Noto Sans KR", system-ui, sans-serif;
+  --r8-font-display: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Noto Sans KR", system-ui, sans-serif;
+  --r8-type-11: .75rem;   /* 12px minimum floor */
+  --r8-type-12: .8125rem; /* 13px */
+  --r8-type-13: .875rem;  /* 14px */
+  --r8-type-15: 1.00rem;  /* 16px */
+  --r8-type-17: 1.125rem; /* 18px */
+  --r8-type-20: 1.375rem; /* 22px */
   --r8-type-24: 1.5rem;
-  --r8-type-32: 2rem;
+  --r8-type-32: 2.25rem;
 
   /* Spacing and shape */
   --r8-space-1: 4px;
