@@ -1,0 +1,15 @@
+name: Deploy to GitHub Pages
+# repo 루트 .github/workflows/deploy.yml 로 이동. 빌드 없음 — platform/ 을 그대로 배포.
+on:
+  push:
+    branches: [master]
+permissions: { contents: read, pages: write, id-token: write }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: { name: github-pages }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: platform }
+      - uses: actions/deploy-pages@v4
