@@ -1,0 +1,29 @@
+/* 탐구랩 디자인 토큰·폰트·키프레임 — docs/07_DESIGN_TOKENS.md 준거 */
+@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+:root {
+  --ink: #26324b;
+  --accent: #41608f;
+  --amber: #b97a2e;
+  --amber-soft: #d9a05b;
+  --paper: #f7f4ec;
+  --solid-face: #dde6f3;
+  --grid: rgba(38, 50, 75, 0.05);
+  --panel: rgba(255, 255, 253, 0.93);
+  --panel-border: rgba(38, 50, 75, 0.14);
+  --font-brand: 'Gaegu', cursive;
+  --font-heading: 'Gowun Batang', serif;
+  --font-body: 'Noto Sans KR', sans-serif;
+  --radius-panel: 16px;
+  --shadow-panel: 0 14px 34px rgba(38, 50, 75, 0.16);
+}
+
+@keyframes floatIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes chipIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
