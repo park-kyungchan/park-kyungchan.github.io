@@ -31,13 +31,18 @@ def run_math_fuzzing():
         page.on('pageerror', lambda e: errors.append(str(e)))
         page.set_content(HTML_CONTENT, wait_until='load', timeout=60000)
         
+        # Dismiss initial dialog
+        page.wait_for_timeout(300)
+        if page.locator('#studentStartDialog').evaluate('(e)=>e.open'):
+            page.locator('#startExploreButton').click()
+            page.wait_for_timeout(200)
+
         # Test 1: Evaluate exposed objects and DOM state under fuzzing
         result = page.evaluate("""() => {
             const keys = Object.keys(window).filter(k => !k.startsWith('webkit') && !k.startsWith('chrome'));
             const canvas = document.querySelector('#glCanvas');
             const hasCanvas = !!canvas;
             
-            // Check if glCanvas has context
             let glType = 'none';
             if (canvas) {
                 const gl = canvas.getContext('webgl') || canvas.getContext('canvas2d');
@@ -49,9 +54,25 @@ def run_math_fuzzing():
             return { loaded: true, keysCount: keys.length, hasCanvas, glType };
         }""")
         
+        # Test 2: Input Fuzzing on sliders
+        sliders = page.locator('input[type="range"]').all()
+        fuzzed_count = 0
+        for slider in sliders[:5]: # Fuzz first 5 sliders
+            try:
+                slider.fill('99999')
+                slider.dispatch_event('input')
+                slider.fill('-99999')
+                slider.dispatch_event('input')
+                slider.fill('NaN')
+                slider.dispatch_event('input')
+                fuzzed_count += 1
+            except Exception:
+                pass
+
         record_check('MATH-FUZZ-MODULE-LOADED', result.get('loaded', False) == True, result.get('loaded'), True)
         record_check('MATH-FUZZ-CANVAS-PRESENT', result.get('hasCanvas', False) == True, result.get('hasCanvas'), True)
         record_check('MATH-FUZZ-GL-CONTEXT-FOUND', result.get('glType') in ['webgl', 'canvas2d'], result.get('glType'), 'webgl or canvas2d')
+        record_check('MATH-FUZZ-SLIDER-INPUT-FUZZED', fuzzed_count > 0, fuzzed_count, '> 0')
         record_check('MATH-FUZZ-ZERO-PAGE-ERRORS', len(errors) == 0, len(errors), 0)
         
         browser.close()
