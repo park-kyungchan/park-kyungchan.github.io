@@ -2383,7 +2383,7 @@ input[type="range"] { min-height: 44px; }
       <div class="viewer-toolbar glass-surface" role="group" aria-label="입체도형 화면 조작"><button id="navigateModeButton" class="tool-button is-active" type="button" aria-pressed="true"><span aria-hidden="true">↻</span><span>회전</span></button><button id="selectModeButton" class="tool-button" type="button" aria-pressed="false"><span aria-hidden="true">⌖</span><span>선택</span></button><button id="zoomOutButton" class="tool-button icon-only" type="button" aria-label="축소">−</button><button id="zoomInButton" class="tool-button icon-only" type="button" aria-label="확대">＋</button><button id="resetViewButton" class="tool-button" type="button"><span aria-hidden="true">◎</span><span>시점 초기화</span></button></div>
       <div id="viewerHint" class="viewer-hint glass-chip">한 손가락 드래그: 회전 · 두 손가락/＋−: 확대·축소</div>
       <aside id="liveGuide" class="live-guide glass-surface" tabindex="0" aria-live="polite" aria-atomic="true"><p id="liveGuideKicker" class="live-guide-kicker"></p><h2 id="liveGuideTitle"></h2><p id="liveGuideBody"></p><div id="liveGuideChips" class="live-guide-chips"></div></aside>
-      <section id="r009SpatialHud" class="r009-spatial-hud" hidden aria-hidden="true">
+      <section id="r009SpatialHud" class="r009-spatial-hud" hidden>
         <div class="r009-spatial-heading"><p id="r009HudKicker"></p><h2 id="r009HudTitle"></h2><span id="r009HudSubtitle"></span><div id="r009PhaseStrip" class="r009-phase-strip"></div></div>
         <div id="r009SpatialLegend" class="r009-spatial-legend"></div>
         <aside id="r009Inset" class="r009-inset" hidden><p id="r009InsetLabel"></p><canvas id="r009InsetCanvas" aria-hidden="true"></canvas><div id="r009InsetMetrics" class="metric" hidden></div></aside>
@@ -2910,16 +2910,16 @@ window.P003_MEASURE = {"schema_version":"P003-MEASURE-001-SURFACE-VOLUME","gener
         event.preventDefault();
         this.contextLossCount += 1;
         this.available = false;
-        this.ctx2d = canvas.getContext('2d');
+        this.ctx2d = null;
         this.requestRender();
       });
       canvas.addEventListener('webglcontextrestored', () => {
         try {
           this.gl = canvas.getContext('webgl', { antialias: true, alpha: true, preserveDrawingBuffer: true });
           this.available = !!this.gl;
-          this.ctx2d = this.available ? null : canvas.getContext('2d');
+          this.ctx2d = null;
           if (this.available) { this.initWebGL(); this.contextRestoreCount += 1; this.uploadGeometry(); }
-        } catch (_) { this.available = false; this.ctx2d = canvas.getContext('2d'); }
+        } catch (_) { this.available = false; this.ctx2d = null; }
         this.requestRender();
       });
       window.addEventListener('resize', () => this.requestRender(), { passive: true });
@@ -6642,7 +6642,7 @@ window.P003_MEASURE = {"schema_version":"P003-MEASURE-001-SURFACE-VOLUME","gener
   });
   const P13_MEASURE_LABELS = Object.freeze({
     base_area:'밑넓이', top_area:'윗면 넓이', base_area_total:'밑넓이의 합', lateral_area:'옆넓이',
-    total_area:'겉넓이', slant_height:'옆면의 높이 ℓ', base_apothem:'밑면 중심에서 한 변까지', height:'높이', volume:'부피',
+    total_area:'겉넓이', slant_height:'모선의 길이 ℓ', base_apothem:'밑면 중심에서 한 변까지', height:'높이', volume:'부피',
   });
 
   /* ---------- shared 2D helpers (also used by the 부피 chapter) ---------- */

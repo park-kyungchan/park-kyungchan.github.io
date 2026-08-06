@@ -13,7 +13,7 @@
   });
   const P13_MEASURE_LABELS = Object.freeze({
     base_area:'밑넓이', top_area:'윗면 넓이', base_area_total:'밑넓이의 합', lateral_area:'옆넓이',
-    total_area:'겉넓이', slant_height:'옆면의 높이 ℓ', base_apothem:'밑면 중심에서 한 변까지', height:'높이', volume:'부피',
+    total_area:'겉넓이', slant_height:'모선의 길이 ℓ', base_apothem:'밑면 중심에서 한 변까지', height:'높이', volume:'부피',
   });
 
   /* ---------- shared 2D helpers (also used by the 부피 chapter) ---------- */
