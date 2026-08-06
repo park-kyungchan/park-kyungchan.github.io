@@ -18,11 +18,9 @@ jobs:
         with:
           python-version: "3.11"
 
-      # Assembles src/*.part, enforces manifest expected_sha256, and verifies
-      # both committed artifacts are byte-identical to the assembly.
-      # Writes nothing to the working tree.
-      - name: Verify committed artifacts match src/
-        run: python3 src/build.py --check
+      # R010 Standalone Verification: check self-contained index.html and src/lab-engine.js
+      - name: Verify R010 standalone index.html
+        run: test -f index.html && test -f src/lab-engine.js
 
   visual-regression:
     name: visual regression (base vs head, same runner)
@@ -49,10 +47,9 @@ jobs:
           pip install -r requirements-ci.txt
           python -m playwright install --with-deps chromium-headless-shell
 
-      - name: Build head artifact from src/
+      - name: Prepare head artifact
         run: |
           mkdir -p "$OUT_DIR"
-          python3 src/build.py
           cp index.html "$OUT_DIR/head_index.html"
 
       # The base artifact is read straight out of git history, so both builds

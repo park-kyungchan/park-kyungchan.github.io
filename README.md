@@ -1,108 +1,42 @@
-# 입체 탐구랩 — 중1 입체도형 탐구랩
+# 입체 탐구랩 R010 — 핸드오프 패키지
 
-A single-file, offline-capable interactive geometry lab for 중학교 1학년
-입체도형: 다면체 · 회전체 · 단면 · 최단거리. Nine chapters (explorer,
-generator, net, section, euler, soccer, revolution, revsection, geodesic) run
-in one fixed two-panel stage with a WebGL renderer and a canvas2d fallback.
+새 디자인/구조로 전면 리빌드된 랩입니다. 단일 파일 바이트-동일성 계약(R009 이전)은 폐기하고, 일반적인 정적 사이트 구조로 전환합니다.
 
-Everything ships as **one self-contained HTML file** — no build step for the
-reader, no network dependency, no assets to lose.
+## 배포 (GitHub Pages)
 
-- Published site: `index.html` (GitHub Pages)
-- Offline copy: `P003_R009_Integrated_Spatial_Revolution_Lab_Standalone.html`
-  (byte-identical duplicate, handed out for offline use)
-
-## Repository layout
-
-| Path | What it holds |
-|---|---|
-| `src/` | **The source.** 37 ordered `.part` files + `manifest.json` + `build.py`. Concatenating the parts is exactly the shipped artifact. Start here for any change. |
-| `tools/` | `visual_regression/` (capture harness + pixel comparer), `serve_local.py`, `build_pack.py`. |
-| `data/` | R007/R009 geometry and state-graph specs (exact spatial spec, state graph, Platonic nets). |
-| `docs/` | R009 specifications, review records, regression and adversarial reports, known limitations. |
-| `tests/` | R009 Playwright suites (static contract, runtime adversarial/resilience, local modes, exact validation). |
-| `archive/` | Frozen R007→R009 provenance: the retired regex-surgery build, the R008 parent baseline, evidence, audit JSON, pack manifest. Read-only — see `archive/README.md`. |
-
-The two HTML files at the repository root are build **outputs**, committed on
-purpose so GitHub Pages can serve them. Do not hand-edit them; edit a part file
-in `src/` and rebuild.
-
-## Build
+`index.html` 하나만 repo 루트에 올리면 됩니다. 모든 리소스(폰트, three.js, 데이터, 엔진)가 인라인된 self-contained 파일이라 외부 요청 없이 오프라인에서도 동작합니다.
 
 ```bash
-python3 src/build.py
+git checkout -b r010-redesign
+cp index.html <repo>/index.html
+git add index.html
+git commit -m "R010: 전면 리디자인 — 풀스크린 3D 스테이지 + 플로팅 패널, 수학 위계 기반 9챕터 IA"
+git push -u origin r010-redesign
+# PR 생성 후 merge
 ```
 
-Stdlib only, no dependencies. Reassembles the artifact and writes both
-root-level HTML files. Verify without touching the working tree:
+기존 `src/*.part` 빌드 체계·CI(`src/build.py --check`)는 이 커밋과 충돌하므로, PR에서 함께 정리하거나 `archive/`로 이동하세요. (CI 워크플로 `.github/workflows/ci.yml`의 바이트-동일성 게이트를 비활성화하지 않으면 push가 red가 됩니다.)
 
-```bash
-python3 src/build.py --check
-```
+## 무엇이 바뀌었나
 
-## The byte-identity contract
+- **IA**: 9챕터를 수학적 위계로 재편 — Ⅰ 다면체(관찰실·정다면체 판정·오일러·전개도·단면) / Ⅱ 회전체(생성·단면) / Ⅲ 심화(축구공·최단거리)
+- **셸**: 고정 2패널 → 풀스크린 3D 캔버스 + 드래그·플링·최소화 가능한 플로팅 패널(커리큘럼/학습 노트/칠판/컨트롤 독)
+- **3D**: 커스텀 WebGL 렌더러(33_runtime_renderer.js.part) → three.js 기반 경량 엔진 `src/lab-engine.js` (다면체/회전체 생성, 평면 단면 계산+캡 채움, 클리핑, 경로 오버레이, 터치 궤도 컨트롤)
+- **데이터**: 기존 계약 그대로 사용 — `src/p003-data.js`는 원본 repo의 `src/20/21_*.part`에서 추출한 window.P003_DATA + P003_R009_EXACT
+- **모션**: 챕터별 단계형 재생(준비→변화→확인), 카운팅 애니메이션, 회전 스윕, 평면 스위프
+- **타이포**: Gaegu(손글씨 정체성 유지) + Gowun Batang(제목) + Noto Sans KR(본문)
 
-`src/` is a **pure partition** of the artifact, not a transformation. Every
-byte of `index.html` belongs to exactly one part, in manifest order, with
-nothing added, removed, reordered, re-encoded or reformatted:
+## src/ 폴더
 
-```
-b"".join(read_bytes(p) for p in manifest["parts"]) == read_bytes("index.html")
-```
+향후 유지보수용 소스입니다 (index.html은 이들을 인라인한 빌드 산출물):
 
-`build.py` enforces this with a SHA-256 guard against
-`manifest.json:expected_sha256`
-(`cd985d66bf5a63c55cab8832b5b3a191b5b0df076585ab91102519805b67223a` today). On
-a mismatch it writes **nothing** and exits non-zero. CI runs
-`src/build.py --check` on every push and pull request, so a hand-edited
-artifact, a reordered part or an editor that "helpfully" re-indented a part
-file fails loudly instead of silently shipping.
+- `lab-engine.js` — 3D 엔진 (three.js r128 필요)
+- `p003-data.js` — 기하 데이터 페이로드
+- `lab-app.dc.html` — 앱 셸/챕터 소스 (Design Component 형식; 편집은 디자인 도구에서)
 
-When a change is intentional, edit the part file and update
-`expected_sha256` **in the same commit**. The field then means "this tree
-builds exactly this artifact", and accidental drift still fails.
+## 알려진 한계 / 후속 작업
 
-Do not open `.part` files in an editor that normalises line endings, strips
-trailing whitespace, or appends a final newline. `.gitattributes` marks them
-`-text` so git will not do it either.
-
-## Visual regression
-
-The hash guard proves byte identity, not correct behaviour. Behaviour is gated
-separately by a deterministic screenshot matrix: 38 states across 9 chapters
-and 2 viewports, with animations disabled and `performance.now()` frozen.
-
-```bash
-pip install -r requirements-ci.txt
-python3 -m playwright install --with-deps chromium-headless-shell
-
-# capture the current build and a reference build, then compare
-python3 tools/visual_regression/capture_states.py /tmp/vr/head index.html
-git show origin/master:index.html > /tmp/vr/base_index.html
-python3 tools/visual_regression/capture_states.py /tmp/vr/base /tmp/vr/base_index.html
-python3 tools/visual_regression/compare.py /tmp/vr/base /tmp/vr/head
-```
-
-A pair fails at more than 200 differing pixels or a max channel delta above 16.
-Always capture both sides **on the same machine**: two runs of the identical
-artifact on one runner differ by ~7 pixels, but a different GPU, font stack or
-Chromium version differs by far more than the gate allows. CI does exactly this
-on pull requests, rendering the base and head builds on one runner.
-
-## Fonts
-
-The Korean handwriting face (**Gaegu**, SIL OFL 1.1) is subset and base64-embedded
-into the artifact by `tools/content_gen/build_font_subset.py`, because the build
-must make zero external requests; see `docs/P1-4_FONT_LICENSE.md`.
-
-## History
-
-R007 through R009 were built by *sedimentation*: each release applied ordered
-regex substitutions to the previous release's opaque HTML blob, so the "source"
-was a patch script rather than the code being shipped, every edit was a fragile
-pattern match against text nobody could read, and a pattern that quietly
-stopped matching produced a quietly wrong artifact. R010 inverts that. The
-artifact became the source, sliced into readable parts, and the build is now
-plain concatenation — there is no pattern that can fail to match. The old
-pipeline and all of its release evidence are preserved verbatim under
-`archive/`; `docs/README.md` remains accurate as the R009 provenance record.
+- 정육면체 전개도 11종 변형(원본 22_data R007_NETS, 539KB)은 아직 미이식 — 전개도 챕터는 기본 전개도 1종
+- 오일러 증명 타임라인(원본 41_chapter_euler)은 카운팅 시연으로 대체
+- 전개도 접기 3D 애니메이션 미이식
+- 터치 실기기(태블릿) QA 권장
