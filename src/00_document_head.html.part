@@ -5,5 +5,31 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,user-scalable=yes,viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#eff6ff">
-  <title>입체 탐구랩 R009 — 다면체·회전체·단면·최단거리</title>
+  <title>입체 탐구랩 — 다면체·회전체·단면·최단거리 | Kyungchan Park</title>
+  <meta name="description" content="중학교 1학년 수학 입체도형 탐구 대화형 3D 시뮬레이터. 다면체, 정다면체 5종, 회전체, 단면, 겉넓이, 부피 및 최단거리를 오프라인에서 탐구합니다.">
+  <meta name="keywords" content="입체도형, 정다면체, 회전체, 단면, 겉넓이, 부피, 최단거리, 3D 수학 탐구, 입체 탐구랩">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="입체 탐구랩">
+  <meta property="og:title" content="입체 탐구랩 — 다면체·회전체·단면·최단거리 | Kyungchan Park">
+  <meta property="og:description" content="중학교 1학년 수학 입체도형 탐구 대화형 3D 시뮬레이터. 3D 인터랙티브 다면체·회전체·단면 탐구.">
+  <meta property="og:url" content="https://park-kyungchan.github.io/">
+  <meta property="og:locale" content="ko_KR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="입체 탐구랩 — 다면체·회전체·단면·최단거리">
+  <meta name="twitter:description" content="중학교 1학년 수학 입체도형 탐구 대화형 3D 시뮬레이터.">
+  <link rel="canonical" href="https://park-kyungchan.github.io/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "입체 탐구랩",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "author": {
+      "@type": "Person",
+      "name": "Kyungchan Park",
+      "url": "https://park-kyungchan.github.io/"
+    }
+  }
+  </script>
   <style>
