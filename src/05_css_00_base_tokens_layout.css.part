@@ -7,8 +7,8 @@
   --glass-soft: rgba(255,255,255,.46);
   --ink: #14233b;
   --ink-strong: #07162f;
-  --muted: #5e718f;
-  --muted-2: #5d6e8b;
+  --muted: #475975;
+  --muted-2: #485c78;
   --line: rgba(53,78,117,.16);
   --line-strong: rgba(38,110,201,.34);
   --accent: #0a78ff;
