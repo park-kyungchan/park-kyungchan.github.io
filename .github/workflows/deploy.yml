@@ -1,4 +1,4 @@
-name: Deploy video homepage to GitHub Pages
+name: Deploy 탐구Lab Hub to GitHub Pages
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: platform
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
