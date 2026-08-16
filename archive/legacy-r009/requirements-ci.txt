@@ -1,5 +1,0 @@
-# Pinned CI dependencies for the visual-regression job.
-# Keep in sync with the versions the harness baselines were captured on:
-# a Chromium bump changes rasterisation and will trip the pixel gate.
-playwright==1.62.0
-pillow==12.2.0
