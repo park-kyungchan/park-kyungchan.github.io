@@ -9,8 +9,8 @@ const html = readFileSync(new URL('index.html', root), 'utf8');
 const script = readFileSync(new URL('history.js', root), 'utf8');
 
 const sha256 = /^[a-f0-9]{64}$/;
-const qaStatuses = new Set(['PASS_DRIVE_IMPORT_DECODE', 'PASS_REVIEW_PUBLICATION', 'LEGACY_UNVERIFIED', 'FINAL_RELEASE']);
-const artifactLabels = new Set(['SOURCE_FULL_FILM', 'REVIEW_CANARY', 'LEGACY_REVIEW', 'FINAL_RELEASE']);
+const qaStatuses = new Set(['PASS_DRIVE_IMPORT_DECODE', 'PASS_SILENT_REVIEW_PUBLICATION', 'PASS_REVIEW_PUBLICATION', 'LEGACY_UNVERIFIED', 'FINAL_RELEASE']);
+const artifactLabels = new Set(['SOURCE_FULL_FILM', 'SILENT_FULL_MOTION_REVIEW', 'REVIEW_CANARY', 'LEGACY_REVIEW', 'FINAL_RELEASE']);
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 test('manifest v2 preserves a selectable generation history', () => {
@@ -22,7 +22,7 @@ test('manifest v2 preserves a selectable generation history', () => {
 });
 
 test('history excludes the unrelated four-second launch preview', () => {
-  assert.equal(manifest.generations.length, 4);
+  assert.equal(manifest.generations.length, 5);
   assert.ok(!manifest.generations.some((entry) => entry.id === 'launch-2026-08-16'));
   assert.doesNotMatch(JSON.stringify(manifest), /초기 4초 런치 프리뷰/);
 });

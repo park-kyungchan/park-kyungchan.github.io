@@ -11,12 +11,12 @@ const generationId = 'motion-canary-review-v2-20260816t224909z';
 const videoName = 'motion-canary-review-v2-20260816T224909Z.mp4';
 const sha256 = (path) => createHash('sha256').update(readFileSync(path)).digest('hex');
 
-test('v2 remains in history after the full film becomes the newest generation', () => {
+test('v2 remains in history after the full film becomes the active generation', () => {
   assert.equal(manifest.active_generation, activeGenerationId);
-  assert.equal(manifest.generations.length, 4);
+  assert.equal(manifest.generations.length, 5);
   assert.deepEqual(
     manifest.generations.map((item) => item.id),
-    [activeGenerationId, generationId, 'motion-canary-review-v1-20260816t195140z', 'storyboard15-emergency-silent-animatic-1080p60'],
+    [activeGenerationId, 'full-motion-review-v3-20260817t123945z', generationId, 'motion-canary-review-v1-20260816t195140z', 'storyboard15-emergency-silent-animatic-1080p60'],
   );
   const generation = manifest.generations.find((item) => item.id === generationId);
   assert.equal(generation.artifact_label, 'REVIEW_CANARY');

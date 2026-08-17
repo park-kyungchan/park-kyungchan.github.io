@@ -34,9 +34,9 @@ test('Pages deploys only the math-education video app at the site root', () => {
   assert.doesNotMatch(builder, /\*\.mp4/);
 });
 
-test('the Drive-selected full film is the newest hash-bound public generation', () => {
+test('the Drive-selected full film remains the active hash-bound public generation', () => {
   assert.equal(manifest.active_generation, generationId);
-  assert.equal(manifest.generations.length, 4);
+  assert.equal(manifest.generations.length, 5);
   assert.equal(manifest.generations[0].id, generationId);
   const entry = manifest.generations[0];
   assert.equal(entry.title, 'Megastudy 15 Full Film');

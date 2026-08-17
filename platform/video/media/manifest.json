@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "active_generation": "megastudy-15-full-film-20260817t133046z",
-  "updated_at_utc": "2026-08-17T13:42:59Z",
+  "updated_at_utc": "2026-08-17T22:44:54Z",
   "generations": [
     {
       "id": "megastudy-15-full-film-20260817t133046z",
@@ -22,6 +22,27 @@
         "kind": "video",
         "storage": "github-pages",
         "url": "./media/megastudy-15-full-film-20260817T133046Z.mp4"
+      }
+    },
+    {
+      "id": "full-motion-review-v3-20260817t123945z",
+      "title": "Storyboard 15 전체 무음 모션 리뷰 v3",
+      "summary": "S00–S11 전체를 연결한 8분 35초 무음 모션 리뷰입니다. 기술·디코드·source-fingerprint·targeted visual QA를 통과했지만, 내레이션과 최종 production 릴리스가 승인된 영상은 아닙니다.",
+      "artifact_label": "SILENT_FULL_MOTION_REVIEW",
+      "qa_status": "PASS_SILENT_REVIEW_PUBLICATION",
+      "release_approved": false,
+      "published_at_utc": "2026-08-17T22:44:54Z",
+      "duration_seconds": 515.0,
+      "fps": 60,
+      "width": 1920,
+      "height": 1080,
+      "silent": true,
+      "bytes": 25621767,
+      "sha256": "2743c4a82124361921fc73fa8bb3ff905823896b060d97450e1724070e9ba31e",
+      "source": {
+        "kind": "video",
+        "storage": "github-pages",
+        "url": "./media/full-motion-review-v3-20260817T123945Z.mp4"
       }
     },
     {
