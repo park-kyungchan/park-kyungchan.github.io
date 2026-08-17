@@ -1,0 +1,71 @@
+{
+  "schema_version": 2,
+  "active_generation": "motion-canary-review-v2-20260816t224909z",
+  "updated_at_utc": "2026-08-17T01:02:10Z",
+  "generations": [
+    {
+      "id": "motion-canary-review-v2-20260816t224909z",
+      "title": "조건 (가) 절댓값 접힘 모션 캐너리 v2",
+      "summary": "x축 아래의 f(x) 그래프와 조각이 x축을 기준으로 접혀 올라가 |f(x)|가 되는 과정과, f(x)·dx 조각이 짧게 누적되는 과정을 보여 주는 27초 무음 REVIEW CANARY입니다. 최종 강의나 문항 전체 해설은 아닙니다.",
+      "artifact_label": "REVIEW_CANARY",
+      "qa_status": "PASS_REVIEW_PUBLICATION",
+      "release_approved": false,
+      "published_at_utc": "2026-08-17T01:02:10Z",
+      "duration_seconds": 27.0,
+      "fps": 60,
+      "width": 1920,
+      "height": 1080,
+      "silent": true,
+      "bytes": 2774241,
+      "sha256": "ba584d092436ef9f34d0c45d5785d691e777fcef1cf80810bfcb43a29b43fefe",
+      "source_authority_sha256": "76d6fa4551549c25bdb257b036bc641b5b6f7d66fc23c38e8241fb62e45e5624",
+      "source": {
+        "kind": "video",
+        "storage": "github-pages",
+        "url": "./media/motion-canary-review-v2-20260816T224909Z.mp4"
+      }
+    },
+    {
+      "id": "motion-canary-review-v1-20260816t195140z",
+      "title": "S00→S01 모션 캐너리 v1",
+      "summary": "서로 다른 p/q 조건에서 공통 적분 부등식을 추출하고, 동일 수식 객체를 부호 상태 해석으로 넘기는 12초 무음 연출 실험입니다. 최종 강의가 아니라 의도·속도·위계·전환 피드백을 받기 위한 REVIEW CANARY입니다.",
+      "artifact_label": "REVIEW_CANARY",
+      "qa_status": "PASS_REVIEW_PUBLICATION",
+      "release_approved": false,
+      "published_at_utc": "2026-08-16T20:57:40Z",
+      "duration_seconds": 12.0,
+      "fps": 60,
+      "width": 1920,
+      "height": 1080,
+      "silent": true,
+      "bytes": 1583573,
+      "sha256": "61c3c2a7476d117634fa13c429c8a7078428ca146eb431831762c7a5801162b6",
+      "source": {
+        "kind": "video",
+        "storage": "github-pages",
+        "url": "./media/motion-canary-review-v1-20260816T195140Z.mp4"
+      }
+    },
+    {
+      "id": "storyboard15-emergency-silent-animatic-1080p60",
+      "title": "Storyboard 15 무음 애니매틱",
+      "summary": "현재 QA 계약을 만들기 전에 공개된 8분 35초 무음 애니매틱입니다. 새로운 세대와 방향·밀도·속도를 비교하기 위한 역사적 기준점으로 보존합니다.",
+      "artifact_label": "LEGACY_REVIEW",
+      "qa_status": "LEGACY_UNVERIFIED",
+      "release_approved": false,
+      "published_at_utc": "2026-08-16T14:45:57Z",
+      "duration_seconds": 515.0,
+      "fps": 60,
+      "width": 1920,
+      "height": 1080,
+      "silent": true,
+      "bytes": 21482437,
+      "sha256": "83ff801a3212671016f77a85582c173c30700051d63b3606f31cf2104e9f5a55",
+      "source": {
+        "kind": "video",
+        "storage": "github-pages",
+        "url": "./media/storyboard15-emergency-silent-animatic-1080p60.mp4"
+      }
+    }
+  ]
+}
