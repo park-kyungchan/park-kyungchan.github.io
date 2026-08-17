@@ -6,18 +6,19 @@ import test from 'node:test';
 const root = new URL('../', import.meta.url);
 const manifestPath = new URL('media/manifest.json', root);
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+const activeGenerationId = 'megastudy-15-full-film-20260817t133046z';
 const generationId = 'motion-canary-review-v2-20260816t224909z';
 const videoName = 'motion-canary-review-v2-20260816T224909Z.mp4';
 const sha256 = (path) => createHash('sha256').update(readFileSync(path)).digest('hex');
 
-test('v2 becomes the newest QA-passed review generation without removing related history', () => {
-  assert.equal(manifest.active_generation, generationId);
-  assert.equal(manifest.generations.length, 3);
+test('v2 remains in history after the full film becomes the newest generation', () => {
+  assert.equal(manifest.active_generation, activeGenerationId);
+  assert.equal(manifest.generations.length, 4);
   assert.deepEqual(
     manifest.generations.map((item) => item.id),
-    [generationId, 'motion-canary-review-v1-20260816t195140z', 'storyboard15-emergency-silent-animatic-1080p60'],
+    [activeGenerationId, generationId, 'motion-canary-review-v1-20260816t195140z', 'storyboard15-emergency-silent-animatic-1080p60'],
   );
-  const generation = manifest.generations[0];
+  const generation = manifest.generations.find((item) => item.id === generationId);
   assert.equal(generation.artifact_label, 'REVIEW_CANARY');
   assert.equal(generation.qa_status, 'PASS_REVIEW_PUBLICATION');
   assert.equal(generation.release_approved, false);

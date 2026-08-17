@@ -9,8 +9,8 @@ const html = readFileSync(new URL('index.html', root), 'utf8');
 const script = readFileSync(new URL('history.js', root), 'utf8');
 
 const sha256 = /^[a-f0-9]{64}$/;
-const qaStatuses = new Set(['PASS_REVIEW_PUBLICATION', 'LEGACY_UNVERIFIED', 'FINAL_RELEASE']);
-const artifactLabels = new Set(['REVIEW_CANARY', 'LEGACY_REVIEW', 'FINAL_RELEASE']);
+const qaStatuses = new Set(['PASS_DRIVE_IMPORT_DECODE', 'PASS_REVIEW_PUBLICATION', 'LEGACY_UNVERIFIED', 'FINAL_RELEASE']);
+const artifactLabels = new Set(['SOURCE_FULL_FILM', 'REVIEW_CANARY', 'LEGACY_REVIEW', 'FINAL_RELEASE']);
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');
 
 test('manifest v2 preserves a selectable generation history', () => {
@@ -22,7 +22,7 @@ test('manifest v2 preserves a selectable generation history', () => {
 });
 
 test('history excludes the unrelated four-second launch preview', () => {
-  assert.equal(manifest.generations.length, 3);
+  assert.equal(manifest.generations.length, 4);
   assert.ok(!manifest.generations.some((entry) => entry.id === 'launch-2026-08-16'));
   assert.doesNotMatch(JSON.stringify(manifest), /초기 4초 런치 프리뷰/);
 });
@@ -45,10 +45,11 @@ test('every generation is scope-labelled and artifact-bound', () => {
   }
 });
 
-test('the active review canary exposes no private package locator', () => {
+test('the active full film exposes no private package locator', () => {
   const active = manifest.generations.find((entry) => entry.id === manifest.active_generation);
-  assert.equal(active.artifact_label, 'REVIEW_CANARY');
-  assert.equal(active.qa_status, 'PASS_REVIEW_PUBLICATION');
+  assert.equal(active.artifact_label, 'SOURCE_FULL_FILM');
+  assert.equal(active.qa_status, 'PASS_DRIVE_IMPORT_DECODE');
+  assert.equal(active.release_approved, true);
   assert.equal(Object.hasOwn(active, 'director_timeline_url'), false);
   assert.equal(Object.hasOwn(active, 'director_timeline_sha256'), false);
   assert.equal(Object.hasOwn(active, 'drive_folder_url'), false);

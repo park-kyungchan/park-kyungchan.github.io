@@ -1,8 +1,29 @@
 {
   "schema_version": 2,
-  "active_generation": "motion-canary-review-v2-20260816t224909z",
-  "updated_at_utc": "2026-08-17T01:02:10Z",
+  "active_generation": "megastudy-15-full-film-20260817t133046z",
+  "updated_at_utc": "2026-08-17T13:42:59Z",
   "generations": [
+    {
+      "id": "megastudy-15-full-film-20260817t133046z",
+      "title": "Megastudy 15 Full Film",
+      "summary": "사용자가 지정한 원본 MP4를 체크섬 및 전체 디코드 검증 후 그대로 공개한 5분 무음 수학교육 영상입니다.",
+      "artifact_label": "SOURCE_FULL_FILM",
+      "qa_status": "PASS_DRIVE_IMPORT_DECODE",
+      "release_approved": true,
+      "published_at_utc": "2026-08-17T13:42:59Z",
+      "duration_seconds": 300.0,
+      "fps": 30,
+      "width": 1920,
+      "height": 1080,
+      "silent": true,
+      "bytes": 14752094,
+      "sha256": "436b93e94b15b32671aa36220c8cbbb29799a45761c3e477e186675e3944cc3b",
+      "source": {
+        "kind": "video",
+        "storage": "github-pages",
+        "url": "./media/megastudy-15-full-film-20260817T133046Z.mp4"
+      }
+    },
     {
       "id": "motion-canary-review-v2-20260816t224909z",
       "title": "조건 (가) 절댓값 접힘 모션 캐너리 v2",

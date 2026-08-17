@@ -1,4 +1,4 @@
-name: Deploy 탐구Lab Hub to GitHub Pages
+name: Deploy math education videos to GitHub Pages
 
 on:
   push:
@@ -23,9 +23,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      - name: Build video-only Pages artifact
+        run: node .github/scripts/build-video-pages.mjs --output _site
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: platform
+          path: _site
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
