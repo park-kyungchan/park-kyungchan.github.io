@@ -22,20 +22,20 @@ const builder = readOptional(new URL('.github/scripts/build-video-pages.mjs', re
 
 const expectedFinals = [
   {
-    id: 'megastudy-15-final-part-1-20260818t035228z',
+    id: 'megastudy-15-final-part-1-20260818t102636z',
     title: 'Megastudy 15 Final · PART 1',
-    bytes: 14_523_305,
-    sha256: '5a6f310d47ef06abbe81ed9addccfbacd8a97d59f906cb2d424eb0900cfb4a7e',
-    duration_seconds: 205,
-    source: './media/megastudy-15-final-part-1-20260818T035228Z.mp4',
+    bytes: 16_872_173,
+    sha256: '45aebae05e319fb285d20fd033997abcad1e91e10a203b5b1cd3bf0f087f7b8f',
+    duration_seconds: 230,
+    source: './media/megastudy-15-final-part-1-20260818T102636Z.mp4',
   },
   {
-    id: 'megastudy-15-final-part-2-20260818t050635z',
+    id: 'megastudy-15-final-part-2-20260818t103037z',
     title: 'Megastudy 15 Final · PART 2',
-    bytes: 26_781_460,
-    sha256: '661043e65b56f5f5f154ad3ff13558d9729fa8922d0b64d33d8cb5d5a5e1556c',
+    bytes: 27_103_704,
+    sha256: 'bd0ac9bc4cc520c40aa60b0c6ab72c1e9299ebe5aca4a36cab67e0a4094f462a',
     duration_seconds: 245,
-    source: './media/megastudy-15-final-part-2-20260818T050635Z.mp4',
+    source: './media/megastudy-15-final-part-2-20260818T103037Z.mp4',
   },
 ];
 
