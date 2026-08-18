@@ -108,6 +108,17 @@ test('Final UI reads only the final manifest and exposes both completed players'
   assert.match(finalScript, /document\.createElement\(['"]video['"]\)/);
 });
 
+test('Final is player-only and renders no release metadata', () => {
+  assert.doesNotMatch(landing, /Megastudy 15|PART 1|PART 2|2 PARTS/);
+  assert.doesNotMatch(finalHtml, /Megastudy 15|PART 1|PART 2|완성본만 모았습니다|SHA-256|1920×1080|30fps|무음/);
+  for (const visibleMetadataHook of ['final-intro', 'final-copy', 'final-badge', 'final-meta', 'final-summary']) {
+    assert.doesNotMatch(finalHtml, new RegExp(visibleMetadataHook));
+    assert.doesNotMatch(finalScript, new RegExp(visibleMetadataHook));
+  }
+  assert.doesNotMatch(finalScript, /textContent\s*=\s*entry\.(?:title|summary)/);
+  assert.doesNotMatch(finalScript, /duration_seconds\.toFixed|entry\.width|entry\.height|entry\.fps|SHA-256/);
+});
+
 test('Pages builder preserves an explicit Final/History allowlist', () => {
   for (const required of [
     'index.html',

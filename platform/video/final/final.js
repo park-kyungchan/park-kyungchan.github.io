@@ -29,7 +29,7 @@ const assertFinalCatalog = (catalog) => {
 const renderRelease = (entry) => {
   const article = document.createElement('article');
   article.className = 'final-card';
-  article.setAttribute('aria-labelledby', `${entry.id}-title`);
+  article.setAttribute('aria-label', `완성본 영상 ${entry.part}`);
 
   const videoWrap = document.createElement('div');
   videoWrap.className = 'video-wrap';
@@ -39,39 +39,19 @@ const renderRelease = (entry) => {
   video.playsInline = true;
   video.preload = 'metadata';
   video.src = cacheBoundUrl(entry.source.url, entry.sha256);
-  video.setAttribute('aria-label', `${entry.title} 재생`);
-
-  const copy = document.createElement('div');
-  copy.className = 'final-copy';
-
-  const badge = document.createElement('span');
-  badge.className = 'final-badge';
-  badge.textContent = `FINAL · PART ${entry.part}`;
-
-  const title = document.createElement('h3');
-  title.id = `${entry.id}-title`;
-  title.textContent = entry.title;
-
-  const meta = document.createElement('p');
-  meta.className = 'final-meta';
-  meta.textContent = `${entry.duration_seconds.toFixed(1)}초 · ${entry.width}×${entry.height} ${entry.fps}fps · 무음 · SHA-256 ${entry.sha256.slice(0, 12)}…`;
-
-  const summary = document.createElement('p');
-  summary.className = 'final-summary';
-  summary.textContent = entry.summary;
+  video.setAttribute('aria-label', `완성본 영상 ${entry.part} 재생`);
 
   const videoError = document.createElement('p');
   videoError.className = 'video-error';
   videoError.hidden = true;
   videoError.setAttribute('role', 'alert');
   video.addEventListener('error', () => {
-    videoError.textContent = `${entry.title} 파일을 재생할 수 없습니다. 잠시 후 다시 시도해 주세요.`;
+    videoError.textContent = '영상 파일을 재생할 수 없습니다. 잠시 후 다시 시도해 주세요.';
     videoError.hidden = false;
   });
 
   videoWrap.append(video);
-  copy.append(badge, title, meta, summary, videoError);
-  article.append(videoWrap, copy);
+  article.append(videoWrap, videoError);
   return article;
 };
 
