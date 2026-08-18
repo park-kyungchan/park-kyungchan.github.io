@@ -3,42 +3,35 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="수학교육 영상의 검증된 세대별 히스토리" />
-  <title>수학교육 영상 히스토리</title>
+  <meta name="description" content="수학교육 영상 완성본과 제작 히스토리 진입점" />
+  <title>수학교육 영상</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23071016'/%3E%3Cpath d='M18 20h28v24H18z' fill='none' stroke='%2356e0bd' stroke-width='4'/%3E%3Cpath d='m28 26 12 6-12 6z' fill='%23f2c75c'/%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="./history.css" />
+  <link rel="stylesheet" href="./portal.css" />
 </head>
 <body>
-  <header class="site-header">
-    <span class="site-label">수학교육</span>
-    <h1>수학교육 영상 · 히스토리</h1>
-    <span class="header-kicker">VIDEO ARCHIVE</span>
-  </header>
+  <main class="entry-shell">
+    <header class="entry-header">
+      <p class="eyebrow">MATH EDUCATION VIDEO</p>
+      <h1>수학교육 영상</h1>
+      <p class="entry-intro">완료된 영상과 제작·검증 과정을 분리했습니다. 목적에 맞는 진입점을 선택하세요.</p>
+    </header>
 
-  <p id="page-error" class="page-error" role="alert" hidden></p>
+    <nav class="entry-grid" aria-label="수학교육 영상 진입점">
+      <a class="entry-card final-card" data-entry="final" href="./final/">
+        <span class="card-kicker">COMPLETED RELEASES ONLY</span>
+        <h2>Final</h2>
+        <p>완료된 Megastudy 15 PART 1과 PART 2만 재생합니다.</p>
+        <span class="card-action">완성본 보기 <span class="card-count">2 PARTS →</span></span>
+      </a>
 
-  <main class="review-layout">
-    <section class="panel player-panel" aria-labelledby="generation-title">
-      <div class="video-wrap">
-        <video id="video-player" controls playsinline preload="metadata"></video>
-      </div>
-      <div class="generation-copy">
-        <h2 id="generation-title">영상 세대를 불러오는 중입니다</h2>
-        <p id="generation-meta" class="generation-meta"></p>
-        <p id="generation-summary" class="generation-summary"></p>
-      </div>
-    </section>
-
-    <aside class="panel history-panel" aria-labelledby="history-heading">
-      <div class="panel-heading">
-        <h2 id="history-heading">버전 히스토리</h2>
-        <span>최신 검증본부터 표시</span>
-      </div>
-      <ol id="generation-list" class="generation-list"></ol>
-    </aside>
-
+      <a class="entry-card history-card" data-entry="history" href="./history/">
+        <span class="card-kicker">PRODUCTION HISTORY</span>
+        <h2>History</h2>
+        <p>기존 검토본, 캐너리와 세대별 제작 흐름을 계속 확인합니다.</p>
+        <span class="card-action">히스토리 보기 <span class="card-count">ARCHIVE →</span></span>
+      </a>
+    </nav>
   </main>
-
-  <script type="module" src="./history.js"></script>
+  <script type="module" src="./portal.js"></script>
 </body>
 </html>

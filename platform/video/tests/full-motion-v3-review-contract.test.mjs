@@ -5,7 +5,7 @@ import test from 'node:test';
 
 const videoRoot = new URL('../', import.meta.url);
 const manifest = JSON.parse(readFileSync(new URL('media/manifest.json', videoRoot), 'utf8'));
-const css = readFileSync(new URL('history.css', videoRoot), 'utf8');
+const css = readFileSync(new URL('history/history.css', videoRoot), 'utf8');
 const id = 'full-motion-review-v3-20260817t123945z';
 const expectedSha256 = '2743c4a82124361921fc73fa8bb3ff905823896b060d97450e1724070e9ba31e';
 const expectedBytes = 25_621_767;

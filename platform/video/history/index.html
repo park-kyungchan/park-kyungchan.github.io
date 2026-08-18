@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="수학교육 영상의 제작·검증 히스토리" />
+  <title>수학교육 영상 히스토리</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23071016'/%3E%3Cpath d='M18 20h28v24H18z' fill='none' stroke='%2388adff' stroke-width='4'/%3E%3Cpath d='m28 26 12 6-12 6z' fill='%23f2c75c'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./history.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-brand">
+      <span class="site-label">수학교육 · HISTORY</span>
+      <h1>수학교육 영상 · 히스토리</h1>
+    </div>
+    <nav class="route-nav" aria-label="영상 영역 이동">
+      <a href="../">Entry</a>
+      <a href="../final/">Final</a>
+      <a href="./" aria-current="page">History</a>
+    </nav>
+  </header>
+
+  <p id="page-error" class="page-error" role="alert" hidden></p>
+
+  <main class="review-layout">
+    <section class="panel player-panel" aria-labelledby="generation-title">
+      <div class="video-wrap">
+        <video id="video-player" controls playsinline preload="metadata"></video>
+      </div>
+      <div class="generation-copy">
+        <h2 id="generation-title">영상 세대를 불러오는 중입니다</h2>
+        <p id="generation-meta" class="generation-meta"></p>
+        <p id="generation-summary" class="generation-summary"></p>
+      </div>
+    </section>
+
+    <aside class="panel history-panel" aria-labelledby="history-heading">
+      <div class="panel-heading">
+        <h2 id="history-heading">버전 히스토리</h2>
+        <span>기존 작업 흐름 · 최신 검증본부터</span>
+      </div>
+      <ol id="generation-list" class="generation-list"></ol>
+    </aside>
+  </main>
+
+  <script type="module" src="./history.js"></script>
+</body>
+</html>

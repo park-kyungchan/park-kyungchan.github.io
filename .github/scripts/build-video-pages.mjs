@@ -34,6 +34,7 @@ const assertInside = (base, path) => {
 };
 const copyVerified = (source, destination) => {
   assertRegular(source);
+  mkdirSync(dirname(destination), {recursive: true});
   copyFileSync(source, destination);
   const sourceBytes = readFileSync(source);
   const copiedBytes = readFileSync(destination);
@@ -42,48 +43,83 @@ const copyVerified = (source, destination) => {
   }
 };
 
-const manifestPath = join(sourceRoot, 'media/manifest.json');
-assertRegular(manifestPath);
-const manifestBytes = readFileSync(manifestPath);
-const manifest = JSON.parse(manifestBytes.toString('utf8'));
-if (manifest.schema_version !== 2 || !Array.isArray(manifest.generations) || manifest.generations.length === 0) {
-  throw new Error('MANIFEST_SCHEMA_MISMATCH');
+const historyManifestPath = join(sourceRoot, 'media/manifest.json');
+const finalManifestPath = join(sourceRoot, 'media/final-manifest.json');
+assertRegular(historyManifestPath);
+assertRegular(finalManifestPath);
+const historyManifestBytes = readFileSync(historyManifestPath);
+const finalManifestBytes = readFileSync(finalManifestPath);
+const historyManifest = JSON.parse(historyManifestBytes.toString('utf8'));
+const finalManifest = JSON.parse(finalManifestBytes.toString('utf8'));
+
+if (historyManifest.schema_version !== 2 || !Array.isArray(historyManifest.generations) || historyManifest.generations.length === 0) {
+  throw new Error('HISTORY_MANIFEST_SCHEMA_MISMATCH');
 }
-if (!manifest.generations.some((entry) => entry.id === manifest.active_generation)) {
+if (!historyManifest.generations.some((entry) => entry.id === historyManifest.active_generation)) {
   throw new Error('ACTIVE_GENERATION_MISSING');
 }
-if (new Set(manifest.generations.map((entry) => entry.id)).size !== manifest.generations.length) {
+if (new Set(historyManifest.generations.map((entry) => entry.id)).size !== historyManifest.generations.length) {
   throw new Error('DUPLICATE_GENERATION_ID');
 }
 
-const publicSources = ['index.html', 'history.css', 'history.js'];
-const publicText = publicSources.map((name) => readFileSync(join(sourceRoot, name), 'utf8')).join('\n') + manifestBytes.toString('utf8');
+if (finalManifest.schema_version !== 1 || finalManifest.release_set !== 'MEGASTUDY_15_FINAL' || !Array.isArray(finalManifest.releases) || finalManifest.releases.length === 0) {
+  throw new Error('FINAL_MANIFEST_SCHEMA_MISMATCH');
+}
+if (new Set(finalManifest.releases.map((entry) => entry.id)).size !== finalManifest.releases.length) {
+  throw new Error('DUPLICATE_FINAL_ID');
+}
+for (const entry of finalManifest.releases) {
+  if (entry.artifact_label !== 'FINAL_RELEASE' || entry.qa_status !== 'PASS_DRIVE_IMPORT_FULL_DECODE' || entry.release_approved !== true) {
+    throw new Error(`FINAL_ONLY_CONTRACT_FAILED: ${entry.id}`);
+  }
+}
+
+const publicSources = [
+  'index.html',
+  'portal.css',
+  'portal.js',
+  'history/index.html',
+  'history/history.css',
+  'history/history.js',
+  'final/index.html',
+  'final/final.css',
+  'final/final.js',
+];
+const publicText = [
+  ...publicSources.map((name) => readFileSync(join(sourceRoot, name), 'utf8')),
+  historyManifestBytes.toString('utf8'),
+  finalManifestBytes.toString('utf8'),
+].join('\n');
 if (/drive\.google\.com|director[_-]timeline|탐구Lab|탐구랩|입체도형/i.test(publicText)) {
   throw new Error('PUBLIC_PRIVACY_BOUNDARY_FAILED');
 }
 
 const mediaRoot = join(sourceRoot, 'media');
 const mediaNames = new Set();
-for (const entry of manifest.generations) {
-  if (entry.source?.kind !== 'video' || entry.source?.storage !== 'github-pages') {
-    throw new Error(`SOURCE_CONTRACT_MISMATCH: ${entry.id}`);
+const collectMedia = (entries) => {
+  for (const entry of entries) {
+    if (entry.source?.kind !== 'video' || entry.source?.storage !== 'github-pages') {
+      throw new Error(`SOURCE_CONTRACT_MISMATCH: ${entry.id}`);
+    }
+    const match = /^\.\/media\/([^/]+\.mp4)$/.exec(entry.source.url);
+    if (!match) throw new Error(`SOURCE_URL_INVALID: ${entry.id}`);
+    const mediaName = match[1];
+    const mediaPath = join(mediaRoot, mediaName);
+    if (!existsSync(mediaPath)) throw new Error(`SOURCE_MEDIA_MISSING: ${entry.id}`);
+    assertInside(mediaRoot, mediaPath);
+    assertRegular(mediaPath);
+    const entryBytes = readFileSync(mediaPath);
+    if (entry.bytes !== entryBytes.length) throw new Error(`SOURCE_BYTES_MISMATCH: ${entry.id}`);
+    if (entry.sha256 !== digest(entryBytes)) throw new Error(`SOURCE_SHA256_MISMATCH: ${entry.id}`);
+    mediaNames.add(mediaName);
   }
-  const match = /^\.\/media\/([^/]+\.mp4)$/.exec(entry.source.url);
-  if (!match) throw new Error(`SOURCE_URL_INVALID: ${entry.id}`);
-  const mediaName = match[1];
-  const mediaPath = join(mediaRoot, mediaName);
-  if (!existsSync(mediaPath)) throw new Error(`SOURCE_MEDIA_MISSING: ${entry.id}`);
-  assertInside(mediaRoot, mediaPath);
-  assertRegular(mediaPath);
-  const entryBytes = readFileSync(mediaPath);
-  if (entry.bytes !== entryBytes.length) throw new Error(`SOURCE_BYTES_MISMATCH: ${entry.id}`);
-  if (entry.sha256 !== digest(entryBytes)) throw new Error(`SOURCE_SHA256_MISMATCH: ${entry.id}`);
-  mediaNames.add(mediaName);
-}
+};
+collectMedia(historyManifest.generations);
+collectMedia(finalManifest.releases);
 
-mkdirSync(join(outputRoot, 'media'), {recursive: true});
 for (const name of publicSources) copyVerified(join(sourceRoot, name), join(outputRoot, name));
-copyVerified(manifestPath, join(outputRoot, 'media/manifest.json'));
+copyVerified(historyManifestPath, join(outputRoot, 'media/manifest.json'));
+copyVerified(finalManifestPath, join(outputRoot, 'media/final-manifest.json'));
 for (const mediaName of [...mediaNames].sort()) {
   copyVerified(join(mediaRoot, mediaName), join(outputRoot, 'media', mediaName));
 }
@@ -100,10 +136,17 @@ const walk = (directory) => {
 walk(outputRoot);
 const expectedFiles = [
   '.nojekyll',
-  'history.css',
-  'history.js',
+  'final/final.css',
+  'final/final.js',
+  'final/index.html',
+  'history/history.css',
+  'history/history.js',
+  'history/index.html',
   'index.html',
+  'media/final-manifest.json',
   'media/manifest.json',
+  'portal.css',
+  'portal.js',
   ...[...mediaNames].sort().map((name) => `media/${name}`),
 ].sort();
 relativeFiles.sort();
@@ -114,8 +157,11 @@ const totalBytes = relativeFiles.reduce((sum, path) => sum + statSync(join(outpu
 console.log(JSON.stringify({
   status: 'PASS_VIDEO_ONLY_PAGES_BUILD',
   output: outputRoot,
-  active_generation: manifest.active_generation,
-  manifest_sha256: digest(manifestBytes),
+  entry_routes: ['/final/', '/history/'],
+  active_history_generation: historyManifest.active_generation,
+  final_release_count: finalManifest.releases.length,
+  history_manifest_sha256: digest(historyManifestBytes),
+  final_manifest_sha256: digest(finalManifestBytes),
   media: [...mediaNames].sort(),
   file_count: relativeFiles.length,
   total_bytes: totalBytes,

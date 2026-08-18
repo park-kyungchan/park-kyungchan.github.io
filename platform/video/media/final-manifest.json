@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "release_set": "MEGASTUDY_15_FINAL",
+  "updated_at_utc": "2026-08-18T00:42:20Z",
+  "releases": [
+    {
+      "id": "megastudy-15-final-part-1-20260817t233214z",
+      "part": 1,
+      "title": "Megastudy 15 Final · PART 1",
+      "summary": "Megastudy 15 수학교육 영상의 완료된 첫 번째 파트입니다. Google Drive에서 지정된 원본 bytes를 변경 없이 게시합니다.",
+      "artifact_label": "FINAL_RELEASE",
+      "qa_status": "PASS_DRIVE_IMPORT_FULL_DECODE",
+      "release_approved": true,
+      "published_at_utc": "2026-08-18T00:42:20Z",
+      "duration_seconds": 205.0,
+      "fps": 30,
+      "width": 1920,
+      "height": 1080,
+      "silent": true,
+      "bytes": 9579967,
+      "sha256": "4114dbebb8a88c1aae9dd2db3a82c112035ebb706b3da111c14306aea9100e67",
+      "source": {
+        "kind": "video",
+        "storage": "github-pages",
+        "url": "./media/megastudy-15-final-part-1-20260817T233214Z.mp4"
+      }
+    },
+    {
+      "id": "megastudy-15-final-part-2-20260818t002711z",
+      "part": 2,
+      "title": "Megastudy 15 Final · PART 2",
+      "summary": "Megastudy 15 수학교육 영상의 완료된 두 번째 파트입니다. Google Drive에서 지정된 원본 bytes를 변경 없이 게시합니다.",
+      "artifact_label": "FINAL_RELEASE",
+      "qa_status": "PASS_DRIVE_IMPORT_FULL_DECODE",
+      "release_approved": true,
+      "published_at_utc": "2026-08-18T00:42:20Z",
+      "duration_seconds": 245.0,
+      "fps": 30,
+      "width": 1920,
+      "height": 1080,
+      "silent": true,
+      "bytes": 16336375,
+      "sha256": "af0bb1b8b3b0f73d600f27f44a3c442f5bbd3dde48e039cda30c5767c95bb5c8",
+      "source": {
+        "kind": "video",
+        "storage": "github-pages",
+        "url": "./media/megastudy-15-final-part-2-20260818T002711Z.mp4"
+      }
+    }
+  ]
+}

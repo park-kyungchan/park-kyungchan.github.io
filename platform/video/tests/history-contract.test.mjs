@@ -4,9 +4,10 @@ import {readFileSync} from 'node:fs';
 import test from 'node:test';
 
 const root = new URL('../', import.meta.url);
+const historyRoot = new URL('history/', root);
 const manifest = JSON.parse(readFileSync(new URL('media/manifest.json', root), 'utf8'));
-const html = readFileSync(new URL('index.html', root), 'utf8');
-const script = readFileSync(new URL('history.js', root), 'utf8');
+const html = readFileSync(new URL('index.html', historyRoot), 'utf8');
+const script = readFileSync(new URL('history.js', historyRoot), 'utf8');
 
 const sha256 = /^[a-f0-9]{64}$/;
 const qaStatuses = new Set(['PASS_DRIVE_IMPORT_DECODE', 'PASS_SILENT_REVIEW_PUBLICATION', 'PASS_REVIEW_PUBLICATION', 'LEGACY_UNVERIFIED', 'FINAL_RELEASE']);

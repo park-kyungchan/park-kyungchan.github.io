@@ -3,15 +3,29 @@ import {existsSync, readdirSync, readFileSync} from 'node:fs';
 import test from 'node:test';
 
 const root = new URL('../', import.meta.url);
+const historyRoot = new URL('history/', root);
+const finalRoot = new URL('final/', root);
 const manifest = JSON.parse(readFileSync(new URL('media/manifest.json', root), 'utf8'));
-const html = readFileSync(new URL('index.html', root), 'utf8');
-const script = readFileSync(new URL('history.js', root), 'utf8');
-const css = readFileSync(new URL('history.css', root), 'utf8');
+const finalManifest = JSON.parse(readFileSync(new URL('media/final-manifest.json', root), 'utf8'));
+const landing = readFileSync(new URL('index.html', root), 'utf8');
+const portalScript = readFileSync(new URL('portal.js', root), 'utf8');
+const html = readFileSync(new URL('index.html', historyRoot), 'utf8');
+const script = readFileSync(new URL('history.js', historyRoot), 'utf8');
+const css = readFileSync(new URL('history.css', historyRoot), 'utf8');
+const finalHtml = readFileSync(new URL('index.html', finalRoot), 'utf8');
+const finalScript = readFileSync(new URL('final.js', finalRoot), 'utf8');
+const finalCss = readFileSync(new URL('final.css', finalRoot), 'utf8');
 const publicText = [
-  ['index.html', html],
-  ['history.js', script],
-  ['history.css', css],
+  ['index.html', landing],
+  ['portal.js', portalScript],
+  ['history/index.html', html],
+  ['history/history.js', script],
+  ['history/history.css', css],
+  ['final/index.html', finalHtml],
+  ['final/final.js', finalScript],
+  ['final/final.css', finalCss],
   ['media/manifest.json', JSON.stringify(manifest)],
+  ['media/final-manifest.json', JSON.stringify(finalManifest)],
 ];
 
 const privateManifestKeys = [
@@ -21,10 +35,10 @@ const privateManifestKeys = [
 ];
 
 test('public manifest contains no private note or Drive package locator', () => {
-  for (const entry of manifest.generations) {
+  for (const entry of [...manifest.generations, ...finalManifest.releases]) {
     for (const key of privateManifestKeys) assert.equal(Object.hasOwn(entry, key), false, `${entry.id} exposes ${key}`);
   }
-  assert.doesNotMatch(JSON.stringify(manifest), /drive\.google\.com|director[-_]intent|directing_hypothesis|feedback_prompt/i);
+  assert.doesNotMatch(JSON.stringify([manifest, finalManifest]), /drive\.google\.com|director[-_]intent|directing_hypothesis|feedback_prompt/i);
 });
 
 test('public site contains no private note payload', () => {
